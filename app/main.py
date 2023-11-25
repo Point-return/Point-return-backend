@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 
 app = FastAPI(
-    title='Мои проекты',
+    title='ProSept',
 )
 
 
