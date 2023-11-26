@@ -4,18 +4,13 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from app.config import settings as sett
 
 
-SQLALCHEMY_DATABASE_URL = (
-        f"{sett.DB_ENG}+asyncpg://{sett.PG_USER}:{sett.PG_PASS}"
-        + f"@{sett.DB_HOST}:{sett.DB_PORT}/{sett.DB_NAME}"
-    )
-
-DATABASE_URL = SQLALCHEMY_DATABASE_URL
+DATABASE_URL = sett.DATABASE_URL
 
 engine = create_async_engine(
     DATABASE_URL
 )
 
-async_session_maker = sessionmaker(bind=engine, class_=AsyncSession)
+async_session_maker = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 
 class Base(DeclarativeBase):
