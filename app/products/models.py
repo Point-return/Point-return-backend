@@ -1,19 +1,28 @@
-from sqlalchemy import Column, Integer, String, Float, URL, Date, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String
 
 from app.database import Base
 
 
 class Dealer(Base):
+    """Модель дилера."""
+
     __tablename__ = 'marketing_dealer'
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
 
     def __repr__(self):
+        """Функция для представления модели дилера.
+
+        Returns:
+            Строку с именем дилера.
+        """
         return f'Dealer {self.name}'
 
+
 class Product(Base):
+    """Модель продукта."""
+
     __tablename__ = 'marketing_product'
 
     id = Column(Integer, primary_key=True)
@@ -32,9 +41,17 @@ class Product(Base):
     wb_article_td = Column(String)
 
     def __repr__(self):
-        return f'Product {self.article}'
+        """Функция для представления модели продукта.
+
+        Returns:
+            Строку с названием продукта.
+        """
+        return f'Product {self.name}'
+
 
 class ParsedProductDealer(Base):
+    """Модель данных парсинга."""
+
     __tablename__ = 'marketing_dealerprice'
 
     id = Column(Integer, primary_key=True)
@@ -46,13 +63,31 @@ class ParsedProductDealer(Base):
     dealer_id = Column(Integer, ForeignKey('marketing_dealer.id'))
 
     def __repr__(self):
-        return f'Parsed product {self.product_key}'
-    
-class ProductDealerAssociation(Base):
+        """Функция для представления модели данных парсинга.
+
+        Returns:
+            Строку с ключом продукта парсинга.
+        """
+        return f'Данные парсинга {self.product_key}'
+
+
+class ProductDealer(Base):
+    """Модель связи дилера и продукта по ключу."""
+
     __tablename__ = 'marketing_productdealerkey'
 
     id = Column(Integer, primary_key=True)
-    key = Column(Integer, nullable=False)
+    key = Column(Integer, ForeignKey('marketing_dealerprice.id'))
     dealer_id = Column(Integer, ForeignKey('marketing_dealer.id'))
     product_id = Column(Integer, ForeignKey('marketing_product.id'))
 
+    def __repr__(self):
+        """Функция для представления модели связки продукт-дилер.
+
+        Returns:
+            Строку с ключом связки продукт-дилер.
+        """
+        return (
+            f'Продукт {self.product_id} от дилера '
+            f'{self.dealer_id} по ключу {self.key}'
+        )

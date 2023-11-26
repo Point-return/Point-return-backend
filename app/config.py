@@ -1,7 +1,9 @@
-from pydantic import BaseSettings, root_validator
+from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
+    """Настройки проекта."""
+
     DB_PORT: int
     PG_PASS: str
     PG_USER: str
@@ -11,17 +13,20 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = '.env'
-    
-    @root_validator
-    def get_database_url(cls, v):
-        if v['DB_ENG'] == 'sqlite':
-            v['DATABASE_URL'] = f"{v['DB_ENG']}+aiosqlite:///{v['DB_NAME']}.db"
-        else:
-            v['DATABASE_URL'] = (
-                    f"{v['DB_ENG']}+asyncpg://{v['PG_USER']}:{v['PG_PASS']}"
-                    + f"@{v['DB_HOST']}:{v['DB_PORT']}/{v['DB_NAME']}"
-                )
-        return v
+
+    @property
+    def DATABASE_URL(cls):
+        """Создание URL для базы данных в зависимости от .env файла.
+
+        Returns:
+            URL базы данных.
+        """
+        if cls.DB_ENG == 'sqlite':
+            return f'{cls.DB_ENG}+aiosqlite:///{cls.DB_NAME}.db'
+        return (
+            f'{cls.DB_ENG}+asyncpg://{cls.PG_USER}:{cls.PG_PASS}'
+            + f'@{cls.DB_HOST}:{cls.DB_PORT}/{cls.DB_NAME}'
+        )
 
 
 settings = Settings()

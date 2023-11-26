@@ -2,7 +2,9 @@ WORKDIR = app
 MAIN = $(WORKDIR)/main.py
 
 default:
-	python $(MAIN)
+	make migration name="Initial"
+	make migrate
+	make run
 
 style:
 	isort $(WORKDIR)
@@ -10,11 +12,14 @@ style:
 	flake8 $(WORKDIR)
 	mypy $(WORKDIR)
 
-migrations:
+migration:
 	alembic revision --autogenerate -m "$(name)"
 
+migrate:
+	alembic upgrade head
+
 run:
-	uvicorn app.main:app --reload
+	uvicorn app.main:app
 
 pip:
 	python -m pip install --upgrade pip

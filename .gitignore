@@ -171,3 +171,7 @@ media/
 # Django migrations
 **/migrations/*.py
 !**/migrations/__init__.py
+
+# FastAPI migrations
+versions/*
+!env.py
