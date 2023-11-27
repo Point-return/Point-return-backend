@@ -1,3 +1,4 @@
+# mypy: disable-error-code="list-item, assignment"
 from sqladmin import ModelView
 
 from app.products.models import (

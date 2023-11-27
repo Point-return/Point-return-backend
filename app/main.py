@@ -8,11 +8,17 @@ from app.products.admin import (
     ProductAdmin,
     ProductDealerAdmin,
 )
+from app.products.router import router_products
 from app.users.admin import UserAdmin
+from app.users.router import router_user
 
 app = FastAPI(
     title='ProSept',
 )
+
+app.include_router(router_user)
+app.include_router(router_products)
+
 admin = Admin(app, engine)
 admin.add_view(DealerAdmin)
 admin.add_view(ProductAdmin)
@@ -22,6 +28,6 @@ admin.add_view(UserAdmin)
 
 
 @app.get('/')
-def index():
+def index() -> str:
     """Тестовая функция."""
     return 'Hello'

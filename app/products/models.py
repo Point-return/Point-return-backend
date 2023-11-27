@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String
 
-from app.database import Base
+from app.core.models import Base
 
 
 class Dealer(Base):
@@ -11,7 +11,7 @@ class Dealer(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Функция для представления модели дилера.
 
         Returns:
@@ -40,7 +40,7 @@ class Product(Base):
     ym_article = Column(String)
     wb_article_td = Column(String)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Функция для представления модели продукта.
 
         Returns:
@@ -62,7 +62,7 @@ class ParsedProductDealer(Base):
     date = Column(Date, nullable=False)
     dealer_id = Column(Integer, ForeignKey('marketing_dealer.id'))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Функция для представления модели данных парсинга.
 
         Returns:
@@ -81,7 +81,7 @@ class ProductDealer(Base):
     dealer_id = Column(Integer, ForeignKey('marketing_dealer.id'))
     product_id = Column(Integer, ForeignKey('marketing_product.id'))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Функция для представления модели связки продукт-дилер.
 
         Returns:

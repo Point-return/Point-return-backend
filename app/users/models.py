@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from app.database import Base
+from app.core.models import Base
 
 
 class User(Base):
@@ -13,7 +13,7 @@ class User(Base):
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Функция для представления модели пользователя.
 
         Returns:

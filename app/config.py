@@ -15,7 +15,7 @@ class Settings(BaseSettings):
         env_file = '.env'
 
     @property
-    def DATABASE_URL(cls):
+    def DATABASE_URL(cls) -> str:
         """Создание URL для базы данных в зависимости от .env файла.
 
         Returns:
@@ -27,6 +27,9 @@ class Settings(BaseSettings):
             f'{cls.DB_ENG}+asyncpg://{cls.PG_USER}:{cls.PG_PASS}'
             + f'@{cls.DB_HOST}:{cls.DB_PORT}/{cls.DB_NAME}'
         )
+
+    SECRET_KEY: str
+    ALGORITHM: str
 
 
 settings = Settings()

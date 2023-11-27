@@ -32,3 +32,6 @@ req:
 
 style-req:
 	pip install -r style-requirements.txt
+
+secret-key:
+	python app/core/generate_key.py
