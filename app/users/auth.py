@@ -71,3 +71,22 @@ async def authenticate_user(email: EmailStr, password: str) -> Optional[User]:
     if user and verify_password(password, user.password):
         return user
     return None
+
+
+async def authenticate_user_by_username(
+    username: str,
+    password: str,
+) -> Optional[User]:
+    """Авторизация пользователя по имени.
+
+    Args:
+        username: имя пользователя.
+        password: пароль пользователя.
+
+    Returns:
+        Объект пользователя из базы данных или None.
+    """
+    user = await UserDAO.find_one_or_none(username=username)
+    if user and verify_password(password, user.password):
+        return user
+    return None

@@ -1,11 +1,18 @@
 from datetime import datetime
 from typing import Awaitable
 
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, Request
 from jose import JWTError, jwt
 
-from app.config import settings
+from app.config import TOKEN_NAME, settings
 from app.users.dao import UserDAO
+from app.users.exceptions import (
+    NoTokenException,
+    TokenExpiredException,
+    UserInfoNotFoundException,
+    WrongTokenException,
+    WrongUserInfoException,
+)
 from app.users.models import User
 
 
@@ -21,12 +28,9 @@ def get_token(request: Request) -> str:
     Raises:
         HTTPException 401: если токен не предоставлен.
     """
-    token = request.cookies.get('points_access_token')
+    token = request.cookies.get(TOKEN_NAME)
     if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Токен не предоставлен',
-        )
+        raise NoTokenException
     return token
 
 
@@ -53,26 +57,14 @@ def get_current_user(token: str = Depends(get_token)) -> Awaitable[User]:
         )
 
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Ошибка распознавания JWT-токена',
-        )
+        raise WrongTokenException
     expire: str = payload.get('exp')
     if not expire or int(expire) < datetime.utcnow().timestamp():
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Токен истек',
-        )
+        raise TokenExpiredException
     user_id: str = payload.get('sub')
     if not user_id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Не найдеа информация о пользователе в токене',
-        )
+        raise UserInfoNotFoundException
     user = UserDAO.find_by_id(int(user_id))
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Не найден пользователь в базе',
-        )
+        raise WrongUserInfoException
     return user

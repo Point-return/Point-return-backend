@@ -12,6 +12,7 @@ class User(Base):
     username = Column(String, nullable=False)
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
+    role = Column(String, nullable=False)
 
     def __repr__(self) -> str:
         """Функция для представления модели пользователя.

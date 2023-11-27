@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from sqladmin import Admin
 
+from app.core.admin import authentication_backend
 from app.database import engine
 from app.products.admin import (
     DealerAdmin,
@@ -10,16 +11,17 @@ from app.products.admin import (
 )
 from app.products.router import router_products
 from app.users.admin import UserAdmin
-from app.users.router import router_user
+from app.users.router import router_auth, router_users
 
 app = FastAPI(
     title='ProSept',
 )
 
-app.include_router(router_user)
+app.include_router(router_auth)
+app.include_router(router_users)
 app.include_router(router_products)
 
-admin = Admin(app, engine)
+admin = Admin(app, engine, authentication_backend=authentication_backend)
 admin.add_view(DealerAdmin)
 admin.add_view(ProductAdmin)
 admin.add_view(ProductDealerAdmin)

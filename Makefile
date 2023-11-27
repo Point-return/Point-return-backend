@@ -18,6 +18,9 @@ migration:
 migrate:
 	alembic upgrade head
 
+superuser:
+	python create_admin.py
+
 run:
 	uvicorn app.main:app
 

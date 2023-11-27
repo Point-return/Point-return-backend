@@ -1,9 +1,9 @@
-from typing import Awaitable
+from typing import List
 
 from fastapi import APIRouter, Depends
 
 from app.products.dao import ProductDAO
-from app.products.models import Product
+from app.products.schemas import ProductSchema
 from app.users.dependencies import get_current_user
 from app.users.models import User
 
@@ -16,7 +16,7 @@ router_products = APIRouter(
 @router_products.get('/')
 async def get_products(
     user: User = Depends(get_current_user),
-) -> Awaitable[Product]:
+) -> List[ProductSchema]:
     """Функция для получения всех продуктов.
 
     Args:
