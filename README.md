@@ -61,7 +61,64 @@ ALGORITHM =
 Алгоритм для генетации JWT-токена.
 
 ```
+Для генерации секретного ключа можно воспользоваться следующей командой:
+```
+make secret-key
+```
+После генерации вставьте ключ в файл .env указанным образом.
 
+### Подготовка файлов с данными:
+
+Чтобы заполнить данными систему, необходимо использовать 4 файла с расширением csv.
+Разместить их необходимо в папке data, расположенной внутри папки app. 
+
+```
+cd app
+cd data
+```
+
+Необходимые названия файлов указаны в файле app.config в классе CSVFiles. 
+По умолчанию названия файлов указаны далее.
+
+#### Файл продуктов marketing_product.csv:
+
+| Заголовок | Пустой заголовок  | id    |	article |	ean_13  |	name    |	cost    |	recommended_price   |	category_id |	ozon_name   |	name_1c |	wb_name |	ozon_article    |   wb_article  |	ym_article  |	wb_article_td   |
+|------|--------|-----------|---------|------------|--------|-------|-------|---------|--------|--------|--------|---------|---------|--------|--------|
+| Тип  |Integer | Integer   | String  | BigInteger | String | Float | Float | Integer | String | String | String | Integer | Integer | String | String |
+
+#### Файл дилеров marketing_dealer.csv:
+
+| Заголовок | id    |	name    |
+|------|-----------|---------|
+| Тип  | Integer   | String  |
+
+#### Файл связок продукт-дилер marketing_productdealerkey.csv:
+
+| Заголовок | id     |	key    |	dealer_id  |	product_id    |
+|-----------|--------|---------|---------------|------------------|
+| Тип       |Integer |String   | Integer       |     Integer      |
+
+id	product_key	price	product_url	product_name	date	dealer_id
+
+#### Файл данных парсинга marketing_dealerprice.csv:
+
+| Заголовок | id     |	product_key |	price |	product_url |	product_name |	date          |	dealer_id   |
+|-----------|--------|--------------|---------|-------------|----------------|----------------|-------------|
+| Тип       |Integer | String       | Float   | String      | String         | Date  %Y-%m-%d | Integer     |
+
+Импортировать данные можно следующей командой:
+
+```
+make import
+```
+
+Также предусмотрен импорт отдельно каждой таблицы:
+```
+make products
+make dealers
+make product-dealer
+make parsed-data
+```
 ### Как запустить бэкенд без контейнеров:
 
 Выполнить миграции:
@@ -69,6 +126,10 @@ ALGORITHM =
 ```
 make migration name=Migration_name
 make migrate
+```
+Создайте админа:
+```
+make admin
 ```
 
 Запустить приложение:
@@ -88,8 +149,12 @@ make run
 - Python
 - FastAPI
 - PostgreSQL
-- SQL Alchemy
-- SQL Admin
+- SQLAlchemy
+- SQLAlchemy Admin
+- CSV
+- Scarlette
+- Pydantic
+- Swagger
 
 ### Авторы:
 

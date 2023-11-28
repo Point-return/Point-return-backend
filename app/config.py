@@ -1,4 +1,8 @@
+from pathlib import Path
+
 from pydantic import BaseSettings
+
+BASE_DIR = Path(__file__).resolve().parent
 
 
 class Settings(BaseSettings):
@@ -36,6 +40,16 @@ settings = Settings()
 
 API_URL = '/api/v1'
 TOKEN_NAME = 'points_access_token'
+DATA_IMPORT_LOCATION = str(BASE_DIR / 'data')
+
+
+class CSVFilenames:
+    """Названия файлов с тестовыми данными."""
+
+    products: str = 'marketing_product'
+    dealers: str = 'marketing_dealer'
+    parsed_data: str = 'marketing_dealerprice'
+    product_dealer: str = 'marketing_productdealerkey'
 
 
 class Roles:
