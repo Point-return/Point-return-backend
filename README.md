@@ -82,9 +82,9 @@ cd data
 
 #### Файл продуктов marketing_product.csv:
 
-|Заголовок|       |id     |article|ean_13    |name  |cost |recommended_price|category_id |ozon_name|name_1c|wb_name|ozon_article|wb_article|ym_article|wb_article_td|
+|Заголовок  | Пустой столбец      | id     |    article |   ean_13    | name  | cost |  recommended_price   |   category_id |   ozon_name   |name_1c    |   wb_name |   ozon_article    |   wb_article  |ym_article |   wb_article_td   |
 |---------|-------|-------|-------|----------|------|-----|-----------------|------------|---------|-------|-------|------------|--------- |----------|-------------|
-| Тип     |Integer|Integer|String |BigInteger|String|Float|Float            | Integer    | String  |String | String|Integer     | Integer  | String   | String      |
+| Тип     | Integer  |  Integer |   String |    BigInteger  |   String  |   Float   |   Float   | Integer    | String  |    String | String | Integer     | Integer  | String   | String      |
 
 #### Файл дилеров marketing_dealer.csv:
 
