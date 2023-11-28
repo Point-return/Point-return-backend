@@ -1,20 +1,35 @@
-import uvicorn
 from fastapi import FastAPI
+from sqladmin import Admin
 
+from app.core.admin import authentication_backend
+from app.database import engine
+from app.products.admin import (
+    DealerAdmin,
+    ParsedProductDealerAdmin,
+    ProductAdmin,
+    ProductDealerAdmin,
+)
+from app.products.router import router_products
+from app.users.admin import UserAdmin
+from app.users.router import router_auth, router_users
 
 app = FastAPI(
     title='ProSept',
 )
 
+app.include_router(router_auth)
+app.include_router(router_users)
+app.include_router(router_products)
+
+admin = Admin(app, engine, authentication_backend=authentication_backend)
+admin.add_view(DealerAdmin)
+admin.add_view(ProductAdmin)
+admin.add_view(ProductDealerAdmin)
+admin.add_view(ParsedProductDealerAdmin)
+admin.add_view(UserAdmin)
+
 
 @app.get('/')
-def index():
+def index() -> str:
+    """Тестовая функция."""
     return 'Hello'
-
-
-def main():
-    uvicorn.run(app, host='127.0.0.1', port=8000)
-
-
-if __name__ == '__main__':
-    main()

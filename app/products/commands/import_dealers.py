@@ -1,0 +1,35 @@
+import csv
+
+from app.config import DATA_IMPORT_LOCATION, CSVFilenames
+from app.products.dao import DealerDAO
+
+
+async def import_dealers() -> None:
+    """Функция для импорта дилеров."""
+    print(  # noqa: T201
+        'Импортируются данные дилеров из:',
+        DATA_IMPORT_LOCATION,
+    )
+    with open(
+        f'{DATA_IMPORT_LOCATION}/{CSVFilenames.dealers}.csv',
+        'r',
+        encoding='utf-8-sig',
+    ) as csv_file:
+        counter = 0
+        data = csv.reader(csv_file, delimiter=';')
+        next(data)
+        for id, name in data:
+            existing_dealer = await DealerDAO.find_by_id(int(id))
+            if not existing_dealer:
+                await DealerDAO.create(id=int(id), name=name)
+                counter += 1
+        print(  # noqa: T201
+            f'Импорт завершён, испортировано {counter} дилеров',
+        )
+
+
+if __name__ == '__main__':
+    import asyncio
+
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(import_dealers())
