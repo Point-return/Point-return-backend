@@ -5,14 +5,14 @@ from app.core.utils import (
     convert_string_to_float,
     convert_to_float_and_truncate,
 )
+from app.main import logger
 from app.products.dao import ProductDAO
 
 
 async def import_products() -> None:
     """Функция для импорта продуктов."""
-    print(  # noqa: T201
-        'Импортируются данные продуктов из:',
-        DATA_IMPORT_LOCATION,
+    logger.debug(
+        'Импортируются данные продуктов из: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.products}.csv',
@@ -60,8 +60,8 @@ async def import_products() -> None:
                     wb_article_td=wb_article_td,
                 )
                 counter += 1
-        print(  # noqa: T201
-            f'Импорт заверщён, импортировано {counter} продуктов',
+        logger.debug(
+            f'Импорт завершён, импортировано {counter} продуктов',
         )
 
 
