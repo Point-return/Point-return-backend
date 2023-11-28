@@ -17,3 +17,8 @@ class UserSafe(BaseModel):
 
     class Config:
         orm_mode = True
+
+class TokenSchema(BaseModel):
+    """Схема для отображения токена."""
+
+    access_token: str

@@ -1,8 +1,7 @@
-from typing import Dict
-
 from fastapi import APIRouter, Depends, Response
 
 from app.config import TOKEN_NAME, Roles
+from app.core.schemas import EmptySchema
 from app.users.auth import (
     authenticate_user,
     create_access_token,
@@ -16,7 +15,7 @@ from app.users.exceptions import (
     UserNameAlreadyExistsException,
 )
 from app.users.models import User
-from app.users.schemas import UserAuth, UserSafe
+from app.users.schemas import UserAuth, UserSafe, TokenSchema
 
 router_users = APIRouter(
     prefix='/users',
@@ -30,7 +29,7 @@ router_auth = APIRouter(
 
 
 @router_auth.post('/register')
-async def register_user(user_data: UserAuth) -> None:
+async def register_user(user_data: UserAuth) -> EmptySchema:
     """Регистрация пользователя.
 
     Args:
@@ -60,7 +59,7 @@ async def register_user(user_data: UserAuth) -> None:
 async def login_user(
     response: Response,
     user_data: UserAuth,
-) -> Dict[str, str]:
+) -> TokenSchema:
     """Вход пользователя.
 
     Args:
@@ -79,7 +78,7 @@ async def login_user(
 
 
 @router_auth.post('/logout')
-async def logout_user(response: Response) -> None:
+async def logout_user(response: Response) -> EmptySchema:
     """Вход пользователя.
 
     Args:
