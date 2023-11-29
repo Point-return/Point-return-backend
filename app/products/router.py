@@ -1,4 +1,5 @@
 from typing import List
+from datetime import datetime
 
 from fastapi import APIRouter, Depends
 
@@ -8,15 +9,17 @@ from app.users.dependencies import get_current_user
 from app.users.models import User
 
 router_products = APIRouter(
-    prefix='/products',
+    prefix='',
     tags=['Продукты & Дилеры'],
 )
 
 
-@router_products.get('/')
+@router_products.get('/products')
 async def get_products(
-    user: User = Depends(get_current_user),
-) -> List[ProductSchema]:
+        limit=10,
+        date_from=datetime(1900, 1, 1),
+        date_to=datetime(2100, 1, 1),
+):
     """Функция для получения всех продуктов.
 
     Args:
@@ -25,4 +28,8 @@ async def get_products(
     Returns:
         Все продукты из базы данных.
     """
-    return await ProductDAO.find_all()
+    return await ProductDAO.main_list(
+        limit=limit,
+        date_from=date_from,
+        date_to=date_to,
+    )

@@ -1,9 +1,16 @@
 from typing import Any, Generic, Type, TypeVar
+from datetime import date
+import sqlalchemy as sa
 
-from sqlalchemy import insert, select
 
 from app.core.models import Base
 from app.database import async_session_maker
+from app.products.models import (
+    ParsedProductDealer,
+    Product,
+    ProductDealer,
+    Dealer,
+)
 
 Model = TypeVar('Model', bound=Base)
 
@@ -27,7 +34,7 @@ class BaseDAO(Generic[Model]):
             Один объект из базы данных или None.
         """
         async with async_session_maker() as session:
-            query = select(cls.model).filter_by(id=model_id)
+            query = sa.select(cls.model).filter_by(id=model_id)
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
@@ -39,7 +46,7 @@ class BaseDAO(Generic[Model]):
             Все объекты данного типа из базы.
         """
         async with async_session_maker() as session:
-            query = select(cls.model)
+            query = sa.select(cls.model)
             result = await session.execute(query)
             return result.scalars().all()
 
@@ -57,7 +64,7 @@ class BaseDAO(Generic[Model]):
             Один объект из базы данных или None.
         """
         async with async_session_maker() as session:
-            query = select(cls.model).filter_by(**parameters)
+            query = sa.select(cls.model).filter_by(**parameters)
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
@@ -69,6 +76,34 @@ class BaseDAO(Generic[Model]):
             data: данные модели.
         """
         async with async_session_maker() as session:
-            query = insert(cls.model).values(**data)
+            query = sa.insert(cls.model).values(**data)
             await session.execute(query)
             await session.commit()
+
+    @classmethod
+    async def main_list(
+        cls,
+        limit: int,
+        date_from: date,
+        date_to: date,
+    ):
+        """Функция для получения всех продуктов."""
+        async with async_session_maker() as session:
+            query = sa.select(Product.__table__.columns,
+                              ParsedProductDealer.date,
+                              ParsedProductDealer.price,
+                              ParsedProductDealer.product_name,
+                              ParsedProductDealer.product_url,
+                              Dealer.name).\
+            join(ProductDealer, Product.id == ProductDealer.product_id, isouter=True).\
+            join(ParsedProductDealer, ProductDealer.key == ParsedProductDealer.product_key, isouter=True).\
+            join(Dealer, ProductDealer.dealer_id == Dealer.id, isouter=True).\
+            where(
+                sa.and_(
+                    ParsedProductDealer.date >= date_from,
+                    ParsedProductDealer.date <= date_to,
+                    )
+                ).\
+            limit(limit)
+            result = await session.execute(query)
+            return result.mappings().all()

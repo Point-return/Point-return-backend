@@ -2,7 +2,7 @@ import logging
 from logging.config import dictConfig
 
 from fastapi import FastAPI
-from sqladmin import Admin
+#from sqladmin import Admin
 
 from app.config import LoggingConfig
 from app.core.admin import authentication_backend
@@ -29,15 +29,15 @@ app.include_router(router_auth)
 app.include_router(router_users)
 app.include_router(router_products)
 
-admin = Admin(app, engine, authentication_backend=authentication_backend)
+'''admin = Admin(app, engine, authentication_backend=authentication_backend)
 admin.add_view(DealerAdmin)
 admin.add_view(ProductAdmin)
 admin.add_view(ProductDealerAdmin)
 admin.add_view(ParsedProductDealerAdmin)
-admin.add_view(UserAdmin)
+admin.add_view(UserAdmin)'''
 
 
-@app.get('/')
+@app.get('/test')
 def index() -> str:
     """Тестовая функция."""
     return 'Hello'
