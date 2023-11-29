@@ -1,6 +1,10 @@
+import logging
+from logging.config import dictConfig
+
 from fastapi import FastAPI
 from sqladmin import Admin
 
+from app.config import LoggingConfig
 from app.core.admin import authentication_backend
 from app.database import engine
 from app.products.admin import (
@@ -12,6 +16,10 @@ from app.products.admin import (
 from app.products.router import router_products
 from app.users.admin import UserAdmin
 from app.users.router import router_auth, router_users
+
+dictConfig(LoggingConfig().dict())
+logger = logging.getLogger('point_logger')
+
 
 app = FastAPI(
     title='ProSept',
