@@ -110,3 +110,30 @@ class BaseDAO(Generic[Model]):
                 limit(limit)
             result = await session.execute(query)
             return result.mappings().all()
+
+    @classmethod
+    async def product_list(
+        cls,
+        date_from: date,
+        date_to: date,
+        dialer_id: int,
+        limit: int,
+    ):
+        """Функция для получения всех продуктов."""
+        async with async_session_maker() as session:
+            query = sa.select(ParsedProductDealer.__table__.columns,
+                              Product.__table__.columns).\
+                select_from(ProductDealer).\
+                join(ParsedProductDealer,
+                     ProductDealer.key == ParsedProductDealer.product_key,
+                     isouter=True).\
+                join(Product,
+                     ProductDealer.product_id == Product.id,
+                     isouter=True).\
+                where(
+                    sa.and_(ParsedProductDealer.date >= date_from,
+                            ParsedProductDealer.date <= date_to)).\
+                filter(ProductDealer.dealer_id == dialer_id).\
+                limit(limit)
+            result = await session.execute(query)
+            return result.mappings().all()
