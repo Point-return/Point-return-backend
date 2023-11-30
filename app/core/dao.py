@@ -116,7 +116,7 @@ class BaseDAO(Generic[Model]):
         cls,
         date_from: date,
         date_to: date,
-        dialer_id: int,
+        dealer_id: int,
         limit: int,
     ):
         """Функция для получения всех продуктов."""
@@ -133,7 +133,7 @@ class BaseDAO(Generic[Model]):
                 where(
                     sa.and_(ParsedProductDealer.date >= date_from,
                             ParsedProductDealer.date <= date_to)).\
-                filter(ProductDealer.dealer_id == dialer_id).\
+                filter(ProductDealer.dealer_id == dealer_id).\
                 limit(limit)
             result = await session.execute(query)
             return result.mappings().all()
