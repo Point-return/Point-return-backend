@@ -41,9 +41,9 @@ async def get_products(
     )
 
 
-@router_products.get('/dialer/{dialer_id}')
+@router_products.get('/dealer/{dealer_id}')
 async def dialer_products(
-        dialer_id: int,
+        dealer_id: int,
         limit: int = 10,
         year_from: int = 1900,
         month_from: int = 1,
@@ -56,14 +56,14 @@ async def dialer_products(
     date_from = datetime(int(year_from), int(month_from), int(day_from))
     date_to = datetime(int(year_to), int(month_to), int(day_to))
     return await ProductDAO.product_list(
-        dialer_id=dialer_id,
+        dealer_id=dealer_id,
         limit=limit,
         date_from=date_from,
         date_to=date_to,
         )
 
 
-@router_products.get('/dialers')
-async def get_dialers():
+@router_products.get('/dealers')
+async def get_dealers():
     """Функция для получения всех дилеров."""
     return await DealerDAO.find_all()
