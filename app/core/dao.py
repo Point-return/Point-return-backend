@@ -95,15 +95,18 @@ class BaseDAO(Generic[Model]):
                               ParsedProductDealer.product_name,
                               ParsedProductDealer.product_url,
                               Dealer.name).\
-            join(ProductDealer, Product.id == ProductDealer.product_id, isouter=True).\
-            join(ParsedProductDealer, ProductDealer.key == ParsedProductDealer.product_key, isouter=True).\
-            join(Dealer, ProductDealer.dealer_id == Dealer.id, isouter=True).\
-            where(
-                sa.and_(
-                    ParsedProductDealer.date >= date_from,
-                    ParsedProductDealer.date <= date_to,
-                    )
-                ).\
-            limit(limit)
+                join(ProductDealer,
+                     Product.id == ProductDealer.product_id,
+                     isouter=True).\
+                join(ParsedProductDealer,
+                     ProductDealer.key == ParsedProductDealer.product_key,
+                     isouter=True).\
+                join(Dealer,
+                     ProductDealer.dealer_id == Dealer.id,
+                     isouter=True).\
+                where(
+                    sa.and_(ParsedProductDealer.date >= date_from,
+                            ParsedProductDealer.date <= date_to)).\
+                limit(limit)
             result = await session.execute(query)
             return result.mappings().all()
