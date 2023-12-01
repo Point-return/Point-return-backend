@@ -91,6 +91,7 @@ class BaseDAO(Generic[Model]):
         limit: int,
     ):
         """Функция для получения всех продуктов."""
+        offset = (page - 1) * limit
         async with async_session_maker() as session:
             query = sa.select(ParsedProductDealer.__table__.columns,
                               Product.__table__.columns).\
@@ -105,7 +106,7 @@ class BaseDAO(Generic[Model]):
                     sa.and_(ParsedProductDealer.date >= date_from,
                             ParsedProductDealer.date <= date_to)).\
                 filter(ProductDealer.dealer_id == dealer_id).\
-                offset(page).\
+                offset(offset).\
                 limit(limit)
             total = await session.execute(sa.select(ParsedProductDealer.id).\
                 select_from(ProductDealer).\
@@ -120,7 +121,7 @@ class BaseDAO(Generic[Model]):
             result = await session.execute(query)
             response = result.mappings().all() + [
                 {
-                  "page": (page + 1),
+                  "page": page,
                   "size": limit,
                   "total page": total_list,
                 }

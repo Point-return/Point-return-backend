@@ -58,7 +58,7 @@ async def dialer_products(
     return await ProductDAO.product_list(
         dealer_id=dealer_id,
         limit=size,
-        page=((page - 1) * size),
+        page=page,
         date_from=date_from,
         date_to=date_to,
         )
