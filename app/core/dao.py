@@ -119,12 +119,11 @@ class BaseDAO(Generic[Model]):
                 filter(ProductDealer.dealer_id == dealer_id))
             total_list = ceil(len(total.scalars().all()) / limit)
             result = await session.execute(query)
-            response = result.mappings().all() + [
-                {
+            items = result.mappings().all() 
+            response = {
+                  "items": items,  
                   "page": page,
                   "size": limit,
                   "total page": total_list,
-                }
-            ]
+                        }
             return response
-
