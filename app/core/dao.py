@@ -122,7 +122,7 @@ class BaseDAO(Generic[Model]):
                 {
                   "page": (page + 1),
                   "size": limit,
-                  "total": total_list,
+                  "total page": total_list,
                 }
             ]
             return response
