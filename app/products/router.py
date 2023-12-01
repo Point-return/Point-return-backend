@@ -13,7 +13,6 @@ router_products = APIRouter(
     tags=['Продукты & Дилеры'],
 )
 
-
 @router_products.get('/products')
 async def get_products(
         limit: int = 10,
@@ -44,7 +43,8 @@ async def get_products(
 @router_products.get('/dealer/{dealer_id}')
 async def dialer_products(
         dealer_id: int,
-        limit: int = 10,
+        size: int,
+        page: int,
         year_from: int = 1900,
         month_from: int = 1,
         day_from: int = 1,
@@ -57,7 +57,8 @@ async def dialer_products(
     date_to = datetime(int(year_to), int(month_to), int(day_to))
     return await ProductDAO.product_list(
         dealer_id=dealer_id,
-        limit=limit,
+        limit=size,
+        page=((page - 1) * size),
         date_from=date_from,
         date_to=date_to,
         )

@@ -1,3 +1,4 @@
+from math import ceil
 from typing import Any, Generic, Type, TypeVar
 from datetime import date
 import sqlalchemy as sa
@@ -81,42 +82,12 @@ class BaseDAO(Generic[Model]):
             await session.commit()
 
     @classmethod
-    async def main_list(
-        cls,
-        limit: int,
-        date_from: date,
-        date_to: date,
-    ):
-        """Функция для получения всех продуктов."""
-        async with async_session_maker() as session:
-            query = sa.select(Product.__table__.columns,
-                              ParsedProductDealer.date,
-                              ParsedProductDealer.price,
-                              ParsedProductDealer.product_name,
-                              ParsedProductDealer.product_url,
-                              Dealer.name).\
-                join(ProductDealer,
-                     Product.id == ProductDealer.product_id,
-                     isouter=True).\
-                join(ParsedProductDealer,
-                     ProductDealer.key == ParsedProductDealer.product_key,
-                     isouter=True).\
-                join(Dealer,
-                     ProductDealer.dealer_id == Dealer.id,
-                     isouter=True).\
-                where(
-                    sa.and_(ParsedProductDealer.date >= date_from,
-                            ParsedProductDealer.date <= date_to)).\
-                limit(limit)
-            result = await session.execute(query)
-            return result.mappings().all()
-
-    @classmethod
     async def product_list(
         cls,
         date_from: date,
         date_to: date,
         dealer_id: int,
+        page: int,
         limit: int,
     ):
         """Функция для получения всех продуктов."""
@@ -134,6 +105,25 @@ class BaseDAO(Generic[Model]):
                     sa.and_(ParsedProductDealer.date >= date_from,
                             ParsedProductDealer.date <= date_to)).\
                 filter(ProductDealer.dealer_id == dealer_id).\
+                offset(page).\
                 limit(limit)
+            total = await session.execute(sa.select(ParsedProductDealer.id).\
+                select_from(ProductDealer).\
+                join(ParsedProductDealer,
+                     ProductDealer.key == ParsedProductDealer.product_key,
+                     isouter=True).\
+                where(
+                    sa.and_(ParsedProductDealer.date >= date_from,
+                            ParsedProductDealer.date <= date_to)).\
+                filter(ProductDealer.dealer_id == dealer_id))
+            total_list = ceil(len(total.scalars().all()) / limit)
             result = await session.execute(query)
-            return result.mappings().all()
+            response = result.mappings().all() + [
+                {
+                  "page": (page + 1),
+                  "size": limit,
+                  "total": total_list,
+                }
+            ]
+            return response
+
