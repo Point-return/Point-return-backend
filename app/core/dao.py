@@ -121,9 +121,9 @@ class BaseDAO(Generic[Model]):
             result = await session.execute(query)
             items = result.mappings().all() 
             response = {
-                  "items": items,  
+                  "items": items,
                   "page": page,
                   "size": limit,
-                  "total page": total_list,
+                  "total_page": total_list,
                         }
             return response
