@@ -13,18 +13,45 @@ git clone git@github.com:Point-return/Point-return-backend.git
 cd Point-return-backend
 ```
 
-Cоздать и активировать виртуальное окружение:
+Cоздать и активировать виртуальное окружение для Windows:
 
 ```
-python3 -m venv env
+python -m venv venv
+source venv/Scripts/activate
+```
+
+Для Linux:
+
+```
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-Одновить pip и установить зависимости из файла requirements.txt:
+Обновить pip:
 
 ```
 make pip
+```
+
+Файлы зависимости разделяются по следующим назначениям:
+
+```
+requirements.txt - требования для работы backend основы приложения
 make req
+
+requirements-DS.txt - требования для работы DS-скрипта (обязательны при запуске)
+make ds-req
+
+requirements-style.txt - требования для стилизации кода при разработке
+make style-req
+
+requirements-test.txt - требования для работы тестирования
+make test-req
+```
+
+Для запуска будет достаточно установить зависимости, требуемые для backend-основы и DS-скрипта:
+```
+make base-req
 ```
 
 Для работы приложения необходим файл .env:
@@ -128,20 +155,23 @@ id	product_key	price	product_url	product_name	date	dealer_id
 |-----------|--------|--------------|---------|-------------|----------------|----------------|-------------|
 | Тип       |Integer | String       | Float   | String      | String         | Date  %Y-%m-%d | Integer     |
 
-Импортировать данные можно следующей командой:
+Импортировать данные можно следующей командой, предварительно вернувшись в корневую директорию:
 
 ```
+cd ..
+cd ..
 make import
 ```
 
-Также предусмотрен импорт отдельно каждой таблицы:
+Также предусмотрен импорт отдельно каждой таблицы. 
+Однако импорт product-dealer требует наличия products и dealers, а импорт parsed-data - product-dealer и dealers:
 ```
 make products
 make dealers
 make product-dealer
 make parsed-data
 ```
-### Как запустить бэкенд без контейнеров:
+### Как запустить backend без контейнеров:
 
 Выполнить миграции:
 
@@ -160,25 +190,51 @@ make admin
 make run
 ```
 
+## Тестирование приложения
+
+Для запуска тестов в директории app/data необходимо расположить файл с названием по умолчанию mock_users.csv. 
+Необходимо добавить одного пользователя с ролью admin, одного - с ролью user.
+
+#### Файл тестовых данных mock_users.csv:
+
+| Заголовок | username     |	email       |	password    |	role        |
+|-----------|--------------|----------------|---------------|---------------|
+| Тип       |   String     | Email String   | String        | admin / user  |
+
+Для запуска тестов можно использовать 2 команды:
+
+```
+make test
+pytest
+```
+
 ### Эндпоинты:
 
-| Эндпоинт                             |Тип запроса | Тело запроса | Ответ           |
-|--------------------------------------|------------|--------------|-----------------|
-|/                                     |GET         |              |```"Hello"```    |
+Документация на эндпоинты при локальном запуске располагается по адресу: http://127.0.0.1:8000/docs
+
 
 ### Стек технологий использованный в проекте:
 
-- Python
+- CSV
 - FastAPI
+- FuzzyWuzzy
+- Pandas
 - PostgreSQL
+- Pydantic
+- Pytest
+- Python
 - SQLAlchemy
 - SQLAlchemy Admin
-- CSV
-- Scarlette
-- Pydantic
 - Swagger
+- Uvicorn
 
-### Авторы:
+### Авторы backend-основы:
 
-- :white_check_mark: [vlad3069](https://github.com/vlad3069)
-- :white_check_mark: [Starkiller2000Turbo](https://github.com/Starkiller2000Turbo)
+- :white_check_mark: [Maksim Ermoshin](https://github.com/Starkiller2000Turbo)
+- :white_check_mark: [Vladislav Podtiazhkin](https://github.com/vlad3069)
+
+### Авторы DS-скрипта:
+
+- :white_check_mark: [Aigerim Tokhmetova](https://github.com/moonkerimka)
+- :white_check_mark: [Aleksandr Filippov](https://github.com/AlexFee1)
+- :white_check_mark: [Evgeniy Bessonov](https://github.com/evgeniy-yandex)

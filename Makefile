@@ -1,17 +1,20 @@
 WORKDIR = app
-MAIN = $(WORKDIR)/main.py
 current_dir = $(shell pwd)
+
+ifeq ($(OS),Windows_NT)
+    PYTHON = python
+	PIP = pip
+else
+    PYTHON = python3
+	PIP = pip3
+endif
+
+# starting
 
 default:
 	make migration name="Initial"
 	make migrate
 	make run
-
-style:
-	isort $(WORKDIR)
-	black -S -l 79 $(WORKDIR)
-	flake8 $(WORKDIR)
-	mypy $(WORKDIR)
 
 migration:
 	@alembic revision --autogenerate -m "$(name)"
@@ -20,37 +23,64 @@ migrate:
 	@alembic upgrade head
 
 admin:
-	@PYTHONPATH=$(current_dir) python app/users/commands/create_admin.py
+	@PYTHONPATH=$(current_dir) $(PYTHON) app/users/commands/create_admin.py
 
 run:
 	@uvicorn app.main:app
 
-pip:
-	@python -m pip install --upgrade pip
+# requirements
 
-req-file:
-	@pip freeze -> requirements.txt
+pip:
+	@$(PYTHON) -m $(PIP) install --upgrade pip
 
 req:
-	@pip install -r requirements.txt
+	@$(PIP) install -r requirements.txt
+
+ds-req:
+	@$(PIP) install -r requirements-DS.txt
 
 style-req:
-	@pip install -r style-requirements.txt
+	@$(PIP) install -r requirements-style.txt
+
+test-req:
+	@$(PIP) install -r requirements-test.txt
+
+base-req:
+	@make req
+	@make ds-req
+
+all-req:
+	@make req
+	@make style-req
+	@make ds-req
+	@make test-req
+
+# styling
+
+style:
+	isort $(WORKDIR)
+	black -S -l 79 $(WORKDIR)
+	flake8 $(WORKDIR)
+	mypy $(WORKDIR)
+
+# utils
 
 secret-key:
-	@python app/core/commands/generate_key.py
+	@$(PYTHON) app/core/commands/generate_key.py
+
+# data import
 
 products:
-	@PYTHONPATH=$(current_dir) python app/products/commands/import_products.py
+	@PYTHONPATH=$(current_dir) $(PYTHON) app/products/commands/import_products.py
 
 dealers:
-	@PYTHONPATH=$(current_dir) python app/products/commands/import_dealers.py
+	@PYTHONPATH=$(current_dir) $(PYTHON) app/products/commands/import_dealers.py
 
 product-dealer:
-	@PYTHONPATH=$(current_dir) python app/products/commands/import_productdealer.py
+	@PYTHONPATH=$(current_dir) $(PYTHON) app/products/commands/import_productdealer.py
 
 parsed-data:
-	@PYTHONPATH=$(current_dir) python app/products/commands/import_parsed_data.py
+	@PYTHONPATH=$(current_dir) $(PYTHON) app/products/commands/import_parsed_data.py
 
 import:
 	@make products
@@ -58,8 +88,13 @@ import:
 	@make product-dealer
 	@make parsed-data
 
+# testing
+
 test:
 	pytest
 
-solve_ds:
-	@PYTHONPATH=$(current_dir) python app/ds/solution.py
+report:
+	coverage run -m pytest app
+
+read-report:
+	coverage report

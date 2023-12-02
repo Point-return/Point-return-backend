@@ -1,13 +1,18 @@
 from datetime import date as datetype
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.core.schemas import to_snake_case
 
 
 class ProductSchema(BaseModel):
     """Схема продукта."""
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_snake_case,
+    )
 
     id: int
     article: str
@@ -23,10 +28,6 @@ class ProductSchema(BaseModel):
     wbArticle: Optional[int]
     ymArticle: Optional[str]
     wbArticleTd: Optional[str]
-
-    class Config:
-        orm_mode = True
-        alias_generator = to_snake_case
 
 
 class ParsedProductValidationSchema(BaseModel):
@@ -44,9 +45,10 @@ class ParsedProductValidationSchema(BaseModel):
 class ParsedProductSchema(ParsedProductValidationSchema):
     """Схема данных парсинга."""
 
-    class Config:
-        orm_mode = True
-        alias_generator = to_snake_case
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_snake_case,
+    )
 
 
 class MenuValidationSchema(BaseModel):
@@ -61,20 +63,21 @@ class MenuValidationSchema(BaseModel):
 class MenuSchema(MenuValidationSchema):
     """Схема меню данных парсинга."""
 
-    items: List[ParsedProductSchema]  # type: ignore[assignment]
+    model_config = ConfigDict(alias_generator=to_snake_case)
 
-    class Config:
-        alias_generator = to_snake_case
+    items: List[ParsedProductSchema]  # type: ignore[assignment]
 
 
 class DealerSchema(BaseModel):
     """Схема дилера."""
 
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_snake_case,
+    )
+
     id: int
     name: str
-
-    class Config:
-        orm_mode = True
 
 
 class RecomendationValidationSchema(BaseModel):
@@ -88,5 +91,4 @@ class RecomendationValidationSchema(BaseModel):
 class RecomendationSchema(RecomendationValidationSchema):
     """Схема рекомендуемого варианта."""
 
-    class Config:
-        alias_generator = to_snake_case
+    model_config = ConfigDict(alias_generator=to_snake_case)

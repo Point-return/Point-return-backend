@@ -1,25 +1,33 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr
+
+from app.core.schemas import to_snake_case
 
 
 class UserAuth(BaseModel):
     """Схема регистрации пользователей."""
 
-    email: EmailStr = Field(..., alias='email')
-    password: str = Field(..., alias='password')
-    username: str = Field(..., alias='username')
+    model_config = ConfigDict(alias_generator=to_snake_case)
+
+    email: EmailStr
+    password: str
+    username: str
 
 
 class UserSafe(BaseModel):
     """Схема отображения пользователя без пароля."""
 
-    email: EmailStr = Field(..., alias='email')
-    username: str = Field(..., alias='username')
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_snake_case,
+    )
 
-    class Config:
-        orm_mode = True
+    email: EmailStr
+    username: str
 
 
 class TokenSchema(BaseModel):
     """Схема для отображения токена."""
 
-    access_token: str = Field(..., alias='accessToken')
+    model_config = ConfigDict(alias_generator=to_snake_case)
+
+    access_token: str
