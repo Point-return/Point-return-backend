@@ -1,7 +1,7 @@
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 
-from app.config import TOKEN_NAME, Roles, settings
+from app.config import TOKEN_NAME, Roles, logger, settings
 from app.users.auth import authenticate_user_by_username, create_access_token
 from app.users.dependencies import get_current_user
 
@@ -25,8 +25,10 @@ class AdminAuth(AuthenticationBackend):
             password,  # type: ignore[arg-type]
         )
         if not user:
+            logger.debug('User not found in database')
             return False
         if user.role != Roles.admin:
+            logger.debug('User is not admin')
             return False
         access_token = create_access_token({'sub': str(user.id)})
         request.session.update({TOKEN_NAME: access_token})
@@ -55,9 +57,11 @@ class AdminAuth(AuthenticationBackend):
         """
         token = request.session.get(TOKEN_NAME)
         if not token:
+            logger.debug('Token not found')
             return False
         user = await get_current_user(token)
         if not user:
+            logger.debug('User data not found in token')
             return False
         return True
 

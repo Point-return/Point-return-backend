@@ -23,7 +23,7 @@ admin:
 	@PYTHONPATH=$(current_dir) python app/users/commands/create_admin.py
 
 run:
-	@uvicorn app.main:app --reload
+	@uvicorn app.main:app
 
 pip:
 	@python -m pip install --upgrade pip
@@ -38,7 +38,7 @@ style-req:
 	@pip install -r style-requirements.txt
 
 secret-key:
-	@python app/core/generate_key.py
+	@python app/core/commands/generate_key.py
 
 products:
 	@PYTHONPATH=$(current_dir) python app/products/commands/import_products.py
@@ -60,3 +60,6 @@ import:
 
 test:
 	pytest
+
+solve_ds:
+	@PYTHONPATH=$(current_dir) python app/ds/solution.py

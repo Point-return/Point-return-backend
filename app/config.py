@@ -1,3 +1,5 @@
+import logging
+from logging.config import dictConfig
 from pathlib import Path
 
 from pydantic import BaseModel, BaseSettings
@@ -110,3 +112,7 @@ class LoggingConfig(BaseModel):
     loggers = {
         LOGGER_NAME: {'handlers': ['default'], 'level': LOG_LEVEL},
     }
+
+
+dictConfig(LoggingConfig().dict())
+logger = logging.getLogger(LOGGER_NAME)

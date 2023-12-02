@@ -75,7 +75,7 @@ async def login_user(
         raise InvalidCredentialsException
     access_token = create_access_token({'sub': str(user.id)})
     response.set_cookie(TOKEN_NAME, access_token, httponly=True)
-    return TokenSchema(access_token=access_token)
+    return TokenSchema(accessToken=access_token)
 
 
 @router_auth.post('/logout')
@@ -93,7 +93,7 @@ async def logout_user(response: Response) -> EmptySchema:
 async def read_users_me(
     current_user: User = Depends(get_current_user),
 ) -> UserSafe:
-    """Регистрация пользователя.
+    """Данные текущего пользователя.
 
     Args:
         current_user: текущий пользователь.

@@ -1,9 +1,9 @@
 import csv
+import sys
 from datetime import datetime
 
-from app.config import DATA_IMPORT_LOCATION, CSVFilenames
+from app.config import DATA_IMPORT_LOCATION, CSVFilenames, logger
 from app.core.utils import convert_string_to_float
-from app.main import logger
 from app.products.dao import ParsedProductDealerDAO, ProductDealerDAO
 
 
@@ -46,12 +46,16 @@ async def import_parsed_data() -> None:
                         date=datetime.strptime(date, '%Y-%m-%d').date(),
                         dealer_id=int(dealer_id),
                     )
-                    counter += 1
                 else:
-                    logger.debug(
-                        'Отсутствует связка продукт-дилер '
-                        f'с ключом: {product_key}',
+                    await ParsedProductDealerDAO.create(
+                        id=int(id),
+                        price=convert_string_to_float(price),
+                        product_url=product_url,
+                        product_name=product_name,
+                        date=datetime.strptime(date, '%Y-%m-%d').date(),
+                        dealer_id=int(dealer_id),
                     )
+                counter += 1
         logger.debug(
             f'Импорт завершён, импортировано {counter} данных парсинга',
         )
@@ -60,5 +64,7 @@ async def import_parsed_data() -> None:
 if __name__ == '__main__':
     import asyncio
 
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    if sys.platform == 'win32' and sys.version_info.minor >= 8:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.get_event_loop_policy().new_event_loop()
     asyncio.run(import_parsed_data())

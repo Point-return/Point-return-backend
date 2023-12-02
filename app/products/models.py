@@ -103,12 +103,16 @@ class ParsedProductDealer(Base):
     __tablename__ = 'marketing_dealerprice'
 
     id = Column(Integer, primary_key=True)
-    product_key = Column(String)
+    product_key = Column(String, ForeignKey('marketing_productdealerkey.key'))
     price = Column(Float, nullable=False)
     product_url = Column(String)
     product_name = Column(String, nullable=False)
     date = Column(Date, nullable=False)
-    dealer_id = Column(Integer, ForeignKey('marketing_dealer.id'))
+    dealer_id = Column(
+        Integer,
+        ForeignKey('marketing_dealer.id'),
+        nullable=False,
+    )
 
     product_dealer = relationship(
         'ProductDealer',
