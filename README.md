@@ -37,13 +37,13 @@ touch .env
 
 ```
 DB_ENG=postgresql
-Название базы данных на английском для подключения (Разработка велать на PostgreSQL)
+Название базы данных на английском для подключения (Разработка велась на PostgreSQL)
 
 PG_USER=
-Имя пользователя базы данных postgres.
+Имя пользователя базы данных postgresql.
 
 PG_PASS=
-Пароль пользователя базы данных postgres.
+Пароль пользователя базы данных postgresql.
 
 DB_NAME=
 Имя базы данных.
@@ -82,15 +82,15 @@ cd data
 
 #### Файл продуктов marketing_product.csv:
 
-| Заголовок | Пустой заголовок  | id    |	article |	ean_13  |	name    |	cost    |	recommended_price   |	category_id |	ozon_name   |	name_1c |	wb_name |	ozon_article    |   wb_article  |	ym_article  |	wb_article_td   |
-|------|--------|-----------|---------|------------|--------|-------|-------|---------|--------|--------|--------|---------|---------|--------|--------|
-| Тип  |Integer | Integer   | String  | BigInteger | String | Float | Float | Integer | String | String | String | Integer | Integer | String | String |
+|Заголовок  | Пустой столбец      | id     |    article |   ean_13    | name  | cost |  recommended_price   |   category_id |   ozon_name   |name_1c    |   wb_name |   ozon_article    |   wb_article  |ym_article |   wb_article_td   |
+|---------|-------|-------|-------|----------|------|-----|-----------------|------------|---------|-------|-------|------------|--------- |----------|-------------|
+| Тип     | Integer  |  Integer |   String |    BigInteger  |   String  |   Float   |   Float   | Integer    | String  |    String | String | Integer     | Integer  | String   | String      |
 
 #### Файл дилеров marketing_dealer.csv:
 
 | Заголовок | id    |	name    |
-|------|-----------|---------|
-| Тип  | Integer   | String  |
+|-----------|-------|-----------|
+| Тип       |Integer| String    |
 
 #### Файл связок продукт-дилер marketing_productdealerkey.csv:
 

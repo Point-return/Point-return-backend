@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ProductSchema(BaseModel):
@@ -6,20 +6,20 @@ class ProductSchema(BaseModel):
 
     __tablename__ = 'marketing_product'
 
-    id: int
-    article: str
-    ean_13: int
-    name: str
-    cost: float
-    recomended_price: float
-    category_id: int
-    ozon_name: str
-    name_1c: str
-    wb_name: str
-    ozon_article: int
-    wb_article: int
-    ym_article: str
-    wb_article_td: str
+    id: int = Field(..., alias='id')
+    article: str = Field(..., alias='article')
+    ean_13: int = Field(..., alias='ean13')
+    name: str = Field(..., alias='name')
+    cost: float = Field(..., alias='cost')
+    recomended_price: float = Field(..., alias='recomendedPrice')
+    category_id: int = Field(..., alias='categoryId')
+    ozon_name: str = Field(..., alias='ozonName')
+    name_1c: str = Field(..., alias='name1c')
+    wb_name: str = Field(..., alias='wbName')
+    ozon_article: int = Field(..., alias='ozonArticle')
+    wb_article: int = Field(..., alias='wbArticle')
+    ym_article: str = Field(..., alias='ymArticle')
+    wb_article_td: str = Field(..., alias='wbArticleTd')
 
     class Config:
         orm_mode = True

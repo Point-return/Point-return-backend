@@ -4,6 +4,7 @@ from getpass import getpass
 from email_validator import EmailNotValidError, validate_email
 
 from app.config import Roles
+from app.main import logger
 from app.users.auth import get_password_hash
 from app.users.dao import UserDAO
 from app.users.exceptions import (
@@ -15,7 +16,7 @@ from app.users.exceptions import (
 async def create_admin() -> None:
     """Функция для создания админа."""
     try:
-        print(  # noqa: T201
+        logger.debug(
             'В любой момент нажмите ctrl+C для прекращения создания админа',
         )
         while True:
@@ -28,9 +29,9 @@ async def create_admin() -> None:
                 if not existing_user_email:
                     break
                 else:
-                    print(UserEmailAlreadyExistsException.detail)  # noqa: T201
+                    logger.debug(UserEmailAlreadyExistsException.detail)
             except EmailNotValidError:
-                print('Email не валидный')  # noqa: T201
+                logger.debug('Email не валидный')
         while True:
             username = input('Введите имя пользователя:\n')
             existing_user_name = await UserDAO.find_one_or_none(
@@ -39,15 +40,22 @@ async def create_admin() -> None:
             if not existing_user_name:
                 break
             else:
-                print(UserNameAlreadyExistsException.detail)  # noqa: T201
-        hashed_password = get_password_hash(getpass('Введите пароль:\n'))
+                logger.debug(UserNameAlreadyExistsException.detail)
+        while True:
+            password1 = getpass('Введите пароль:\n')
+            password2 = getpass('Повторите пароль:\n')
+            if password1 == password2:
+                hashed_password = get_password_hash(password1)
+                break
+            else:
+                logger.debug('Пароли не совпадают')
         await UserDAO.create(
             email=email,
             password=hashed_password,
             username=username,
             role=Roles.admin,
         )
-        print('Админ успешно создан!')  # noqa: T201
+        logger.debug('Админ успешно создан!')
     except KeyboardInterrupt:
         sys.exit()
 

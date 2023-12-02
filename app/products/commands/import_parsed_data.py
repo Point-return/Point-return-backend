@@ -1,16 +1,16 @@
-import csv
+import csv, sys
 from datetime import datetime
 
 from app.config import DATA_IMPORT_LOCATION, CSVFilenames
 from app.core.utils import convert_string_to_float
+from app.main import logger
 from app.products.dao import ParsedProductDealerDAO, ProductDealerDAO
 
 
 async def import_parsed_data() -> None:
     """Функция для импорта данных парсинга."""
-    print(  # noqa: T201
-        'Импортируются данные парсинга:',
-        DATA_IMPORT_LOCATION,
+    logger.debug(
+        'Импортируются данные парсинга из: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.parsed_data}.csv',
@@ -48,11 +48,11 @@ async def import_parsed_data() -> None:
                     )
                     counter += 1
                 else:
-                    print(  # noqa: T201
+                    logger.debug(
                         'Отсутствует связка продукт-дилер '
                         f'с ключом: {product_key}',
                     )
-        print(  # noqa: T201
+        logger.debug(
             f'Импорт завершён, импортировано {counter} данных парсинга',
         )
 
@@ -60,5 +60,9 @@ async def import_parsed_data() -> None:
 if __name__ == '__main__':
     import asyncio
 
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    if sys.platform == "win32" and sys.version_info.minor >= 8:
+        asyncio.set_event_loop_policy(
+            asyncio.WindowsSelectorEventLoopPolicy()
+        )
+    asyncio.get_event_loop_policy().new_event_loop()
     asyncio.run(import_parsed_data())

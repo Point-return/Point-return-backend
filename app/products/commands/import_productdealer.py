@@ -1,14 +1,15 @@
-import csv
+import csv, sys
 
 from app.config import DATA_IMPORT_LOCATION, CSVFilenames
+from app.main import logger
 from app.products.dao import ProductDealerDAO
 
 
 async def import_productdealer() -> None:
     """Функция для импорта связок продукт-дилер."""
-    print(  # noqa: T201
-        'Импортируются данные связок продукт-дилер из:',
-        DATA_IMPORT_LOCATION,
+    logger.debug(
+        'Импортируются данные связок продукт-дилер из: '
+        f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.product_dealer}.csv',
@@ -35,7 +36,7 @@ async def import_productdealer() -> None:
                     product_id=int(product_id),
                 )
                 counter += 1
-        print(  # noqa: T201
+        logger.debug(
             f'Импорт завершён, импортировано {counter} '
             'связок пользователь-дилер',
         )
@@ -44,5 +45,9 @@ async def import_productdealer() -> None:
 if __name__ == '__main__':
     import asyncio
 
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    if sys.platform == "win32" and sys.version_info.minor >= 8:
+        asyncio.set_event_loop_policy(
+            asyncio.WindowsSelectorEventLoopPolicy()
+        )
+    asyncio.get_event_loop_policy().new_event_loop()
     asyncio.run(import_productdealer())
