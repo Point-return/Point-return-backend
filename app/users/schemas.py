@@ -22,4 +22,4 @@ class UserSafe(BaseModel):
 class TokenSchema(BaseModel):
     """Схема для отображения токена."""
 
-    access_token: str = Field(..., alias='access_token')
+    access_token: str = Field(..., alias='accessToken')

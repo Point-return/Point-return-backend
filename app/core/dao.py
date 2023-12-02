@@ -93,33 +93,22 @@ class BaseDAO(Generic[Model]):
         """Функция для получения всех продуктов."""
         offset = (page - 1) * limit
         async with async_session_maker() as session:
-            query = sa.select(ParsedProductDealer.__table__.columns,
-                              Product.__table__.columns).\
-                select_from(ProductDealer).\
-                join(ParsedProductDealer,
-                     ProductDealer.key == ParsedProductDealer.product_key,
-                     isouter=True).\
-                join(Product,
-                     ProductDealer.product_id == Product.id,
-                     isouter=True).\
+            query = sa.select(ParsedProductDealer.__table__.columns).\
+                select_from(ParsedProductDealer).\
                 where(
                     sa.and_(ParsedProductDealer.date >= date_from,
                             ParsedProductDealer.date <= date_to)).\
-                filter(ProductDealer.dealer_id == dealer_id).\
+                filter(ParsedProductDealer.dealer_id == dealer_id).\
                 offset(offset).\
                 limit(limit)
             total = await session.execute(sa.select(ParsedProductDealer.id).\
-                select_from(ProductDealer).\
-                join(ParsedProductDealer,
-                     ProductDealer.key == ParsedProductDealer.product_key,
-                     isouter=True).\
                 where(
                     sa.and_(ParsedProductDealer.date >= date_from,
                             ParsedProductDealer.date <= date_to)).\
-                filter(ProductDealer.dealer_id == dealer_id))
+                filter(ParsedProductDealer.dealer_id == dealer_id))
             total_list = ceil(len(total.scalars().all()) / limit)
             result = await session.execute(query)
-            items = result.mappings().all() 
+            items = result.mappings().all()
             response = {
                   "items": items,
                   "page": page,

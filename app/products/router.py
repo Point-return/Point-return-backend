@@ -8,6 +8,8 @@ from app.products.schemas import ProductSchema
 from app.users.dependencies import get_current_user
 from app.users.models import User
 
+from app.solution import get_solution, get_suitable_products
+
 router_products = APIRouter(
     prefix='',
     tags=['Продукты & Дилеры'],
