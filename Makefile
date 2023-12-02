@@ -57,3 +57,6 @@ import:
 	@make dealers
 	@make product-dealer
 	@make parsed-data
+
+test:
+	pytest

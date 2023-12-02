@@ -4,7 +4,7 @@ from logging.config import dictConfig
 from fastapi import FastAPI
 from sqladmin import Admin
 
-from app.config import LoggingConfig
+from app.config import LOGGER_NAME, LoggingConfig
 from app.core.admin import authentication_backend
 from app.database import engine
 from app.products.admin import (
@@ -18,16 +18,12 @@ from app.users.admin import UserAdmin
 from app.users.router import router_auth, router_users
 
 dictConfig(LoggingConfig().dict())
-logger = logging.getLogger('point_logger')
+logger = logging.getLogger(LOGGER_NAME)
 
 
 app = FastAPI(
     title='ProSept',
 )
-
-app.include_router(router_auth)
-app.include_router(router_users)
-app.include_router(router_products)
 
 admin = Admin(app, engine, authentication_backend=authentication_backend)
 admin.add_view(DealerAdmin)
@@ -35,6 +31,11 @@ admin.add_view(ProductAdmin)
 admin.add_view(ProductDealerAdmin)
 admin.add_view(ParsedProductDealerAdmin)
 admin.add_view(UserAdmin)
+
+
+app.include_router(router_auth)
+app.include_router(router_users)
+app.include_router(router_products)
 
 
 @app.get('/')

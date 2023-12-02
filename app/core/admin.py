@@ -3,6 +3,7 @@ from starlette.requests import Request
 
 from app.config import TOKEN_NAME, Roles, settings
 from app.users.auth import authenticate_user_by_username, create_access_token
+from app.users.dependencies import get_current_user
 
 
 class AdminAuth(AuthenticationBackend):
@@ -54,6 +55,9 @@ class AdminAuth(AuthenticationBackend):
         """
         token = request.session.get(TOKEN_NAME)
         if not token:
+            return False
+        user = await get_current_user(token)
+        if not user:
             return False
         return True
 

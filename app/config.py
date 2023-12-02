@@ -1,12 +1,15 @@
 from pathlib import Path
 
 from pydantic import BaseModel, BaseSettings
+from typing_extensions import Literal
 
 BASE_DIR = Path(__file__).resolve().parent
 
 
 class Settings(BaseSettings):
     """Настройки проекта."""
+
+    MODE: Literal['DEV', 'TEST', 'PROD']
 
     DB_PORT: int
     PG_PASS: str
@@ -15,9 +18,6 @@ class Settings(BaseSettings):
     DB_NAME: str
     DB_HOST: str
 
-    class Config:
-        env_file = '.env'
-
     @property
     def DATABASE_URL(cls) -> str:
         """Создание URL для базы данных в зависимости от .env файла.
@@ -25,15 +25,37 @@ class Settings(BaseSettings):
         Returns:
             URL базы данных.
         """
-        if cls.DB_ENG == 'sqlite':
-            return f'{cls.DB_ENG}+aiosqlite:///{cls.DB_NAME}.db'
         return (
-            f'{cls.DB_ENG}+asyncpg://{cls.PG_USER}:{cls.PG_PASS}'
-            + f'@{cls.DB_HOST}:{cls.DB_PORT}/{cls.DB_NAME}'
+            f'{cls.DB_ENG}+asyncpg://{cls.PG_USER}:'
+            f'{cls.PG_PASS}@{cls.DB_HOST}:'
+            f'{cls.DB_PORT}/{cls.DB_NAME}'
+        )
+
+    TEST_DB_PORT: int
+    TEST_PG_PASS: str
+    TEST_PG_USER: str
+    TEST_DB_ENG: str
+    TEST_DB_NAME: str
+    TEST_DB_HOST: str
+
+    @property
+    def TEST_DATABASE_URL(cls) -> str:
+        """Создание URL для базы данных в зависимости от .env файла.
+
+        Returns:
+            URL базы данных.
+        """
+        return (
+            f'{cls.TEST_DB_ENG}+asyncpg://{cls.TEST_PG_USER}:'
+            f'{cls.TEST_PG_PASS}@{cls.TEST_DB_HOST}:'
+            f'{cls.TEST_DB_PORT}/{cls.TEST_DB_NAME}'
         )
 
     SECRET_KEY: str
     ALGORITHM: str
+
+    class Config:
+        env_file = '.env'
 
 
 settings = Settings()
@@ -59,10 +81,13 @@ class Roles:
     admin: str = 'admin'
 
 
+LOGGER_NAME = 'point_logger'
+
+
 class LoggingConfig(BaseModel):
     """Конфигурация логирования."""
 
-    LOGGER_NAME: str = 'point_logger'
+    LOGGER_NAME: str = LOGGER_NAME
     LOG_FORMAT: str = '%(levelprefix)s | %(asctime)s | %(message)s'
     LOG_LEVEL: str = 'DEBUG'
 

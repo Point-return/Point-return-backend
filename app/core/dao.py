@@ -1,6 +1,6 @@
 from typing import Any, Generic, Type, TypeVar
 
-from sqlalchemy import insert, select
+from sqlalchemy import delete, insert, select
 
 from app.core.models import Base
 from app.database import async_session_maker
@@ -70,5 +70,20 @@ class BaseDAO(Generic[Model]):
         """
         async with async_session_maker() as session:
             query = insert(cls.model).values(**data)
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def delete(
+        cls,
+        **parameters: Any,
+    ) -> None:
+        """Удалить объект в базе по параметрам.
+
+        Args:
+            parameters: параметры модели.
+        """
+        async with async_session_maker() as session:
+            query = delete(cls.model).where(**parameters)
             await session.execute(query)
             await session.commit()
