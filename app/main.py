@@ -2,6 +2,7 @@ import logging
 from logging.config import dictConfig
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqladmin import Admin
 
 from app.config import LOGGER_NAME, LoggingConfig
@@ -23,6 +24,16 @@ logger = logging.getLogger(LOGGER_NAME)
 
 app = FastAPI(
     title='ProSept',
+    version='0.1.0',
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
+    allow_headers=["*"],
 )
 
 admin = Admin(app, engine, authentication_backend=authentication_backend)

@@ -103,7 +103,7 @@ class ParsedProductDealer(Base):
     __tablename__ = 'marketing_dealerprice'
 
     id = Column(Integer, primary_key=True)
-    product_key = Column(String, ForeignKey('marketing_productdealerkey.key'))
+    product_key = Column(String)
     price = Column(Float, nullable=False)
     product_url = Column(String)
     product_name = Column(String, nullable=False)
