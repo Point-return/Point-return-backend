@@ -175,3 +175,4 @@ media/
 # FastAPI migrations
 versions/*
 !env.py
+*.csv

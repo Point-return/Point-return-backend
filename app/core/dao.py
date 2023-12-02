@@ -1,17 +1,9 @@
-from math import ceil
 from typing import Any, Generic, Type, TypeVar
-from datetime import date
-import sqlalchemy as sa
 
+from sqlalchemy import delete, insert, select
 
 from app.core.models import Base
 from app.database import async_session_maker
-from app.products.models import (
-    ParsedProductDealer,
-    Product,
-    ProductDealer,
-    Dealer,
-)
 
 Model = TypeVar('Model', bound=Base)
 
@@ -35,7 +27,7 @@ class BaseDAO(Generic[Model]):
             Один объект из базы данных или None.
         """
         async with async_session_maker() as session:
-            query = sa.select(cls.model).filter_by(id=model_id)
+            query = select(cls.model).filter_by(id=model_id)
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
@@ -47,7 +39,7 @@ class BaseDAO(Generic[Model]):
             Все объекты данного типа из базы.
         """
         async with async_session_maker() as session:
-            query = sa.select(cls.model)
+            query = select(cls.model)
             result = await session.execute(query)
             return result.scalars().all()
 
@@ -65,7 +57,7 @@ class BaseDAO(Generic[Model]):
             Один объект из базы данных или None.
         """
         async with async_session_maker() as session:
-            query = sa.select(cls.model).filter_by(**parameters)
+            query = select(cls.model).filter_by(**parameters)
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
@@ -77,42 +69,21 @@ class BaseDAO(Generic[Model]):
             data: данные модели.
         """
         async with async_session_maker() as session:
-            query = sa.insert(cls.model).values(**data)
+            query = insert(cls.model).values(**data)
             await session.execute(query)
             await session.commit()
 
     @classmethod
-    async def product_list(
+    async def delete(
         cls,
-        date_from: date,
-        date_to: date,
-        dealer_id: int,
-        page: int,
-        limit: int,
-    ):
-        """Функция для получения всех продуктов."""
-        offset = (page - 1) * limit
+        **parameters: Any,
+    ) -> None:
+        """Удалить объект в базе по параметрам.
+
+        Args:
+            parameters: параметры модели.
+        """
         async with async_session_maker() as session:
-            query = sa.select(ParsedProductDealer.__table__.columns).\
-                select_from(ParsedProductDealer).\
-                where(
-                    sa.and_(ParsedProductDealer.date >= date_from,
-                            ParsedProductDealer.date <= date_to)).\
-                filter(ParsedProductDealer.dealer_id == dealer_id).\
-                offset(offset).\
-                limit(limit)
-            total = await session.execute(sa.select(ParsedProductDealer.id).\
-                where(
-                    sa.and_(ParsedProductDealer.date >= date_from,
-                            ParsedProductDealer.date <= date_to)).\
-                filter(ParsedProductDealer.dealer_id == dealer_id))
-            total_list = ceil(len(total.scalars().all()) / limit)
-            result = await session.execute(query)
-            items = result.mappings().all()
-            response = {
-                  "items": items,
-                  "page": page,
-                  "size": limit,
-                  "total_page": total_list,
-                        }
-            return response
+            query = delete(cls.model).where(**parameters)
+            await session.execute(query)
+            await session.commit()

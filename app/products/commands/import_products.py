@@ -1,11 +1,11 @@
-import csv, sys
+import csv
+import sys
 
-from app.config import DATA_IMPORT_LOCATION, CSVFilenames
+from app.config import DATA_IMPORT_LOCATION, CSVFilenames, logger
 from app.core.utils import (
     convert_string_to_float,
     convert_to_float_and_truncate,
 )
-from app.main import logger
 from app.products.dao import ProductDAO
 
 
@@ -68,9 +68,7 @@ async def import_products() -> None:
 if __name__ == '__main__':
     import asyncio
 
-    if sys.platform == "win32" and sys.version_info.minor >= 8:
-        asyncio.set_event_loop_policy(
-            asyncio.WindowsSelectorEventLoopPolicy()
-        )
+    if sys.platform == 'win32' and sys.version_info.minor >= 8:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.get_event_loop_policy().new_event_loop()
     asyncio.run(import_products())

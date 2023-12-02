@@ -7,6 +7,7 @@ from sqlalchemy import (
     Integer,
     String,
 )
+from sqlalchemy.orm import relationship
 
 from app.core.models import Base
 
@@ -19,13 +20,16 @@ class Dealer(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
 
+    product_dealer = relationship('ProductDealer', back_populates='dealer')
+    parsed_data = relationship('ParsedProductDealer', back_populates='dealer')
+
     def __repr__(self) -> str:
         """Функция для представления модели дилера.
 
         Returns:
             Строку с именем дилера.
         """
-        return f'Dealer {self.name}'
+        return f'Дилер {self.name}'
 
 
 class Product(Base):
@@ -48,13 +52,15 @@ class Product(Base):
     ym_article = Column(String)
     wb_article_td = Column(String)
 
+    product_dealer = relationship('ProductDealer', back_populates='product')
+
     def __repr__(self) -> str:
         """Функция для представления модели продукта.
 
         Returns:
             Строку с названием продукта.
         """
-        return f'Product {self.name}'
+        return f'Продукт {self.name}'
 
 
 class ProductDealer(Base):
@@ -75,16 +81,20 @@ class ProductDealer(Base):
         nullable=False,
     )
 
+    parsed_data = relationship(
+        'ParsedProductDealer',
+        back_populates='product_dealer',
+    )
+    product = relationship('Product', back_populates='product_dealer')
+    dealer = relationship('Dealer', back_populates='product_dealer')
+
     def __repr__(self) -> str:
         """Функция для представления модели связки продукт-дилер.
 
         Returns:
             Строку с ключом связки продукт-дилер.
         """
-        return (
-            f'Продукт {self.product_id} от дилера '
-            f'{self.dealer_id} по ключу {self.key}'
-        )
+        return f'Продукт {self.product_id} от дилера {self.dealer_id}'
 
 
 class ParsedProductDealer(Base):
@@ -98,7 +108,17 @@ class ParsedProductDealer(Base):
     product_url = Column(String)
     product_name = Column(String, nullable=False)
     date = Column(Date, nullable=False)
-    dealer_id = Column(Integer, ForeignKey('marketing_dealer.id'))
+    dealer_id = Column(
+        Integer,
+        ForeignKey('marketing_dealer.id'),
+        nullable=False,
+    )
+
+    product_dealer = relationship(
+        'ProductDealer',
+        back_populates='parsed_data',
+    )
+    dealer = relationship('Dealer', back_populates='parsed_data')
 
     def __repr__(self) -> str:
         """Функция для представления модели данных парсинга.

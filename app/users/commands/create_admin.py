@@ -3,8 +3,7 @@ from getpass import getpass
 
 from email_validator import EmailNotValidError, validate_email
 
-from app.config import Roles
-from app.main import logger
+from app.config import Roles, logger
 from app.users.auth import get_password_hash
 from app.users.dao import UserDAO
 from app.users.exceptions import (

@@ -9,5 +9,8 @@ class UserAdmin(ModelView, model=User):
 
     column_list = [User.id, User.username, User.email]
     column_details_exclude_list = [User.password]
+    column_searchable_list = [User.username, User.email]
+    column_sortable_list = [User.id, User.username, User.email]
     name = 'Пользователь'
     name_plural = 'Пользователи'
+    icon = 'fa-solid fa-user'

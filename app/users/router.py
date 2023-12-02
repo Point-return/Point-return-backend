@@ -15,7 +15,7 @@ from app.users.exceptions import (
     UserNameAlreadyExistsException,
 )
 from app.users.models import User
-from app.users.schemas import UserAuth, UserSafe, TokenSchema
+from app.users.schemas import TokenSchema, UserAuth, UserSafe
 
 router_users = APIRouter(
     prefix='/users',
@@ -53,6 +53,7 @@ async def register_user(user_data: UserAuth) -> EmptySchema:
         username=user_data.username,
         role=Roles.user,
     )
+    return EmptySchema()
 
 
 @router_auth.post('/login')
@@ -74,7 +75,7 @@ async def login_user(
         raise InvalidCredentialsException
     access_token = create_access_token({'sub': str(user.id)})
     response.set_cookie(TOKEN_NAME, access_token, httponly=True)
-    return {'access_token': access_token}
+    return TokenSchema(accessToken=access_token)
 
 
 @router_auth.post('/logout')
@@ -85,13 +86,14 @@ async def logout_user(response: Response) -> EmptySchema:
         response: передаваемый ответ.
     """
     response.delete_cookie(TOKEN_NAME)
+    return EmptySchema()
 
 
 @router_users.post('/me')
 async def read_users_me(
     current_user: User = Depends(get_current_user),
 ) -> UserSafe:
-    """Регистрация пользователя.
+    """Данные текущего пользователя.
 
     Args:
         current_user: текущий пользователь.
