@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import sqlalchemy as sa
 
 from app.core.dao import BaseDAO
+from app.core.commands import generate_key
 from app.database import async_session_maker
 from app.products.models import (
     Dealer,
@@ -37,16 +38,24 @@ class ProductDealerDAO(BaseDAO):
     @classmethod
     async def add(
         cls,
-        key_new: str,
         dealer_id_new: int,
         product_id_new: int,
-    ) -> ProductDealer:
+        product_name: str,
+        product_url: str,
+        date: date,
+    ):
         """Создать объект связи в базе по данным."""
         try:
             async with async_session_maker() as session:
-                query = sa.select(ProductDealer.__table__.columns).\
-                    filter(ProductDealer.dealer_id == dealer_id_new,
-                           ProductDealer.key == key_new,
+                query = sa.select(ParsedProductDealer.__table__.columns,
+                                  ProductDealer.__table__.columns).\
+                    join(ProductDealer, ParsedProductDealer.product_key
+                         == ProductDealer.key, isouter=True).\
+                    filter(ParsedProductDealer.dealer_id == dealer_id_new,
+                           ParsedProductDealer.product_name == product_name,
+                           ParsedProductDealer.product_url == product_url,
+                           ParsedProductDealer.date == date,
+                           ProductDealer.dealer_id == dealer_id_new,
                            ProductDealer.product_id == product_id_new,
                            )
                 result = await session.execute(query)
@@ -57,32 +66,67 @@ class ProductDealerDAO(BaseDAO):
                         'items': items,
                     }
                 else:
-                    number = sa.func.max(ProductDealer.id)
-                    result = await session.execute(number)
-                    max_id = result.scalar()
-                    new_value = (sa.insert(cls.model).values(
-                        id=(max_id + 1),
-                        dealer_id=dealer_id_new,
-                        key=key_new,
-                        product_id=product_id_new,
-                    ).returning(
-                        ProductDealer.id,
-                        ProductDealer.key,
-                        ProductDealer.product_id,
-                        ProductDealer.dealer_id,
-                    )
-                    )
-                    new_record = await session.execute(new_value)
-                    await session.commit()
-                    return {
-                        'msg': 'Запись добавлена',
-                        'items': new_record.mappings().all(),
-                    }
+                    check = sa.select(ParsedProductDealer.__table__.columns).\
+                        filter(ParsedProductDealer.dealer_id == dealer_id_new,
+                               ParsedProductDealer.product_name
+                               == product_name,
+                               ParsedProductDealer.product_url == product_url,
+                               ParsedProductDealer.date == date,
+                               )
+                    result = await session.execute(check)
+                    items = result.mappings().all()
+                    if not items:
+                        return {
+                            'msg': 'Записи о продукте нет',
+                        }
+                    else:
+                        gen_key = generate_key.generate_secret_key()
+                        number = sa.func.max(ProductDealer.id)
+                        result = await session.execute(number)
+                        max_id = result.scalar()
+                        new_ProductDealer = (sa.insert(cls.model).values(
+                            id=(max_id + 1),
+                            dealer_id=dealer_id_new,
+                            key=gen_key,
+                            product_id=product_id_new,
+                        ).returning(
+                            ProductDealer.id,
+                            ProductDealer.key,
+                            ProductDealer.product_id,
+                            ProductDealer.dealer_id,
+                        )
+                        )
+                        new_ProductDealer = await session.execute(
+                            new_ProductDealer)
+                        new_ParsedProduct = sa.update(ParsedProductDealer,
+                                                      ).values(
+                            product_key=gen_key,
+                        ).where(
+                            ParsedProductDealer.product_name == product_name,
+                            ParsedProductDealer.date == date,
+                            ParsedProductDealer.product_url == product_url,
+                            ParsedProductDealer.dealer_id == dealer_id_new,
+                        ).returning(
+                            ParsedProductDealer.id,
+                            ParsedProductDealer.product_key,
+                            ParsedProductDealer.product_name,
+                            ParsedProductDealer.dealer_id,
+                        )
+                        new_ParsedProduct = await session.execute(
+                            new_ParsedProduct)
+                        await session.commit()
+                        return {
+                            'msg': 'Запись добавлена',
+                            'newParsedProduct':
+                                new_ParsedProduct.mappings().all(),
+                            'newProductDealer':
+                                new_ProductDealer.mappings().all(),
+                        }
         except (SQLAlchemyError, Exception) as e:
             if isinstance(e, SQLAlchemyError):
                 msg = 'Ошибка связи с БД'
             elif isinstance(e, Exception):
-                msg = 'Unknown Exc: Cannot add booking'
+                msg = 'Ошибка'
             return {
                 'msg': msg,
             }

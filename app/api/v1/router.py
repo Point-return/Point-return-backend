@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import List
 
 from fastapi import APIRouter
@@ -10,7 +10,8 @@ from app.api.v1.schemas import (
     MenuValidationSchema,
     RecomendationSchema,
     RecomendationValidationSchema,
-    SNewProductDealerKey,
+    UpdateProductDealerKey,
+    UpdateSchema
 )
 from app.ds.solution import get_solution
 from app.products.dao import (
@@ -81,10 +82,28 @@ async def get_recommendations(
 
 @router_v1.post('/productdealer')
 async def add_product_key(
-        productdealer: SNewProductDealerKey):
+        dealer_id_new: int,
+        product_id_new: int,
+        product_name: str,
+        product_url: str,
+        date: date,
+):
     """Функция для получения информации всех продуктов дилера."""
     return await ProductDealerDAO.add(
-        productdealer.key,
-        productdealer.dealer_id,
-        productdealer.product_id,
+        dealer_id_new=dealer_id_new,
+        product_id_new=product_id_new,
+        product_name=product_name,
+        product_url=product_url,
+        date=date,
     )
+    '''return UpdateProductDealerKey(
+        **UpdateSchema.parse_obj(
+            await ProductDealerDAO.add(
+                dealer_id_new=dealer_id_new,
+                product_id_new=product_id_new,
+                product_name=product_name,
+                product_url=product_url,
+                date=date,
+            ),
+        ).dict(),
+    )'''
