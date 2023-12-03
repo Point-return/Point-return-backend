@@ -15,7 +15,7 @@ from app.users.exceptions import (
     UserNameAlreadyExistsException,
 )
 from app.users.models import User
-from app.users.schemas import TokenSchema, UserRegister, UserSafe, UserLogin
+from app.users.schemas import TokenSchema, UserLogin, UserRegister, UserSafe
 
 router_users = APIRouter(
     prefix='/users',

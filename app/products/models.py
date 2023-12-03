@@ -1,5 +1,6 @@
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Column,
     Date,
     Float,
@@ -69,7 +70,7 @@ class ProductDealer(Base):
     __tablename__ = 'marketing_productdealerkey'
 
     id = Column(Integer, primary_key=True)
-    key = Column(String, unique=True, nullable=False)
+    key = Column(Integer, unique=True, nullable=False)
     dealer_id = Column(
         Integer,
         ForeignKey('marketing_dealer.id'),
@@ -103,7 +104,7 @@ class ParsedProductDealer(Base):
     __tablename__ = 'marketing_dealerprice'
 
     id = Column(Integer, primary_key=True)
-    product_key = Column(String, ForeignKey('marketing_productdealerkey.key'))
+    product_key = Column(Integer, ForeignKey('marketing_productdealerkey.key'))
     price = Column(Float, nullable=False)
     product_url = Column(String)
     product_name = Column(String, nullable=False)
@@ -119,6 +120,7 @@ class ParsedProductDealer(Base):
         back_populates='parsed_data',
     )
     dealer = relationship('Dealer', back_populates='parsed_data')
+    statistics = relationship('Statistics', back_populates='parsed_data')
 
     def __repr__(self) -> str:
         """Функция для представления модели данных парсинга.
@@ -127,3 +129,24 @@ class ParsedProductDealer(Base):
             Строку с ключом продукта парсинга.
         """
         return f'Данные парсинга {self.product_key}'
+
+
+class Statistics(Base):
+    """Модель данных парсинга."""
+
+    __tablename__ = 'marketing_statistics'
+
+    id = Column(Integer, primary_key=True)
+    parsed_data_id = Column(
+        Integer,
+        ForeignKey('marketing_dealerprice.id'),
+        unique=True,
+        nullable=False,
+    )
+    skipped = Column(Integer, nullable=False, default=0)
+    successfull = Column(Boolean, nullable=False, default=False)
+
+    parsed_data = relationship(
+        'ParsedProductDealer',
+        back_populates='statistics',
+    )

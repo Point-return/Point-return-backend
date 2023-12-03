@@ -10,6 +10,7 @@ from app.products.admin import (
     ParsedProductDealerAdmin,
     ProductAdmin,
     ProductDealerAdmin,
+    StatisticsAdmin,
 )
 from app.users.admin import UserAdmin
 from app.users.router import router_auth, router_users
@@ -37,6 +38,7 @@ admin.add_view(ProductAdmin)
 admin.add_view(ProductDealerAdmin)
 admin.add_view(ParsedProductDealerAdmin)
 admin.add_view(UserAdmin)
+admin.add_view(StatisticsAdmin)
 
 
 @app.get('/')

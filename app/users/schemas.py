@@ -12,6 +12,7 @@ class UserRegister(BaseModel):
     password: str
     username: str
 
+
 class UserLogin(BaseModel):
     """Схема регистрации пользователей."""
 
@@ -19,6 +20,7 @@ class UserLogin(BaseModel):
 
     email: EmailStr
     password: str
+
 
 class UserSafe(BaseModel):
     """Схема отображения пользователя без пароля."""

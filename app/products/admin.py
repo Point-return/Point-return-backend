@@ -6,6 +6,7 @@ from app.products.models import (
     ParsedProductDealer,
     Product,
     ProductDealer,
+    Statistics,
 )
 
 
@@ -63,7 +64,28 @@ class ParsedProductDealerAdmin(ModelView, model=ParsedProductDealer):
         ParsedProductDealer.dealer,
         ParsedProductDealer.product_dealer,
     )
-    column_sortable_list = (ParsedProductDealer.id, ParsedProductDealer.date)
+    column_sortable_list = (
+        ParsedProductDealer.id,
+        ParsedProductDealer.date,
+        ParsedProductDealer.product_key,
+    )
     icon = 'fa-regular fa-circle-down'
     name = 'Данные парсинга'
     name_plural = 'Данные парсинга'
+
+
+class StatisticsAdmin(ModelView, model=Statistics):
+    """Statistics representation in admin zone."""
+
+    column_list = tuple(Statistics.__table__.columns) + (
+        Statistics.parsed_data,
+    )
+    column_sortable_list = (
+        Statistics.id,
+        Statistics.parsed_data_id,
+        Statistics.skipped,
+        Statistics.successfull,
+    )
+    icon = 'fa-solid fa-chart-simple'
+    name = 'Statistic'
+    name_plural = 'Statistics'

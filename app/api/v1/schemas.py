@@ -92,39 +92,3 @@ class RecomendationSchema(RecomendationValidationSchema):
     """Схема рекомендуемого варианта."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
-
-
-class ProductDealerKeySchema(BaseModel):
-    """Модель связки продуктов."""
-
-    id: int
-    product_key: str
-    product_name: str
-    dealer_id: int
-
-
-class UpdateParsedProductSchema(BaseModel):
-    """Схема данных парсинга."""
-
-    id: int
-    productKey: Optional[str]
-    productName: str
-    dealerId: int
-
-
-class UpdateProductDealerKey(BaseModel):
-    """Модель для добавления связки продуктов."""
-
-    msg: str
-    newParsedProduct: List[UpdateParsedProductSchema]
-    newProductDealer: List[ProductDealerKeySchema]
-
-
-class UpdateSchema(UpdateProductDealerKey):
-    """Схема обновленных данных парсинга."""
-
-    newParsedProduct: List[UpdateParsedProductSchema]
-    newProductDealer: List[ProductDealerKeySchema]
-
-    class Config:
-        alias_generator = to_snake_case

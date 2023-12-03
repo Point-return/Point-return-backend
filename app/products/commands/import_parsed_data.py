@@ -4,7 +4,7 @@ from datetime import datetime
 
 from app.config import DATA_IMPORT_LOCATION, CSVFilenames, logger
 from app.core.utils import convert_string_to_float
-from app.products.dao import ParsedProductDealerDAO, ProductDealerDAO
+from app.products.dao import ParsedProductDealerDAO, StatisticsDAO
 
 
 async def import_parsed_data() -> None:
@@ -22,7 +22,7 @@ async def import_parsed_data() -> None:
         next(data)
         for (
             id,
-            product_key,
+            _,
             price,
             product_url,
             product_name,
@@ -33,28 +33,17 @@ async def import_parsed_data() -> None:
                 int(id),
             )
             if not existing_parsed_data:
-                product_dealer = await ProductDealerDAO.find_one_or_none(
-                    key=product_key,
+                await ParsedProductDealerDAO.create(
+                    id=int(id),
+                    price=convert_string_to_float(price),
+                    product_url=product_url,
+                    product_name=product_name,
+                    date=datetime.strptime(date, '%Y-%m-%d').date(),
+                    dealer_id=int(dealer_id),
                 )
-                if product_dealer:
-                    await ParsedProductDealerDAO.create(
-                        id=int(id),
-                        product_key=product_key,
-                        price=convert_string_to_float(price),
-                        product_url=product_url,
-                        product_name=product_name,
-                        date=datetime.strptime(date, '%Y-%m-%d').date(),
-                        dealer_id=int(dealer_id),
-                    )
-                else:
-                    await ParsedProductDealerDAO.create(
-                        id=int(id),
-                        price=convert_string_to_float(price),
-                        product_url=product_url,
-                        product_name=product_name,
-                        date=datetime.strptime(date, '%Y-%m-%d').date(),
-                        dealer_id=int(dealer_id),
-                    )
+                await StatisticsDAO.create(
+                    parsed_data_id=int(id),
+                )
                 counter += 1
         logger.debug(
             f'Импорт завершён, импортировано {counter} данных парсинга',

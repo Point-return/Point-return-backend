@@ -1,3 +1,5 @@
+from typing import Dict, Optional
+
 import pytest
 from fastapi import status
 from httpx import AsyncClient
@@ -55,14 +57,18 @@ async def test_registed_user(
 
 
 @pytest.fixture
-def email(request: pytest.FixtureRequest, admin, user):
+def email(
+    request: pytest.FixtureRequest,
+    admin: Dict[str, str],
+    user: Dict[str, str],
+) -> Optional[str]:
     """Iterate email parameters.
-    
+
     Args:
         request: request to fixture from test.
         admin: admin data fixture.
         user: user data fixture.
-    
+
     Returns:
         Corresponding email.
     """
@@ -74,17 +80,22 @@ def email(request: pytest.FixtureRequest, admin, user):
         return 'not_existing@mail.ru'
     elif request.param == 'not_valid':
         return 'not_valid'
+    return None
 
 
 @pytest.fixture
-def password(request: pytest.FixtureRequest, admin, user):
+def password(
+    request: pytest.FixtureRequest,
+    admin: Dict[str, str],
+    user: Dict[str, str],
+) -> Optional[str]:
     """Iterate password parameters.
-    
+
     Args:
         request: request to fixture from test.
         admin: admin data fixture.
         user: user data fixture.
-    
+
     Returns:
         Corresponding password.
     """
@@ -94,6 +105,7 @@ def password(request: pytest.FixtureRequest, admin, user):
         return user['password']
     elif request.param == 'some':
         return 'some_password'
+    return None
 
 
 @pytest.mark.parametrize(

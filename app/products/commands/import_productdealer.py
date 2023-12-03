@@ -3,6 +3,7 @@ import sys
 
 from app.config import DATA_IMPORT_LOCATION, CSVFilenames, logger
 from app.products.dao import ProductDealerDAO
+from app.products.utils import generate_product_dealer_key
 
 
 async def import_productdealer() -> None:
@@ -18,28 +19,45 @@ async def import_productdealer() -> None:
     ) as csv_file:
         counter = 0
         data = csv.reader(csv_file, delimiter=';')
+        wrong_data = []
         next(data)
         for (
-            id,
+            _,
             key,
             dealer_id,
             product_id,
         ) in data:
-            existing_product_dealer = await ProductDealerDAO.find_by_id(
-                int(id),
+            try:
+                integer_key = int(key)
+            except ValueError:
+                wrong_data.append((dealer_id, product_id))
+                continue
+            existing_product_dealer = await ProductDealerDAO.find_one_or_none(
+                key=integer_key,
             )
             if not existing_product_dealer:
                 await ProductDealerDAO.create(
-                    id=int(id),
-                    key=key,
+                    key=integer_key,
                     dealer_id=int(dealer_id),
                     product_id=int(product_id),
                 )
                 counter += 1
-        logger.debug(
-            f'Импорт завершён, импортировано {counter} '
-            'связок пользователь-дилер',
+    for dealer_id, product_id in wrong_data:
+        existing_product_dealer = await ProductDealerDAO.find_one_or_none(
+            dealer_id=int(dealer_id),
+            product_id=int(product_id),
         )
+        if not existing_product_dealer:
+            await ProductDealerDAO.create(
+                key=await generate_product_dealer_key(),
+                dealer_id=int(dealer_id),
+                product_id=int(product_id),
+            )
+            counter += 1
+    logger.debug(
+        f'Импорт завершён, импортировано {counter} '
+        'связок пользователь-дилер',
+    )
 
 
 if __name__ == '__main__':
