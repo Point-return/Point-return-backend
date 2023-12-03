@@ -61,7 +61,6 @@ async def get_solution(
         reverse=True,
     )
     last_index = length if length < len(solution) else len(solution)
-    logger.debug(solution[0:last_index])
 
     return solution[0:last_index]
 

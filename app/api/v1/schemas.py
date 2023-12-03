@@ -34,7 +34,7 @@ class ParsedProductValidationSchema(BaseModel):
     """Схема данных парсинга."""
 
     id: int
-    productKey: Optional[str]
+    productKey: Optional[int]
     price: float
     productUrl: Optional[str]
     productName: str

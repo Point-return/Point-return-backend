@@ -12,7 +12,7 @@ from app.api.v1.schemas import (
     RecomendationValidationSchema,
 )
 from app.core.schemas import EmptySchema
-from app.ds.solution import get_solution
+from app.ds.solution_v_2 import get_solution
 from app.products.dao import (
     DealerDAO,
     ParsedProductDealerDAO,
