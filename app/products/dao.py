@@ -3,6 +3,7 @@ from math import ceil
 from typing import Any, Dict
 
 import sqlalchemy as sa
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.core.dao import BaseDAO
 from app.database import async_session_maker
@@ -32,6 +33,62 @@ class ProductDealerDAO(BaseDAO):
     """Интерфейс работы с моделями связок продукт-дилер."""
 
     model = ProductDealer
+
+    @classmethod
+    async def add(
+        cls,
+        key_new: str,
+        dealer_id_new: int,
+        product_id_new: int,
+    ) -> ProductDealer:
+        """Создать объект связи в базе по данным."""
+        try:
+            async with async_session_maker() as session:
+                query = sa.select(ProductDealer.__table__.columns).filter(
+                    ProductDealer.dealer_id == dealer_id_new,
+                    ProductDealer.key == key_new,
+                    ProductDealer.product_id == product_id_new,
+                )
+                result = await session.execute(query)
+                items = result.mappings().all()
+                if items:
+                    return {
+                        'msg': 'Запись уже существует',
+                        'items': items,
+                    }
+                else:
+                    number = sa.func.max(ProductDealer.id)
+                    result = await session.execute(number)
+                    max_id = result.scalar()
+                    new_value = (
+                        sa.insert(cls.model)
+                        .values(
+                            id=(max_id + 1),
+                            dealer_id=dealer_id_new,
+                            key=key_new,
+                            product_id=product_id_new,
+                        )
+                        .returning(
+                            ProductDealer.id,
+                            ProductDealer.key,
+                            ProductDealer.product_id,
+                            ProductDealer.dealer_id,
+                        )
+                    )
+                    new_record = await session.execute(new_value)
+                    await session.commit()
+                    return {
+                        'msg': 'Запись добавлена',
+                        'items': new_record.mappings().all(),
+                    }
+        except (SQLAlchemyError, Exception) as e:
+            if isinstance(e, SQLAlchemyError):
+                msg = 'Ошибка связи с БД'
+            elif isinstance(e, Exception):
+                msg = 'Unknown Exc: Cannot add booking'
+            return {
+                'msg': msg,
+            }
 
 
 class DealerDAO(BaseDAO):

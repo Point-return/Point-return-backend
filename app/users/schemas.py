@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr
 from app.core.schemas import to_snake_case
 
 
-class UserAuth(BaseModel):
+class UserRegister(BaseModel):
     """Схема регистрации пользователей."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
@@ -12,6 +12,13 @@ class UserAuth(BaseModel):
     password: str
     username: str
 
+class UserLogin(BaseModel):
+    """Схема регистрации пользователей."""
+
+    model_config = ConfigDict(alias_generator=to_snake_case)
+
+    email: EmailStr
+    password: str
 
 class UserSafe(BaseModel):
     """Схема отображения пользователя без пароля."""

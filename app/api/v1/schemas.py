@@ -92,3 +92,11 @@ class RecomendationSchema(RecomendationValidationSchema):
     """Схема рекомендуемого варианта."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
+
+
+class SNewProductDealerKey(BaseModel):
+    """Модель связки продуктов."""
+
+    key: str
+    dealer_id: int
+    product_id: int

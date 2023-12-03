@@ -10,9 +10,14 @@ from app.api.v1.schemas import (
     MenuValidationSchema,
     RecomendationSchema,
     RecomendationValidationSchema,
+    SNewProductDealerKey,
 )
 from app.ds.solution import get_solution
-from app.products.dao import DealerDAO, ParsedProductDealerDAO
+from app.products.dao import (
+    DealerDAO,
+    ParsedProductDealerDAO,
+    ProductDealerDAO,
+)
 
 router_v1 = APIRouter(
     prefix='/v1',
@@ -72,3 +77,13 @@ async def get_recommendations(
         )
         for solution in solutions
     ]
+
+
+@router_v1.post('/productdealer')
+async def add_product_key(productdealer: SNewProductDealerKey):
+    """Функция для создания нового продукта дилера."""
+    return await ProductDealerDAO.add(
+        productdealer.key,
+        productdealer.dealer_id,
+        productdealer.product_id,
+    )
