@@ -3,8 +3,8 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends
 
-from app.products.dao import ProductDAO, DealerDAO
-from app.products.schemas import ProductSchema
+from app.products.dao import ProductDAO, DealerDAO, ProductDealerDAO
+from app.products.schemas import ProductSchema, SNewProductDealerKey
 from app.users.dependencies import get_current_user
 from app.users.models import User
 
@@ -44,3 +44,20 @@ async def dialer_products(
 async def get_dealers():
     """Функция для получения всех дилеров."""
     return await DealerDAO.find_all()
+
+@router_products.get('/productdealer/{id}')
+async def product_key(id: int):
+    """Функция для получения информации о продукте дилера."""
+
+    return await ProductDealerDAO.find_by_id(id)
+
+@router_products.post('/productdealer')
+async def add_product_key(
+        productdealer: SNewProductDealerKey):
+    """Функция для получения информации всех продуктов дилера."""
+
+    return await ProductDealerDAO.add(
+        productdealer.key,
+        productdealer.dealer_id,
+        productdealer.product_id,
+        )

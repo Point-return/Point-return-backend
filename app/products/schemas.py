@@ -23,3 +23,11 @@ class ProductSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class SNewProductDealerKey(BaseModel):
+    """Модель связки продуктов."""
+
+    key: str
+    dealer_id: int
+    product_id: int
