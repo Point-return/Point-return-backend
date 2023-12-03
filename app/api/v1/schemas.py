@@ -90,3 +90,11 @@ class RecomendationSchema(RecomendationValidationSchema):
 
     class Config:
         alias_generator = to_snake_case
+
+
+class SNewProductDealerKey(BaseModel):
+    """Модель связки продуктов."""
+
+    key: str
+    dealer_id: int
+    product_id: int
