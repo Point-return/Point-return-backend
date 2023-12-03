@@ -1,7 +1,6 @@
 import pandas as pd
 from fuzzywuzzy import fuzz
 
-from app.config import logger
 from app.products.dao import ProductDAO
 
 

@@ -173,15 +173,10 @@ class StatisticsDAO(BaseDAO):
     async def update_skip(cls, dealerprice_id: int) -> None:
         """Update product_key value."""
         async with async_session_maker() as session:
-            query_select = sa.select(cls.model.skipped).where(
-                cls.model.parsed_data_id == dealerprice_id,
-            )
-            result = await session.execute(query_select)
-            counter = result.scalar_one_or_none()
             query = (
                 sa.update(cls.model)
                 .where(cls.model.parsed_data_id == dealerprice_id)
-                .values(skipped=counter + 1)
+                .values(skipped=True)
             )
             await session.execute(query)
             await session.commit()

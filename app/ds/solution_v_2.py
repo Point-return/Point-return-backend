@@ -1,18 +1,19 @@
+from typing import Any, Dict, List
+
 import pandas as pd
 from fuzzywuzzy import fuzz
 
-from app.config import logger
 from app.products.dao import ProductDAO
 
 
-def get_not_continuous_words(data):
+def get_not_continuous_words(data: pd.DataFrame) -> str:
     """Separate the combined words in a column 'name'.
 
     Args:
-        data: что за переменная? 
-    
+        data: list of produscts produced and distributed by the manufacturer.
+
     Returns:
-        что возвращает модель?
+        not continuous words in the names of the manufacturer's products.
     """
     list_product_word = [
         'PROSEPT',
@@ -48,20 +49,23 @@ def get_not_continuous_words(data):
         'Ириса',
         'FLOX',
     ]
-
     result = data['name']
     for word in list_product_word:
         tmp_str = result.split(str(word))
         if len(tmp_str) > 1:
             result = tmp_str[0] + ' ' + word + ' ' + tmp_str[1]
-
     return result
 
 
-def get_not_continuous_words_when_entering(row):
-    '''The function separates concatenated
-    words when entering a dealer product.
-    '''
+def get_not_continuous_words_when_entering(row: str) -> str:
+    """Separates merged words when entering a dealer product.
+
+    Args:
+        row: product sold by dealer.
+
+    Returns:
+        there are no merged words when entering a dealer product.
+    """
     list_product_dealer = [
         'антижук',
         'PROSEPT',
@@ -145,13 +149,21 @@ def get_suitable_products(
     manufacturer_products: pd.Series,
     levenshtein_distance_max: int,
 ) -> list:
-    '''A Model Explanation System
-    return: Array of suitable manufactur products
-    '''
+    """Create a model explanation system.
+
+    Args:
+        dealer_product: product sold by dealer.
+        manufacturer_products: list of the manufacturer products.
+        levenshtein_distance_max: difference between the names of two products.
+
+    Returns:
+        Array of suitable manufacturer products.
+    """
     suitable_products = []
     for product in manufacturer_products['name_split']:
         l_d = fuzz.token_sort_ratio(
-            get_not_continuous_words_when_entering(dealer_product), product
+            get_not_continuous_words_when_entering(dealer_product),
+            product,
         )
         if l_d >= levenshtein_distance_max:
             manufacturer_products_id = manufacturer_products[
@@ -162,7 +174,7 @@ def get_suitable_products(
                     'id': manufacturer_products_id,
                     'product_name': product,
                     'levenshtein_distance': l_d,
-                }
+                },
             )
     return suitable_products
 
@@ -171,12 +183,23 @@ async def get_solution(
     dealer_product: str,
     length: int = 10,
     levenshtein_distance_max: int = 50,
-) -> list:
+) -> List[Dict[str, Any]]:
+    """Sorting products in descending order of Levenshtein distance.
+
+    Args:
+        dealer_product: product sold by dealer,
+        length: length of the list of recommended products,
+        levenshtein_distance_max: difference between the names of two products.
+
+    Returns:
+        array of matching products in descending order of Levenshtein distance.
+    """
     manufacturer_products = pd.DataFrame(await ProductDAO.get_ids_names())
     # manufacturer_products = pd.read_csv('manufacturer_data.csv')
     manufacturer_products = manufacturer_products.dropna()
     manufacturer_products['name_split'] = manufacturer_products.apply(
-        get_not_continuous_words, axis=1
+        get_not_continuous_words,
+        axis=1,
     )
     suitable_solution = get_suitable_products(
         get_not_continuous_words_when_entering(dealer_product),

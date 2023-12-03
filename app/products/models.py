@@ -143,7 +143,7 @@ class Statistics(Base):
         unique=True,
         nullable=False,
     )
-    skipped = Column(Integer, nullable=False, default=0)
+    skipped = Column(Boolean, nullable=False, default=False)
     successfull = Column(Boolean, nullable=False, default=False)
 
     parsed_data = relationship(
