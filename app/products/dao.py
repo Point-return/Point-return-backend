@@ -80,7 +80,15 @@ class ProductDealerDAO(BaseDAO):
                             'msg': 'Записи о продукте нет',
                         }
                     else:
-                        gen_key = generate_key.generate_secret_key()
+                        flag = 0
+                        while flag == 0:
+                            gen_key = generate_key.create_code()
+                            key_check = sa.select(ProductDealer.key).\
+                                filter(ProductDealer.key == gen_key)
+                            result = await session.execute(key_check)
+                            key_check = result.scalar()
+                            if key_check != gen_key:
+                                flag = 1
                         number = sa.func.max(ProductDealer.id)
                         result = await session.execute(number)
                         max_id = result.scalar()
