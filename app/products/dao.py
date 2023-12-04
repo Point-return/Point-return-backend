@@ -205,7 +205,7 @@ class StatisticsDAO(BaseDAO):
             try:
                 percent = f'{round(QSuccess /(QSuccess + QSkipped) * 100)}%'
             except ZeroDivisionError:
-                percent = 'Неизвестно'
+                percent = 'Unknown'
             response = {
                 'QuantitySuccessfull': QSuccess,
                 'QuantitySkipped': QSkipped,
