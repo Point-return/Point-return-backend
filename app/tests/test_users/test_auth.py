@@ -36,14 +36,14 @@ async def test_registed_user(
     status_code: int,
     async_client: AsyncClient,
 ) -> None:
-    """Тестирование регистрации пользователей.
+    """Test user registration.
 
     Args:
-        username: параметр pytest с именами пользователей.
-        email: параметр pytest с почтами пользователей.
-        password: параметр pytest с паролями пользователей.
-        status_code: параметр pytest со статус-кодом ответа.
-        async_client: асинхронный клиент.
+        username: pytest parameter with usernames.
+        email: pytest parameter with emails.
+        password: pytest parameter with passwords.
+        status_code: expected status codes.
+        async_client: asynchronous client fixture.
     """
     responce = await async_client.post(
         '/auth/register',

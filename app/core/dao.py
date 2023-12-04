@@ -1,4 +1,4 @@
-from typing import Any, Generic, Type, TypeVar
+from typing import Any, Generic, TypeVar
 
 from sqlalchemy import delete, insert, select
 
@@ -11,7 +11,7 @@ Model = TypeVar('Model', bound=Base)
 class BaseDAO(Generic[Model]):
     """Интерфейс работы с базой данных."""
 
-    model: Type[Model]
+    model = Model  # type: ignore[misc]
 
     @classmethod
     async def find_by_id(
@@ -84,6 +84,10 @@ class BaseDAO(Generic[Model]):
             parameters: параметры модели.
         """
         async with async_session_maker() as session:
-            query = delete(cls.model).where(**parameters)
+            model_parameters = [
+                getattr(cls.model, key) == value
+                for key, value in parameters.items()
+            ]
+            query = delete(cls.model).where(*model_parameters)
             await session.execute(query)
             await session.commit()

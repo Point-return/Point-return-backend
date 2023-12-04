@@ -159,12 +159,24 @@ class StatisticsDAO(BaseDAO):
 
     @classmethod
     async def update_success(cls, dealerprice_id: int) -> None:
-        """Update product_key value."""
+        """Update success value to True."""
         async with async_session_maker() as session:
             query = (
                 sa.update(cls.model)
                 .where(cls.model.parsed_data_id == dealerprice_id)
                 .values(successfull=True)
+            )
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def cancel_success(cls, dealerprice_id: int) -> None:
+        """Update success value to False."""
+        async with async_session_maker() as session:
+            query = (
+                sa.update(cls.model)
+                .where(cls.model.parsed_data_id == dealerprice_id)
+                .values(successfull=False)
             )
             await session.execute(query)
             await session.commit()
@@ -177,6 +189,18 @@ class StatisticsDAO(BaseDAO):
                 sa.update(cls.model)
                 .where(cls.model.parsed_data_id == dealerprice_id)
                 .values(skipped=True)
+            )
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def cancel_skip(cls, dealerprice_id: int) -> None:
+        """Update skipped value to False."""
+        async with async_session_maker() as session:
+            query = (
+                sa.update(cls.model)
+                .where(cls.model.parsed_data_id == dealerprice_id)
+                .values(skipped=False)
             )
             await session.execute(query)
             await session.commit()
