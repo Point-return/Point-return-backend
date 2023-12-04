@@ -1,162 +1,245 @@
-# Проект Point-return-backend
+# Project Point-return-backend
 
-### Описание:
+### Description:
 
-Проект Point-return-backend - ... .
+Project Point-return-backend - ... .
 
-### Как установить проект:
+### How to install a project:
 
-Клонировать репозиторий и перейти в него в командной строке:
+Clone the repository and go to it on the command line:
 
 ```
 git clone git@github.com:Point-return/Point-return-backend.git
 cd Point-return-backend
 ```
 
-Cоздать и активировать виртуальное окружение:
+Create and activate a virtual environment for Windows:
 
 ```
-python3 -m venv env
+python -m venv venv
+source venv/Scripts/activate
+```
+
+For Linux:
+
+```
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-Одновить pip и установить зависимости из файла requirements.txt:
+Update pip:
 
 ```
 make pip
-make req
 ```
 
-Для работы приложения необходим файл .env:
+Dependency files are separated according to the following purposes:
+
+```
+requirements.txt - requirements for running the backend basics of the application
+make req
+
+requirements-DS.txt - requirements for the DS script to work (required when starting)
+make ds-req
+
+requirements-style.txt - requirements for styling code during development
+make style-req
+
+requirements-test.txt - requirements for testing work
+make test-req
+```
+
+To start, just install the dependencies required for the backend framework and the DS script:
+```
+make base-req
+```
+
+For the application to work, a .env file is required:
 
 ```
 touch .env
 ```
 
-Необходимо заполнить файл .env следующим обазом:
+You need to fill out the .env file with the following:
 
 ```
+
+MODE = DEV / TEST / PROD
+Application operating mode. DEV - development, TEST - testing, PROD - production
+
 DB_ENG=postgresql
-Название базы данных на английском для подключения (Разработка велась на PostgreSQL)
+Name of the database for connection (Development was carried out in PostgreSQL)
 
 PG_USER=
-Имя пользователя базы данных postgresql.
+Postgresql database username.
 
 PG_PASS=
-Пароль пользователя базы данных postgresql.
+Postgresql database user password.
 
 DB_NAME=
-Имя базы данных.
+Database name.
 
 DB_HOST=
-Адрес связи с базой данных.
+Database HOST address.
 
 DB_PORT=
-Порт связи с базой данных.
+Database communication PORT.
+
+TEST_DB_ENG=postgresql
+Name of the test database for connection (Development was carried out in PostgreSQL)
+
+TEST_PG_USER=
+Postgresql test database username.
+
+TEST_PG_PASS=
+Postgresql test database user password.
+
+TEST_DB_NAME=
+Test database name.
+
+TEST_DB_HOST=
+HOST address for connecting to the test database.
+
+TEST_DB_PORT=
+Communication PORT with test database.
 
 SECRET_KEY = 
-Секретный ключ для генетации JWT-токена.
+Secret key for generating a JWT token.
 
 ALGORITHM = 
-Алгоритм для генетации JWT-токена.
+Algorithm for generating a JWT token.
 
 ```
-Для генерации секретного ключа можно воспользоваться следующей командой:
+To generate a secret key, you can use the following command:
 ```
 make secret-key
 ```
-После генерации вставьте ключ в файл .env указанным образом.
+After generation, paste the key into the .env file as specified.
 
-### Подготовка файлов с данными:
+### Preparing data files:
 
-Чтобы заполнить данными систему, необходимо использовать 4 файла с расширением csv.
-Разместить их необходимо в папке data, расположенной внутри папки app. 
+To fill the system with data, you need to use 4 files with the csv extension.
+They must be placed in the data folder located inside the app folder.
 
 ```
 cd app
 cd data
 ```
 
-Необходимые названия файлов указаны в файле app.config в классе CSVFiles. 
-По умолчанию названия файлов указаны далее.
+The required file names are specified in the app.config file in the CSVFiles class.
+By default, the file names are listed below.
 
-#### Файл продуктов marketing_product.csv:
+#### Products file marketing_product.csv:
 
-|Заголовок  | Пустой столбец      | id     |    article |   ean_13    | name  | cost |  recommended_price   |   category_id |   ozon_name   |name_1c    |   wb_name |   ozon_article    |   wb_article  |ym_article |   wb_article_td   |
+| Heading  | Empty column      | id     |    article |   ean_13    | name  | cost |  recommended_price   |   category_id |   ozon_name   |name_1c    |   wb_name |   ozon_article    |   wb_article  |ym_article |   wb_article_td   |
 |---------|-------|-------|-------|----------|------|-----|-----------------|------------|---------|-------|-------|------------|--------- |----------|-------------|
-| Тип     | Integer  |  Integer |   String |    BigInteger  |   String  |   Float   |   Float   | Integer    | String  |    String | String | Integer     | Integer  | String   | String      |
+| Type     | Integer  |  Integer |   String |    BigInteger  |   String  |   Float   |   Float   | Integer    | String  |    String | String | Integer     | Integer  | String   | String      |
 
-#### Файл дилеров marketing_dealer.csv:
+#### Dealer File marketing_dealer.csv:
 
-| Заголовок | id    |	name    |
+| Heading | id    |	name    |
 |-----------|-------|-----------|
-| Тип       |Integer| String    |
+| Type       |Integer| String    |
 
-#### Файл связок продукт-дилер marketing_productdealerkey.csv:
+#### Product-dealer link file marketing_productdealerkey.csv:
 
-| Заголовок | id     |	key    |	dealer_id  |	product_id    |
+| Heading | id     |	key    |	dealer_id  |	product_id    |
 |-----------|--------|---------|---------------|------------------|
-| Тип       |Integer |String   | Integer       |     Integer      |
+| Type       |Integer |String   | Integer       |     Integer      |
 
 id	product_key	price	product_url	product_name	date	dealer_id
 
-#### Файл данных парсинга marketing_dealerprice.csv:
+#### Parsing data file marketing_dealerprice.csv:
 
-| Заголовок | id     |	product_key |	price |	product_url |	product_name |	date          |	dealer_id   |
+| Heading | id     |	product_key |	price |	product_url |	product_name |	date          |	dealer_id   |
 |-----------|--------|--------------|---------|-------------|----------------|----------------|-------------|
-| Тип       |Integer | String       | Float   | String      | String         | Date  %Y-%m-%d | Integer     |
+| Type       |Integer | String       | Float   | String      | String         | Date  %Y-%m-%d | Integer     |
 
-Импортировать данные можно следующей командой:
+You can import data with the following command, after first returning to the root directory:
 
 ```
+cd ..
+cd ..
 make import
 ```
 
-Также предусмотрен импорт отдельно каждой таблицы:
+It is also possible to import each table separately.
+However, the product-dealer import requires products and dealers, and the parsed-data import requires product-dealer and dealers:
 ```
 make products
 make dealers
 make product-dealer
 make parsed-data
 ```
-### Как запустить бэкенд без контейнеров:
+### How to run backend without containers:
 
-Выполнить миграции:
+Run migrations:
 
 ```
 make migration name=Migration_name
 make migrate
 ```
-Создайте админа:
+Create an admin:
 ```
 make admin
 ```
 
-Запустить приложение:
+Launch the application:
 
 ```
 make run
 ```
 
-### Эндпоинты:
+## Application testing
 
-| Эндпоинт                             |Тип запроса | Тело запроса | Ответ           |
-|--------------------------------------|------------|--------------|-----------------|
-|/                                     |GET         |              |```"Hello"```    |
+To run tests, you need to place a file with the default name mock_users.csv in the app/data directory.
+You need to add one user with the admin role, one with the user role.
 
-### Стек технологий использованный в проекте:
+#### Test data file mock_users.csv:
 
-- Python
+| Heading | username     |	email       |	password    |	role        |
+|-----------|--------------|----------------|---------------|---------------|
+| Type       |   String     | Email String   | String        | admin / user  |
+
+To run tests you can use 2 commands:
+
+```
+make test
+pytest
+```
+
+### Endpoints:
+
+Documentation for endpoints when running locally is located at: http://127.0.0.1:8000/docs
+
+
+### Technology stack used in the project:
+
+- CSV
 - FastAPI
+- FuzzyWuzzy
+- Pandas
 - PostgreSQL
+- Pydantic
+- Pytest
+- Python
 - SQLAlchemy
 - SQLAlchemy Admin
-- CSV
-- Scarlette
-- Pydantic
 - Swagger
+- Uvicorn
 
-### Авторы:
+### Authors of the backend framework:
 
-- :white_check_mark: [vlad3069](https://github.com/vlad3069)
-- :white_check_mark: [Starkiller2000Turbo](https://github.com/Starkiller2000Turbo)
+- :white_check_mark: [Maksim Ermoshin](https://github.com/Starkiller2000Turbo)
+- :white_check_mark: [Vladislav Podtiazhkin](https://github.com/vlad3069)
+
+### Authors of the frontend framework:
+
+- :white_check_mark: [Amir Mukhtarov](https://github.com/m0000Amir)
+- :white_check_mark: [Ilya Biryulev](https://github.com/IlyaBiryulev)
+
+### Authors of the DS script:
+
+- :white_check_mark: [Aigerim Tokhmetova](https://github.com/moonkerimka)
+- :white_check_mark: [Aleksandr Filippov](https://github.com/AlexFee1)
+- :white_check_mark: [Evgeniy Bessonov](https://github.com/evgeniy-yandex)

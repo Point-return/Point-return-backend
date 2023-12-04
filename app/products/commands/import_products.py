@@ -1,18 +1,18 @@
-import csv, sys
+import csv
+import sys
 
-from app.config import DATA_IMPORT_LOCATION, CSVFilenames
+from app.config import DATA_IMPORT_LOCATION, CSVFilenames, logger
 from app.core.utils import (
     convert_string_to_float,
     convert_to_float_and_truncate,
 )
-from app.main import logger
 from app.products.dao import ProductDAO
 
 
 async def import_products() -> None:
-    """Функция для импорта продуктов."""
+    """Function for importing products."""
     logger.debug(
-        'Импортируются данные продуктов из: ' f'{DATA_IMPORT_LOCATION}',
+        'Imports product data from: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.products}.csv',
@@ -61,16 +61,14 @@ async def import_products() -> None:
                 )
                 counter += 1
         logger.debug(
-            f'Импорт завершён, импортировано {counter} продуктов',
+            f'Import completed, {counter} products imported',
         )
 
 
 if __name__ == '__main__':
     import asyncio
 
-    if sys.platform == "win32" and sys.version_info.minor >= 8:
-        asyncio.set_event_loop_policy(
-            asyncio.WindowsSelectorEventLoopPolicy()
-        )
+    if sys.platform == 'win32' and sys.version_info.minor >= 8:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.get_event_loop_policy().new_event_loop()
     asyncio.run(import_products())

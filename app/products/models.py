@@ -1,5 +1,6 @@
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Column,
     Date,
     Float,
@@ -7,29 +8,33 @@ from sqlalchemy import (
     Integer,
     String,
 )
+from sqlalchemy.orm import relationship
 
 from app.core.models import Base
 
 
 class Dealer(Base):
-    """Модель дилера."""
+    """Dealer model."""
 
     __tablename__ = 'marketing_dealer'
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
 
+    product_dealer = relationship('ProductDealer', back_populates='dealer')
+    parsed_data = relationship('ParsedProductDealer', back_populates='dealer')
+
     def __repr__(self) -> str:
-        """Функция для представления модели дилера.
+        """Function to represent dealer model.
 
         Returns:
-            Строку с именем дилера.
+            Line with dealer name.
         """
         return f'Dealer {self.name}'
 
 
 class Product(Base):
-    """Модель продукта."""
+    """Product model."""
 
     __tablename__ = 'marketing_product'
 
@@ -48,22 +53,24 @@ class Product(Base):
     ym_article = Column(String)
     wb_article_td = Column(String)
 
+    product_dealer = relationship('ProductDealer', back_populates='product')
+
     def __repr__(self) -> str:
-        """Функция для представления модели продукта.
+        """Function to represent the product model.
 
         Returns:
-            Строку с названием продукта.
+            Product name line.
         """
         return f'Product {self.name}'
 
 
 class ProductDealer(Base):
-    """Модель связи дилера и продукта по ключу."""
+    """Model of connection between dealer and product by key."""
 
     __tablename__ = 'marketing_productdealerkey'
 
     id = Column(Integer, primary_key=True)
-    key = Column(String, unique=True, nullable=False)
+    key = Column(Integer, unique=True, nullable=False)
     dealer_id = Column(
         Integer,
         ForeignKey('marketing_dealer.id'),
@@ -75,35 +82,71 @@ class ProductDealer(Base):
         nullable=False,
     )
 
+    parsed_data = relationship(
+        'ParsedProductDealer',
+        back_populates='product_dealer',
+    )
+    product = relationship('Product', back_populates='product_dealer')
+    dealer = relationship('Dealer', back_populates='product_dealer')
+
     def __repr__(self) -> str:
-        """Функция для представления модели связки продукт-дилер.
+        """Function to represent the product-dealer linkage model.
 
         Returns:
-            Строку с ключом связки продукт-дилер.
+            String with product-dealer link key.
         """
-        return (
-            f'Продукт {self.product_id} от дилера '
-            f'{self.dealer_id} по ключу {self.key}'
-        )
+        return f'Product {self.product_id} from the dealer {self.dealer_id}'
 
 
 class ParsedProductDealer(Base):
-    """Модель данных парсинга."""
+    """Parsing data model."""
 
     __tablename__ = 'marketing_dealerprice'
 
     id = Column(Integer, primary_key=True)
-    product_key = Column(String, ForeignKey('marketing_productdealerkey.key'))
+    product_key = Column(Integer, ForeignKey('marketing_productdealerkey.key'))
     price = Column(Float, nullable=False)
     product_url = Column(String)
     product_name = Column(String, nullable=False)
     date = Column(Date, nullable=False)
-    dealer_id = Column(Integer, ForeignKey('marketing_dealer.id'))
+    dealer_id = Column(
+        Integer,
+        ForeignKey('marketing_dealer.id'),
+        nullable=False,
+    )
+
+    product_dealer = relationship(
+        'ProductDealer',
+        back_populates='parsed_data',
+    )
+    dealer = relationship('Dealer', back_populates='parsed_data')
+    statistics = relationship('Statistics', back_populates='parsed_data')
 
     def __repr__(self) -> str:
-        """Функция для представления модели данных парсинга.
+        """Function to represent the parsing data model.
 
         Returns:
-            Строку с ключом продукта парсинга.
+            String with the parsing product key.
         """
-        return f'Данные парсинга {self.product_key}'
+        return f'Parsing data {self.product_key}'
+
+
+class Statistics(Base):
+    """Parsing statistics data model."""
+
+    __tablename__ = 'marketing_statistics'
+
+    id = Column(Integer, primary_key=True)
+    parsed_data_id = Column(
+        Integer,
+        ForeignKey('marketing_dealerprice.id'),
+        unique=True,
+        nullable=False,
+    )
+    skipped = Column(Boolean, nullable=False, default=False)
+    successfull = Column(Boolean, nullable=False, default=False)
+
+    parsed_data = relationship(
+        'ParsedProductDealer',
+        back_populates='statistics',
+    )

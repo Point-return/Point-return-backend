@@ -17,16 +17,16 @@ from app.users.models import User
 
 
 def get_token(request: Request) -> str:
-    """Получение токена из запроса.
+    """Getting a token from a request.
 
     Args:
-        request: передаваемый запрос.
+        request: transmitted request.
 
     Returns:
-        Токен из запроса.
+        Token from request.
 
     Raises:
-        HTTPException 401: если токен не предоставлен.
+        HTTPException 401: if token is not provided.
     """
     token = request.cookies.get(TOKEN_NAME)
     if not token:
@@ -35,19 +35,19 @@ def get_token(request: Request) -> str:
 
 
 def get_current_user(token: str = Depends(get_token)) -> Awaitable[User]:
-    """Получение текущего пользователя из запроса.
+    """Getting the current user from a request.
 
     Args:
-        token: переданный токен.
+        token: transferred token.
 
     Returns:
-        Объект пользователя из базы данных.
+        User object from database.
 
     Raises:
-        HTTPException 401: если токен не декодирован.
-        HTTPException 401: если токен истек.
-        HTTPException 401: если нет информация о пользователе.
-        HTTPException 401: если пользователь не найден в базе.
+        HTTPException 401: if the token is not decoded.
+        HTTPException 401: if the token has expired.
+        HTTPException 401: if there is no user information.
+        HTTPException 401: if the user is not found in the database.
     """
     try:
         payload = jwt.decode(

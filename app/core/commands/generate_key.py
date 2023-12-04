@@ -3,10 +3,10 @@ from secrets import token_bytes
 
 
 def generate_secret_key() -> str:
-    """Функция для создания секретного ключа.
+    """Function for creating a secret key.
 
     Returns:
-        Пример случайного секретного ключа.
+        An example of a random secret key.
     """
     return b64encode(token_bytes(32)).decode()
 
