@@ -180,3 +180,69 @@ class StatisticsDAO(BaseDAO):
             )
             await session.execute(query)
             await session.commit()
+
+    @classmethod
+    async def get_general_stat(cls) -> Dict[str, Any]:
+        """Статистика по диллеру."""
+        async with async_session_maker() as session:
+            query_successfull = (
+                sa.select(cls.model.id)
+                .join(ParsedProductDealer, cls.model.parsed_data_id
+                      == ParsedProductDealer.id, isouter=True)
+                .filter(Statistics.successfull == True)
+            )
+            query_skipped = (
+                sa.select(cls.model.id)
+                .join(ParsedProductDealer, cls.model.parsed_data_id
+                      == ParsedProductDealer.id, isouter=True)
+                .filter(Statistics.skipped == True)
+            )
+            query_successfull = await session.execute(query_successfull)
+            query_skipped = await session.execute(query_skipped)
+            await session.commit()
+            QSuccess = len(query_successfull.mappings().all())
+            QSkipped = len(query_skipped.mappings().all())
+            try:
+                percent = f'{round(QSuccess /(QSuccess + QSkipped) * 100)}%'
+            except ZeroDivisionError:
+                percent = 'Неизвестно'
+            response = {
+                'QuantitySuccessfull': QSuccess,
+                'QuantitySkipped': QSkipped,
+                'percent': percent,
+            }
+            return response
+
+    @classmethod
+    async def get_dealer_stat(cls, dealer_id: int) -> Dict[str, Any]:
+        """Статистика по диллеру."""
+        async with async_session_maker() as session:
+            query_successfull = (
+                sa.select(cls.model.id)
+                .join(ParsedProductDealer, cls.model.parsed_data_id
+                      == ParsedProductDealer.id, isouter=True)
+                .filter(ParsedProductDealer.dealer_id == dealer_id,
+                        Statistics.successfull == True)
+            )
+            query_skipped = (
+                sa.select(cls.model.id)
+                .join(ParsedProductDealer, cls.model.parsed_data_id
+                      == ParsedProductDealer.id, isouter=True)
+                .filter(ParsedProductDealer.dealer_id == dealer_id,
+                        Statistics.skipped == True)
+            )
+            query_successfull = await session.execute(query_successfull)
+            query_skipped = await session.execute(query_skipped)
+            await session.commit()
+            QSuccess = len(query_successfull.mappings().all())
+            QSkipped = len(query_skipped.mappings().all())
+            try:
+                percent = f'{round(QSuccess /(QSuccess + QSkipped) * 100)}%'
+            except ZeroDivisionError:
+                percent = 'Неизвестно'
+            response = {
+                'QuantitySuccessfull': QSuccess,
+                'QuantitySkipped': QSkipped,
+                'percent': percent,
+            }
+            return response

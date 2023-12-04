@@ -6,6 +6,7 @@ from fastapi import APIRouter
 from app.api.v1.exceptions import ConnectionAlreadyExists, ParsedDataNotFound
 from app.api.v1.schemas import (
     DealerSchema,
+    DealerStatSchema,
     MenuSchema,
     MenuValidationSchema,
     RecomendationSchema,
@@ -123,3 +124,15 @@ async def add_skipped(dealerprice_id: int) -> EmptySchema:
     """Add skipped."""
     await StatisticsDAO.update_skip(dealerprice_id)
     return EmptySchema()
+
+
+@router_v1.get('/statistics')
+async def general_static() -> DealerStatSchema:
+    """Статистика по диллеру."""
+    return await StatisticsDAO.get_general_stat()
+
+
+@router_v1.get('/statistics/{dealerprice_id}')
+async def dealer_static(dealer_id: int) -> DealerStatSchema:
+    """Статистика по диллеру."""
+    return await StatisticsDAO.get_dealer_stat(dealer_id)

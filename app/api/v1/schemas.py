@@ -92,3 +92,11 @@ class RecomendationSchema(RecomendationValidationSchema):
     """Схема рекомендуемого варианта."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
+
+
+class DealerStatSchema(BaseModel):
+    """Схема статистики."""
+
+    QuantitySuccessfull: int
+    QuantitySkipped: int
+    percent: str
