@@ -25,7 +25,7 @@ from app.products.utils import generate_product_dealer_key
 
 router_v1 = APIRouter(
     prefix='/v1',
-    tags=['Продукты & Дилеры'],
+    tags=['Products & Dealers'],
 )
 
 
@@ -41,7 +41,7 @@ async def dialer_products(
     month_to: int = 1,
     day_to: int = 1,
 ) -> MenuValidationSchema:
-    """Функция для получения информации всех продуктов дилера."""
+    """Function to get information of all dealer's products."""
     date_from = datetime(int(year_from), int(month_from), int(day_from))
     date_to = datetime(int(year_to), int(month_to), int(day_to))
     return MenuValidationSchema(
@@ -59,7 +59,7 @@ async def dialer_products(
 
 @router_v1.get('/dealers')
 async def get_dealers() -> List[DealerSchema]:
-    """Функция для получения всех дилеров."""
+    """Function to get all dealers."""
     return await DealerDAO.find_all()
 
 
@@ -68,7 +68,7 @@ async def get_recommendations(
     dealerprice_id: int,
     limit: int = 10,
 ) -> List[RecomendationValidationSchema]:
-    """Функция для получения рекомендаций."""
+    """Function for receiving recommendations."""
     parsed_data: ParsedProductDealer = await ParsedProductDealerDAO.find_by_id(
         dealerprice_id,
     )
@@ -128,11 +128,11 @@ async def add_skipped(dealerprice_id: int) -> EmptySchema:
 
 @router_v1.get('/statistics')
 async def general_static() -> DealerStatSchema:
-    """Статистика по диллеру."""
+    """Function to get statistics for all dealers."""
     return await StatisticsDAO.get_general_stat()
 
 
 @router_v1.get('/statistics/{dealerprice_id}')
 async def dealer_static(dealer_id: int) -> DealerStatSchema:
-    """Статистика по диллеру."""
+    """Function to get dealer statistics."""
     return await StatisticsDAO.get_dealer_stat(dealer_id)

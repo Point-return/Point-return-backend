@@ -7,7 +7,7 @@ from app.core.schemas import to_snake_case
 
 
 class ProductSchema(BaseModel):
-    """Схема продукта."""
+    """Product schema."""
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -31,7 +31,7 @@ class ProductSchema(BaseModel):
 
 
 class ParsedProductValidationSchema(BaseModel):
-    """Схема данных парсинга."""
+    """Parsing data schema."""
 
     id: int
     productKey: Optional[int]
@@ -43,7 +43,7 @@ class ParsedProductValidationSchema(BaseModel):
 
 
 class ParsedProductSchema(ParsedProductValidationSchema):
-    """Схема данных парсинга."""
+    """Parsing data schema."""
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -52,7 +52,7 @@ class ParsedProductSchema(ParsedProductValidationSchema):
 
 
 class MenuValidationSchema(BaseModel):
-    """Схема меню данных парсинга."""
+    """Parsing data menu schema."""
 
     items: List[ParsedProductValidationSchema]
     page: int
@@ -61,7 +61,7 @@ class MenuValidationSchema(BaseModel):
 
 
 class MenuSchema(MenuValidationSchema):
-    """Схема меню данных парсинга."""
+    """Parsing data menu schema."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
 
@@ -69,7 +69,7 @@ class MenuSchema(MenuValidationSchema):
 
 
 class DealerSchema(BaseModel):
-    """Схема дилера."""
+    """Dealer schema."""
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -81,7 +81,7 @@ class DealerSchema(BaseModel):
 
 
 class RecomendationValidationSchema(BaseModel):
-    """Схема рекомендуемого варианта."""
+    """Scheme of the recommended option."""
 
     id: int
     productName: str
@@ -89,13 +89,13 @@ class RecomendationValidationSchema(BaseModel):
 
 
 class RecomendationSchema(RecomendationValidationSchema):
-    """Схема рекомендуемого варианта."""
+    """Scheme of the recommended option."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
 
 
 class DealerStatSchema(BaseModel):
-    """Схема статистики."""
+    """Statistic schema."""
 
     QuantitySuccessfull: int
     QuantitySkipped: int

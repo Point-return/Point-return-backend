@@ -4,7 +4,7 @@ from app.core.schemas import to_snake_case
 
 
 class UserRegister(BaseModel):
-    """Схема регистрации пользователей."""
+    """User registration scheme."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
 
@@ -14,7 +14,7 @@ class UserRegister(BaseModel):
 
 
 class UserLogin(BaseModel):
-    """Схема регистрации пользователей."""
+    """User registration scheme."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
 
@@ -23,7 +23,7 @@ class UserLogin(BaseModel):
 
 
 class UserSafe(BaseModel):
-    """Схема отображения пользователя без пароля."""
+    """User display scheme without password."""
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -35,7 +35,7 @@ class UserSafe(BaseModel):
 
 
 class TokenSchema(BaseModel):
-    """Схема для отображения токена."""
+    """Scheme for displaying a token."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
 

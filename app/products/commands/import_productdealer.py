@@ -7,9 +7,9 @@ from app.products.utils import generate_product_dealer_key
 
 
 async def import_productdealer() -> None:
-    """Функция для импорта связок продукт-дилер."""
+    """Function for importing product-dealer links."""
     logger.debug(
-        'Импортируются данные связок продукт-дилер из: '
+        'Product-dealer link data is imported from: '
         f'{DATA_IMPORT_LOCATION}',
     )
     with open(
@@ -55,8 +55,8 @@ async def import_productdealer() -> None:
             )
             counter += 1
     logger.debug(
-        f'Импорт завершён, импортировано {counter} '
-        'связок пользователь-дилер',
+        f'Import completed, imported {counter} '
+        'user-dealer links',
     )
 
 

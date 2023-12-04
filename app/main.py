@@ -43,5 +43,5 @@ admin.add_view(StatisticsAdmin)
 
 @app.get('/')
 def index() -> str:
-    """Тестовая функция."""
+    """Test function."""
     return 'Hello'

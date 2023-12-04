@@ -8,9 +8,9 @@ from app.products.dao import ParsedProductDealerDAO, StatisticsDAO
 
 
 async def import_parsed_data() -> None:
-    """Функция для импорта данных парсинга."""
+    """Function for importing parsing data."""
     logger.debug(
-        'Импортируются данные парсинга из: ' f'{DATA_IMPORT_LOCATION}',
+        'Parsing data is imported from: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.parsed_data}.csv',
@@ -46,7 +46,7 @@ async def import_parsed_data() -> None:
                 )
                 counter += 1
         logger.debug(
-            f'Импорт завершён, импортировано {counter} данных парсинга',
+            f'Import completed, {counter} parsing data imported',
         )
 
 

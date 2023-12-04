@@ -11,18 +11,18 @@ from app.products.models import (
 
 
 class DealerAdmin(ModelView, model=Dealer):
-    """Представление модели дилера в админ-зоне."""
+    """Presentation of the dealer model in the admin area."""
 
     column_list = (Dealer.id, Dealer.name, Dealer.product_dealer)
     column_searchable_list = (Dealer.name,)
     column_sortable_list = (Dealer.id, Dealer.name)
     icon = 'fa-solid fa-user-tie'
-    name = 'Дилер'
-    name_plural = 'Дилеры'
+    name = 'Dealer'
+    name_plural = 'Dealers'
 
 
 class ProductAdmin(ModelView, model=Product):
-    """Представление модели дилера в админ-зоне."""
+    """Presentation of the product model in the admin area."""
 
     column_list = tuple(Product.__table__.columns) + (Product.product_dealer,)
     column_searchable_list = (Product.name,)
@@ -31,12 +31,12 @@ class ProductAdmin(ModelView, model=Product):
         Product.name,
     )
     icon = 'fa-solid fa-barcode'
-    name = 'Продукт'
-    name_plural = 'Продукты'
+    name = 'Product'
+    name_plural = 'Products'
 
 
 class ProductDealerAdmin(ModelView, model=ProductDealer):
-    """Представление модели дилера в админ-зоне."""
+    """Presentation of the product-dealer relationship model in the admin area."""
 
     column_list = [
         ProductDealer.id,
@@ -53,12 +53,12 @@ class ProductDealerAdmin(ModelView, model=ProductDealer):
         ProductDealer.key,
     )
     icon = 'fa-solid fa-file-contract'
-    name = 'Связь продукта и дилера'
-    name_plural = 'Связи продукта и дилера'
+    name = 'Product-dealer connection'
+    name_plural = 'Product-dealer connections'
 
 
 class ParsedProductDealerAdmin(ModelView, model=ParsedProductDealer):
-    """Представление модели дилера в админ-зоне."""
+    """Representation of the parsing data model in the admin area."""
 
     column_list = tuple(ParsedProductDealer.__table__.columns) + (
         ParsedProductDealer.dealer,
@@ -70,8 +70,8 @@ class ParsedProductDealerAdmin(ModelView, model=ParsedProductDealer):
         ParsedProductDealer.product_key,
     )
     icon = 'fa-regular fa-circle-down'
-    name = 'Данные парсинга'
-    name_plural = 'Данные парсинга'
+    name = 'Parsing data'
+    name_plural = 'Parsing data'
 
 
 class StatisticsAdmin(ModelView, model=Statistics):

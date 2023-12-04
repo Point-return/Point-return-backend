@@ -13,14 +13,14 @@ from app.users.exceptions import (
 
 
 async def create_admin() -> None:
-    """Функция для создания админа."""
+    """Function for creating an admin."""
     try:
         logger.debug(
-            'В любой момент нажмите ctrl+C для прекращения создания админа',
+            'At any time, press ctrl+C to stop creating an admin',
         )
         while True:
             try:
-                email = input('Введите почту:\n')
+                email = input('Enter your email:\n')
                 validate_email(email)
                 existing_user_email = await UserDAO.find_one_or_none(
                     email=email,
@@ -30,9 +30,9 @@ async def create_admin() -> None:
                 else:
                     logger.debug(UserEmailAlreadyExistsException.detail)
             except EmailNotValidError:
-                logger.debug('Email не валидный')
+                logger.debug('Email is not valid')
         while True:
-            username = input('Введите имя пользователя:\n')
+            username = input('Enter your username:\n')
             existing_user_name = await UserDAO.find_one_or_none(
                 username=username,
             )
@@ -41,20 +41,20 @@ async def create_admin() -> None:
             else:
                 logger.debug(UserNameAlreadyExistsException.detail)
         while True:
-            password1 = getpass('Введите пароль:\n')
-            password2 = getpass('Повторите пароль:\n')
+            password1 = getpass('Enter password:\n')
+            password2 = getpass('Repeat password:\n')
             if password1 == password2:
                 hashed_password = get_password_hash(password1)
                 break
             else:
-                logger.debug('Пароли не совпадают')
+                logger.debug('Password mismatch')
         await UserDAO.create(
             email=email,
             password=hashed_password,
             username=username,
             role=Roles.admin,
         )
-        logger.debug('Админ успешно создан!')
+        logger.debug('Administrator has been created successfully!')
     except KeyboardInterrupt:
         sys.exit()
 

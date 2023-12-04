@@ -16,19 +16,19 @@ from app.products.models import (
 
 
 class DealerDAO(BaseDAO):
-    """Интерфейс работы с моделями дилеров."""
+    """Interface for working with dealer models."""
 
     model = Dealer
 
 
 class ProductDAO(BaseDAO):
-    """Интерфейс работы с моделями продуктов."""
+    """Interface for working with product models."""
 
     model = Product
 
     @classmethod
     async def get_ids_names(cls) -> List[Dict[str, Any]]:
-        """Функция для получения id и name всех продуктов."""
+        """Function to get id and name of all products."""
         async with async_session_maker() as session:
             query = sa.select(cls.model.id, cls.model.name)
             result = await session.execute(query)
@@ -36,7 +36,7 @@ class ProductDAO(BaseDAO):
 
 
 class ProductDealerDAO(BaseDAO):
-    """Интерфейс работы с моделями связок продукт-дилер."""
+    """Interface for working with product-dealer relationship models."""
 
     model = ProductDealer
 
@@ -81,7 +81,7 @@ class ProductDealerDAO(BaseDAO):
 
 
 class ParsedProductDealerDAO(BaseDAO):
-    """Интерфейс работы с моделями данных парсинга."""
+    """Interface for working with parsing data models."""
 
     model = ParsedProductDealer
 
@@ -94,7 +94,7 @@ class ParsedProductDealerDAO(BaseDAO):
         page: int,
         limit: int,
     ) -> Dict[str, Any]:
-        """Функция для получения всех данных парсинга."""
+        """Function to get all parsing data."""
         offset = (page - 1) * limit
         async with async_session_maker() as session:
             query = (
@@ -133,7 +133,7 @@ class ParsedProductDealerDAO(BaseDAO):
 
     @classmethod
     async def get_product_name(cls, id: int) -> str:
-        """Функция для получения id и name всех продуктов."""
+        """Function to get id and name of all products."""
         async with async_session_maker() as session:
             query = sa.select(cls.model.product_name).where(cls.model.id == id)
             result = await session.execute(query)
@@ -183,7 +183,7 @@ class StatisticsDAO(BaseDAO):
 
     @classmethod
     async def get_general_stat(cls) -> Dict[str, Any]:
-        """Статистика по диллеру."""
+        """Statistics for all dealers."""
         async with async_session_maker() as session:
             query_successfull = (
                 sa.select(cls.model.id)
@@ -215,7 +215,7 @@ class StatisticsDAO(BaseDAO):
 
     @classmethod
     async def get_dealer_stat(cls, dealer_id: int) -> Dict[str, Any]:
-        """Статистика по диллеру."""
+        """Dealer statistics."""
         async with async_session_maker() as session:
             query_successfull = (
                 sa.select(cls.model.id)

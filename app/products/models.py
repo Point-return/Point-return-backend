@@ -14,7 +14,7 @@ from app.core.models import Base
 
 
 class Dealer(Base):
-    """Модель дилера."""
+    """Dealer model."""
 
     __tablename__ = 'marketing_dealer'
 
@@ -25,16 +25,16 @@ class Dealer(Base):
     parsed_data = relationship('ParsedProductDealer', back_populates='dealer')
 
     def __repr__(self) -> str:
-        """Функция для представления модели дилера.
+        """Function to represent dealer model.
 
         Returns:
-            Строку с именем дилера.
+            Line with dealer name.
         """
-        return f'Дилер {self.name}'
+        return f'Dealer {self.name}'
 
 
 class Product(Base):
-    """Модель продукта."""
+    """Product model."""
 
     __tablename__ = 'marketing_product'
 
@@ -56,16 +56,16 @@ class Product(Base):
     product_dealer = relationship('ProductDealer', back_populates='product')
 
     def __repr__(self) -> str:
-        """Функция для представления модели продукта.
+        """Function to represent the product model.
 
         Returns:
-            Строку с названием продукта.
+            Product name line.
         """
-        return f'Продукт {self.name}'
+        return f'Product {self.name}'
 
 
 class ProductDealer(Base):
-    """Модель связи дилера и продукта по ключу."""
+    """Model of connection between dealer and product by key."""
 
     __tablename__ = 'marketing_productdealerkey'
 
@@ -90,16 +90,16 @@ class ProductDealer(Base):
     dealer = relationship('Dealer', back_populates='product_dealer')
 
     def __repr__(self) -> str:
-        """Функция для представления модели связки продукт-дилер.
+        """Function to represent the product-dealer linkage model.
 
         Returns:
-            Строку с ключом связки продукт-дилер.
+            String with product-dealer link key.
         """
-        return f'Продукт {self.product_id} от дилера {self.dealer_id}'
+        return f'Product {self.product_id} from the dealer {self.dealer_id}'
 
 
 class ParsedProductDealer(Base):
-    """Модель данных парсинга."""
+    """Parsing data model."""
 
     __tablename__ = 'marketing_dealerprice'
 
@@ -123,16 +123,16 @@ class ParsedProductDealer(Base):
     statistics = relationship('Statistics', back_populates='parsed_data')
 
     def __repr__(self) -> str:
-        """Функция для представления модели данных парсинга.
+        """Function to represent the parsing data model.
 
         Returns:
-            Строку с ключом продукта парсинга.
+            String with the parsing product key.
         """
-        return f'Данные парсинга {self.product_key}'
+        return f'Parsing data {self.product_key}'
 
 
 class Statistics(Base):
-    """Модель данных парсинга."""
+    """Parsing statistics data model."""
 
     __tablename__ = 'marketing_statistics'
 

@@ -7,16 +7,16 @@ from app.users.dependencies import get_current_user
 
 
 class AdminAuth(AuthenticationBackend):
-    """Аутентификация в админ-зоне."""
+    """Authentication in the admin area."""
 
     async def login(self, request: Request) -> bool:
-        """Вход в админ-зону.
+        """Login to the admin area.
 
         Args:
-            request: передаваемый запрос.
+            request: transmitted request.
 
         Returns:
-            Возможность войти в админ-зону.
+            Ability to log into the admin area.
         """
         form = await request.form()
         username, password = form.get('username'), form.get('password')
@@ -35,10 +35,10 @@ class AdminAuth(AuthenticationBackend):
         return True
 
     async def logout(self, request: Request) -> bool:
-        """Выход из админ-зоны.
+        """Exit from the admin area.
 
         Args:
-            request: передаваемый запрос.
+            request: transmitted request.
 
         Returns:
             True
@@ -47,13 +47,13 @@ class AdminAuth(AuthenticationBackend):
         return True
 
     async def authenticate(self, request: Request) -> bool:
-        """Аутентификация в админ-зоне.
+        """Authentication in the admin area.
 
         Args:
-            request: передаваемый запрос.
+            request: transmitted request.
 
         Returns:
-            Наличие токена
+            Availability of token
         """
         token = request.session.get(TOKEN_NAME)
         if not token:

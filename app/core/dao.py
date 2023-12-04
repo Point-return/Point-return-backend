@@ -9,7 +9,7 @@ Model = TypeVar('Model', bound=Base)
 
 
 class BaseDAO(Generic[Model]):
-    """Интерфейс работы с базой данных."""
+    """Database interface."""
 
     model: Type[Model]
 
@@ -18,13 +18,13 @@ class BaseDAO(Generic[Model]):
         cls,
         model_id: int,
     ) -> Model:
-        """Найти объект в базе по id.
+        """Find an object in the database by id.
 
         Args:
-            model_id: id модели.
+            model_id: id model.
 
         Returns:
-            Один объект из базы данных или None.
+            One object from the database or None.
         """
         async with async_session_maker() as session:
             query = select(cls.model).filter_by(id=model_id)
@@ -33,10 +33,10 @@ class BaseDAO(Generic[Model]):
 
     @classmethod
     async def find_all(cls) -> Model:
-        """Найти все объекты данной модели в базе.
+        """Find all objects of this model in the database.
 
         Returns:
-            Все объекты данного типа из базы.
+            All objects of this type from the database.
         """
         async with async_session_maker() as session:
             query = select(cls.model)
@@ -48,13 +48,13 @@ class BaseDAO(Generic[Model]):
         cls,
         **parameters: Any,
     ) -> Model:
-        """Найти объект в базе по параметрам.
+        """Find an object in the database using parameters.
 
         Args:
-            parameters: параметры модели.
+            parameters: model parameters.
 
         Returns:
-            Один объект из базы данных или None.
+            One object from the database or None.
         """
         async with async_session_maker() as session:
             query = select(cls.model).filter_by(**parameters)
@@ -63,10 +63,10 @@ class BaseDAO(Generic[Model]):
 
     @classmethod
     async def create(cls, **data: Any) -> None:
-        """Создать объект в базе по данным.
+        """Create an object in the database using the data.
 
         Args:
-            data: данные модели.
+            data: model data.
         """
         async with async_session_maker() as session:
             query = insert(cls.model).values(**data)
@@ -78,10 +78,10 @@ class BaseDAO(Generic[Model]):
         cls,
         **parameters: Any,
     ) -> None:
-        """Удалить объект в базе по параметрам.
+        """Delete an object in the database using parameters.
 
         Args:
-            parameters: параметры модели.
+            parameters: model parameters.
         """
         async with async_session_maker() as session:
             query = delete(cls.model).where(**parameters)

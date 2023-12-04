@@ -3,6 +3,6 @@ from app.users.models import User
 
 
 class UserDAO(BaseDAO):
-    """Интерфейс работы с моделями пользователей."""
+    """Interface for working with user models."""
 
     model = User
