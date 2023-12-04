@@ -10,7 +10,7 @@ from app.products.dao import ProductDAO
 
 
 async def import_products() -> None:
-    """Function for importing products."""
+    """Import products."""
     logger.debug(
         'Imports product data from: ' f'{DATA_IMPORT_LOCATION}',
     )

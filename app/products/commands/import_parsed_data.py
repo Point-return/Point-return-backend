@@ -8,7 +8,7 @@ from app.products.dao import ParsedProductDealerDAO, StatisticsDAO
 
 
 async def import_parsed_data() -> None:
-    """Function for importing parsing data."""
+    """Import parsing data."""
     logger.debug(
         'Parsing data is imported from: ' f'{DATA_IMPORT_LOCATION}',
     )

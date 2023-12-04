@@ -36,7 +36,7 @@ class ProductAdmin(ModelView, model=Product):
 
 
 class ProductDealerAdmin(ModelView, model=ProductDealer):
-    """Presentation of the product-dealer relationship model in the admin area."""
+    """Presentation of the product-dealer model in the admin area."""
 
     column_list = [
         ProductDealer.id,

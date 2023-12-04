@@ -38,7 +38,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def create_access_token(data: Dict[str, Any]) -> str:
-    """Creating an Authorization Token.
+    """Create an Authorization Token.
 
     Args:
         data: data for creating a token.

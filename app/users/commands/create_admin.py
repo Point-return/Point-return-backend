@@ -13,7 +13,7 @@ from app.users.exceptions import (
 
 
 async def create_admin() -> None:
-    """Function for creating an admin."""
+    """Create an admin-user."""
     try:
         logger.debug(
             'At any time, press ctrl+C to stop creating an admin',

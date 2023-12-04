@@ -25,7 +25,7 @@ class Dealer(Base):
     parsed_data = relationship('ParsedProductDealer', back_populates='dealer')
 
     def __repr__(self) -> str:
-        """Function to represent dealer model.
+        """Represent dealer model.
 
         Returns:
             Line with dealer name.
@@ -56,7 +56,7 @@ class Product(Base):
     product_dealer = relationship('ProductDealer', back_populates='product')
 
     def __repr__(self) -> str:
-        """Function to represent the product model.
+        """Represent the product model.
 
         Returns:
             Product name line.
@@ -90,7 +90,7 @@ class ProductDealer(Base):
     dealer = relationship('Dealer', back_populates='product_dealer')
 
     def __repr__(self) -> str:
-        """Function to represent the product-dealer linkage model.
+        """Represent the product-dealer linkage model.
 
         Returns:
             String with product-dealer link key.
@@ -123,12 +123,12 @@ class ParsedProductDealer(Base):
     statistics = relationship('Statistics', back_populates='parsed_data')
 
     def __repr__(self) -> str:
-        """Function to represent the parsing data model.
+        """Represent the parsing data model.
 
         Returns:
-            String with the parsing product key.
+            String with the parsing data item id.
         """
-        return f'Parsing data {self.product_key}'
+        return f'Parsing data {self.id}'
 
 
 class Statistics(Base):
@@ -150,3 +150,11 @@ class Statistics(Base):
         'ParsedProductDealer',
         back_populates='statistics',
     )
+
+    def __repr__(self) -> str:
+        """Represent the statistics model.
+
+        Returns:
+            String with the parsing product id.
+        """
+        return f'Statistics of parsed data {self.parsed_data_id}'

@@ -94,7 +94,7 @@ async def logout_user(response: Response) -> EmptySchema:
 async def read_users_me(
     current_user: User = Depends(get_current_user),
 ) -> UserSafe:
-    """Current user details.
+    """Get current user info.
 
     Args:
         current_user: current user.

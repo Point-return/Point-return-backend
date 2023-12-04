@@ -3,7 +3,7 @@ from typing import Optional
 
 
 def convert_string_to_float(string: str) -> Optional[float]:
-    """Function to convert string to float.
+    """Transform string to float.
 
     Args:
         string: passed string.
@@ -17,7 +17,7 @@ def convert_string_to_float(string: str) -> Optional[float]:
 
 
 def convert_to_float_and_truncate(string: str) -> Optional[int]:
-    """Function to convert a string to an int with the fractional part removed.
+    """Transform a string to an int with the fractional part removed.
 
     Args:
         string: passed string.

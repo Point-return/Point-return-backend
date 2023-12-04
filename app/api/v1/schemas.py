@@ -31,7 +31,7 @@ class ProductSchema(BaseModel):
 
 
 class ParsedProductValidationSchema(BaseModel):
-    """Parsing data schema."""
+    """Parsing data validation schema."""
 
     id: int
     productKey: Optional[int]
@@ -52,7 +52,7 @@ class ParsedProductSchema(ParsedProductValidationSchema):
 
 
 class MenuValidationSchema(BaseModel):
-    """Parsing data menu schema."""
+    """Parsing data menu validation schema."""
 
     items: List[ParsedProductValidationSchema]
     page: int
@@ -81,7 +81,7 @@ class DealerSchema(BaseModel):
 
 
 class RecomendationValidationSchema(BaseModel):
-    """Scheme of the recommended option."""
+    """Validation schema of the recommended option."""
 
     id: int
     productName: str
@@ -89,12 +89,12 @@ class RecomendationValidationSchema(BaseModel):
 
 
 class RecomendationSchema(RecomendationValidationSchema):
-    """Scheme of the recommended option."""
+    """Schema of the recommended option."""
 
     model_config = ConfigDict(alias_generator=to_snake_case)
 
 
-class DealerStatSchema(BaseModel):
+class StatisticsSchema(BaseModel):
     """Statistic schema."""
 
     QuantitySuccessfull: int

@@ -47,7 +47,7 @@ class AdminAuth(AuthenticationBackend):
         return True
 
     async def authenticate(self, request: Request) -> bool:
-        """Authentication in the admin area.
+        """Authenticate in the admin area.
 
         Args:
             request: transmitted request.

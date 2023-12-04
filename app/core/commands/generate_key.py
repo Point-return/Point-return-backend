@@ -1,9 +1,11 @@
 from base64 import b64encode
 from secrets import token_bytes
 
+from app.config import logger
+
 
 def generate_secret_key() -> str:
-    """Function for creating a secret key.
+    """Create a secret key.
 
     Returns:
         An example of a random secret key.
@@ -12,4 +14,4 @@ def generate_secret_key() -> str:
 
 
 if __name__ == '__main__':
-    print(generate_secret_key())  # noqa: T201
+    logger.debug(generate_secret_key())

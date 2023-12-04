@@ -15,7 +15,7 @@ class User(Base):
     role = Column(String, nullable=False)
 
     def __repr__(self) -> str:
-        """Function to represent the user model.
+        """Represent the user model.
 
         Returns:
             Username string.

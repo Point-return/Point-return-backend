@@ -11,11 +11,11 @@ from app.api.v1.exceptions import (
 )
 from app.api.v1.schemas import (
     DealerSchema,
-    DealerStatSchema,
     MenuSchema,
     MenuValidationSchema,
     RecomendationSchema,
     RecomendationValidationSchema,
+    StatisticsSchema,
 )
 from app.config import logger
 from app.core.schemas import EmptySchema
@@ -48,7 +48,11 @@ async def dealer_products(
     month_to: int = 1,
     day_to: int = 1,
 ) -> MenuValidationSchema:
-    """Function to get information of all dealer's products."""
+    """Get information about all dealer's products."""
+    dealer = await DealerDAO.find_by_id(dealer_id)
+    if not dealer:
+        logger.error(DealerNotFound.detail)
+        raise DealerNotFound
     date_from = datetime(int(year_from), int(month_from), int(day_from))
     date_to = datetime(int(year_to), int(month_to), int(day_to))
     return MenuValidationSchema(
@@ -66,7 +70,7 @@ async def dealer_products(
 
 @router_v1.get('/dealers')
 async def get_dealers() -> List[DealerSchema]:
-    """Function to get all dealers."""
+    """Get all dealers."""
     return await DealerDAO.find_all()
 
 
@@ -75,7 +79,7 @@ async def get_recommendations(
     dealerprice_id: int,
     limit: int = 10,
 ) -> List[RecomendationValidationSchema]:
-    """Function for receiving recommendations."""
+    """Receive a number of recommendations."""
     parsed_data: ParsedProductDealer = await ParsedProductDealerDAO.find_by_id(
         dealerprice_id,
     )
@@ -99,7 +103,7 @@ async def add_product_key(
     dealerprice_id: int,
     product_id: int,
 ) -> EmptySchema:
-    """Choosing the product from base."""
+    """Choose the product from base."""
     parsed_data = await ParsedProductDealerDAO.find_by_id(
         dealerprice_id,
     )
@@ -137,7 +141,7 @@ async def add_product_key(
 
 @router_v1.patch('/recommendations/{dealerprice_id}/skip')
 async def add_skipped(dealerprice_id: int) -> EmptySchema:
-    """Add skipped."""
+    """Mark parsing data as skipped."""
     parsed_data = await ParsedProductDealerDAO.find_by_id(
         dealerprice_id,
     )
@@ -149,12 +153,20 @@ async def add_skipped(dealerprice_id: int) -> EmptySchema:
 
 
 @router_v1.get('/statistics')
-async def general_static() -> DealerStatSchema:
-    """Function to get statistics for all dealers."""
-    return await StatisticsDAO.get_general_stat()
+async def general_static() -> StatisticsSchema:
+    """Get statistics for all dealers."""
+    return StatisticsSchema.model_validate(
+        await StatisticsDAO.get_general_stat(),
+    )
 
 
-@router_v1.get('/statistics/{dealerprice_id}')
-async def dealer_static(dealer_id: int) -> DealerStatSchema:
-    """Function to get dealer statistics."""
-    return await StatisticsDAO.get_dealer_stat(dealer_id)
+@router_v1.get('/statistics/{dealer_id}')
+async def dealer_static(dealer_id: int) -> StatisticsSchema:
+    """Get dealer statistics."""
+    dealer = DealerDAO.find_by_id(dealer_id)
+    if not dealer:
+        logger.error(DealerNotFound.detail)
+        raise DealerNotFound
+    return StatisticsSchema.model_validate(
+        await StatisticsDAO.get_dealer_stat(dealer_id),
+    )

@@ -6,7 +6,7 @@ from app.products.dao import DealerDAO
 
 
 async def import_dealers() -> None:
-    """Function for importing dealers."""
+    """Import dealers."""
     logger.debug(
         'Dealer data is imported from: ' f'{DATA_IMPORT_LOCATION}',
     )
