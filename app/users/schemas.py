@@ -37,6 +37,4 @@ class UserSafe(BaseModel):
 class TokenSchema(BaseModel):
     """Scheme for displaying a token."""
 
-    model_config = ConfigDict(alias_generator=to_snake_case)
-
-    access_token: str
+    accessToken: str
