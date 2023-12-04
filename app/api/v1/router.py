@@ -3,7 +3,12 @@ from typing import List
 
 from fastapi import APIRouter
 
-from app.api.v1.exceptions import ConnectionAlreadyExists, ParsedDataNotFound
+from app.api.v1.exceptions import (
+    ConnectionAlreadyExists,
+    DealerNotFound,
+    ParsedDataNotFound,
+    ProductNotFound,
+)
 from app.api.v1.schemas import (
     DealerSchema,
     DealerStatSchema,
@@ -12,11 +17,13 @@ from app.api.v1.schemas import (
     RecomendationSchema,
     RecomendationValidationSchema,
 )
+from app.config import logger
 from app.core.schemas import EmptySchema
 from app.ds.solution_v_2 import get_solution
 from app.products.dao import (
     DealerDAO,
     ParsedProductDealerDAO,
+    ProductDAO,
     ProductDealerDAO,
     StatisticsDAO,
 )
@@ -30,7 +37,7 @@ router_v1 = APIRouter(
 
 
 @router_v1.get('/dealer/{dealer_id}')
-async def dialer_products(
+async def dealer_products(
     dealer_id: int,
     size: int = 50,
     page: int = 1,
@@ -73,8 +80,10 @@ async def get_recommendations(
         dealerprice_id,
     )
     if not parsed_data:
+        logger.error(ParsedDataNotFound.detail)
         raise ParsedDataNotFound
     if parsed_data.product_key:
+        logger.error(ConnectionAlreadyExists.detail)
         raise ConnectionAlreadyExists
     solutions = await get_solution(str(parsed_data.product_name), limit)
     return [
@@ -91,12 +100,18 @@ async def add_product_key(
     product_id: int,
 ) -> EmptySchema:
     """Choosing the product from base."""
-    parsed_data: ParsedProductDealer = await ParsedProductDealerDAO.find_by_id(
+    parsed_data = await ParsedProductDealerDAO.find_by_id(
         dealerprice_id,
     )
     if not parsed_data:
+        logger.error(ParsedDataNotFound.detail)
         raise ParsedDataNotFound
+    product = await ProductDAO.find_by_id(product_id)
+    if not product:
+        logger.error(ProductNotFound.detail)
+        raise ProductNotFound
     if parsed_data.product_key:
+        logger.error(ConnectionAlreadyExists.detail)
         raise ConnectionAlreadyExists
     connection = await ProductDealerDAO.find_one_or_none(
         dealer_id=parsed_data.dealer_id,
@@ -116,12 +131,19 @@ async def add_product_key(
         )
     await ParsedProductDealerDAO.update_key(id=dealerprice_id, key=key)
     await StatisticsDAO.update_success(dealerprice_id)
+    await StatisticsDAO.cancel_skip(dealerprice_id)
     return EmptySchema()
 
 
 @router_v1.patch('/recommendations/{dealerprice_id}/skip')
 async def add_skipped(dealerprice_id: int) -> EmptySchema:
     """Add skipped."""
+    parsed_data = await ParsedProductDealerDAO.find_by_id(
+        dealerprice_id,
+    )
+    if not parsed_data:
+        logger.error(ParsedDataNotFound.detail)
+        raise ParsedDataNotFound
     await StatisticsDAO.update_skip(dealerprice_id)
     return EmptySchema()
 

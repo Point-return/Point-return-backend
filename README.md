@@ -201,11 +201,17 @@ You need to add one user with the admin role, one with the user role.
 |-----------|--------------|----------------|---------------|---------------|
 | Type       |   String     | Email String   | String        | admin / user  |
 
-To run tests you can use 2 commands:
+To run tests you can use next command. It not obly starts tests, but also creates coverage report.
 
 ```
-make test
-pytest
+make report
+```
+
+To read coverage report you can use one of two commands:
+
+```
+make read-report
+coverage report
 ```
 
 ### Endpoints:

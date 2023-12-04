@@ -64,7 +64,7 @@ class Settings(BaseSettings):
 settings = Settings()
 
 API_URL = '/api/v1'
-TOKEN_NAME = 'points_access_token'
+TOKEN_NAME = 'access_token'
 DATA_IMPORT_LOCATION = str(BASE_DIR / 'data')
 
 
