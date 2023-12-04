@@ -107,6 +107,7 @@ class ParsedProductDealerDAO(BaseDAO):
                     ),
                 )
                 .filter(cls.model.dealer_id == dealer_id)
+                .order_by(cls.model.id)
                 .offset(offset)
                 .limit(limit)
             )
@@ -211,10 +212,10 @@ class StatisticsDAO(BaseDAO):
             skipped = query_skipped.scalar_one_or_none()
             try:
                 percent = (
-                    f'{round(successfull /(successfull + skipped) * 100)}%'
+                    f'{round(successfull /(successfull + skipped) * 100)}'
                 )
             except ZeroDivisionError:
-                percent = 'Unknown'
+                percent = '-'
             response = {
                 'QuantitySuccessfull': successfull,
                 'QuantitySkipped': skipped,
@@ -258,10 +259,10 @@ class StatisticsDAO(BaseDAO):
             skipped = query_skipped.scalar_one_or_none()
             try:
                 percent = (
-                    f'{round(successfull /(successfull + skipped) * 100)}%'
+                    f'{round(successfull /(successfull + skipped) * 100)}'
                 )
             except ZeroDivisionError:
-                percent = 'Unknown'
+                percent = '-'
             response = {
                 'QuantitySuccessfull': successfull,
                 'QuantitySkipped': skipped,
