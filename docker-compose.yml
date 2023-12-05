@@ -14,7 +14,7 @@ services:
     env_file: .env
     depends_on:
       - db
-    command: ["app/docker/app.sh"]
+    command: ["app/app/docker/app.sh"]
     ports:
       - 8000:8000
 
