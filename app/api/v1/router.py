@@ -1,9 +1,9 @@
-from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter
 
 from app.api.v1.exceptions import (
+    DateError,
     DealerNotFound,
     ParsedDataNotFound,
     ProductDealerNotFound,
@@ -21,6 +21,7 @@ from app.api.v1.schemas import (
 )
 from app.config import logger
 from app.core.schemas import EmptySchema
+from app.api.v1.date_value import date_val
 from app.ds.solution_v_2 import get_solution
 from app.products.dao import (
     DealerDAO,
@@ -52,7 +53,7 @@ async def dealer_products(
 ) -> MenuValidationSchema:
     """Get information about all dealer's products.
 
-    Args:
+        Args:
         dealer_id: id of selected dealer.
         size: amount of objects on page.
         page: page number.
@@ -70,8 +71,11 @@ async def dealer_products(
     if not dealer:
         logger.error(DealerNotFound.detail)
         raise DealerNotFound
-    date_from = datetime(int(year_from), int(month_from), int(day_from))
-    date_to = datetime(int(year_to), int(month_to), int(day_to))
+    date_from = date_val(year_from, month_from, day_from)
+    date_to = date_val(year_to, month_to, day_to)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
     return MenuValidationSchema(
         **MenuSchema.model_validate(
             await ParsedProductDealerDAO.product_list(
@@ -194,33 +198,79 @@ async def add_skipped(dealerprice_id: int) -> EmptySchema:
 
 
 @router_v1.get('/statistics')
-async def general_static() -> StatisticsSchema:
+async def general_static(
+    year_from: int = 1900,
+    month_from: int = 1,
+    day_from: int = 1,
+    year_to: int = 2100,
+    month_to: int = 1,
+    day_to: int = 1,
+) -> StatisticsSchema:
     """Get statistics for all dealers.
+
+        Args:
+        year_from: minimum year of parsing.
+        month_from: minimum month of parsing.
+        day_from: minimum day of parsing.
+        year_to: maximum year of parsing.
+        month_to: maximum month of parsing.
+        day_to: maximum day of parsing.
 
     Returns:
         All statistics information.
     """
+    date_from = date_val(year_from, month_from, day_from)
+    date_to = date_val(year_to, month_to, day_to)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
     return StatisticsSchema.model_validate(
-        await StatisticsDAO.get_general_stat(),
+        await StatisticsDAO.get_general_stat(
+            date_from,
+            date_to,
+        ),
     )
 
 
 @router_v1.get('/statistics/{dealer_id}')
-async def dealer_static(dealer_id: int) -> StatisticsSchema:
+async def dealer_static(
+    dealer_id: int,
+    year_from: int = 1900,
+    month_from: int = 1,
+    day_from: int = 1,
+    year_to: int = 2100,
+    month_to: int = 1,
+    day_to: int = 1,
+) -> StatisticsSchema:
     """Get dealer statistics.
 
-    Args:
+        Args:
         dealer_id: id of dealer.
+        year_from: minimum year of parsing.
+        month_from: minimum month of parsing.
+        day_from: minimum day of parsing.
+        year_to: maximum year of parsing.
+        month_to: maximum month of parsing.
+        day_to: maximum day of parsing.
 
     Returns:
         Statistics corresponding to provided dealer.
     """
+    date_from = date_val(year_from, month_from, day_from)
+    date_to = date_val(year_to, month_to, day_to)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
     dealer = await DealerDAO.find_by_id(dealer_id)
     if not dealer:
         logger.error(DealerNotFound.detail)
         raise DealerNotFound
     return StatisticsSchema.model_validate(
-        await StatisticsDAO.get_dealer_stat(dealer_id),
+        await StatisticsDAO.get_dealer_stat(
+            dealer_id,
+            date_from,
+            date_to,
+        ),
     )
 
 

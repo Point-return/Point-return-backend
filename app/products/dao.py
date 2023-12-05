@@ -183,17 +183,49 @@ class StatisticsDAO(BaseDAO):
             await session.commit()
 
     @classmethod
-    async def get_general_stat(cls) -> Dict[str, Any]:
+    async def get_general_stat(
+        cls,
+        date_from: date,
+        date_to: date,
+    ) -> Dict[str, Any]:
         """Get statistics for all dealers."""
         async with async_session_maker() as session:
             query_successfull = await session.execute(
-                sa.select(sa.func.count(cls.model.id)).filter(
-                    cls.model.successfull,
+                (
+                    sa.select(sa.func.count(cls.model.id))
+                    .join(
+                        ParsedProductDealer,
+                        cls.model.parsed_data_id == ParsedProductDealer.id,
+                        isouter=True,
+                    )
+                    .where(
+                        sa.and_(
+                            ParsedProductDealer.date >= date_from,
+                            ParsedProductDealer.date <= date_to,
+                        ),
+                    )
+                    .filter(
+                        cls.model.successfull,
+                    )
                 ),
             )
             query_skipped = await session.execute(
-                sa.select(sa.func.count(cls.model.id)).filter(
-                    cls.model.skipped,
+                (
+                    sa.select(sa.func.count(cls.model.id))
+                    .join(
+                        ParsedProductDealer,
+                        cls.model.parsed_data_id == ParsedProductDealer.id,
+                        isouter=True,
+                    )
+                    .where(
+                        sa.and_(
+                            ParsedProductDealer.date >= date_from,
+                            ParsedProductDealer.date <= date_to,
+                        ),
+                    )
+                    .filter(
+                        cls.model.skipped,
+                    )
                 ),
             )
             successfull = query_successfull.scalar_one_or_none()
@@ -212,7 +244,12 @@ class StatisticsDAO(BaseDAO):
             return response
 
     @classmethod
-    async def get_dealer_stat(cls, dealer_id: int) -> Dict[str, Any]:
+    async def get_dealer_stat(
+        cls,
+        dealer_id: int,
+        date_from: date,
+        date_to: date,
+    ) -> Dict[str, Any]:
         """Get dealer statistics."""
         async with async_session_maker() as session:
             query_successfull = await session.execute(
@@ -222,6 +259,12 @@ class StatisticsDAO(BaseDAO):
                         ParsedProductDealer,
                         cls.model.parsed_data_id == ParsedProductDealer.id,
                         isouter=True,
+                    )
+                    .where(
+                        sa.and_(
+                            ParsedProductDealer.date >= date_from,
+                            ParsedProductDealer.date <= date_to,
+                        ),
                     )
                     .filter(
                         ParsedProductDealer.dealer_id == dealer_id,
@@ -236,6 +279,12 @@ class StatisticsDAO(BaseDAO):
                         ParsedProductDealer,
                         cls.model.parsed_data_id == ParsedProductDealer.id,
                         isouter=True,
+                    )
+                    .where(
+                        sa.and_(
+                            ParsedProductDealer.date >= date_from,
+                            ParsedProductDealer.date <= date_to,
+                        ),
                     )
                     .filter(
                         ParsedProductDealer.dealer_id == dealer_id,
