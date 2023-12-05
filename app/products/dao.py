@@ -212,7 +212,12 @@ class StatisticsDAO(BaseDAO):
             return response
 
     @classmethod
-    async def get_dealer_stat(cls, dealer_id: int) -> Dict[str, Any]:
+    async def get_dealer_stat(
+        cls,
+        dealer_id: int,
+        date_from: date,
+        date_to: date,
+    ) -> Dict[str, Any]:
         """Get dealer statistics."""
         async with async_session_maker() as session:
             query_successfull = await session.execute(
@@ -222,6 +227,12 @@ class StatisticsDAO(BaseDAO):
                         ParsedProductDealer,
                         cls.model.parsed_data_id == ParsedProductDealer.id,
                         isouter=True,
+                    )
+                    .where(
+                        sa.and_(
+                            ParsedProductDealer.date >= date_from,
+                            ParsedProductDealer.date <= date_to,
+                        ),
                     )
                     .filter(
                         ParsedProductDealer.dealer_id == dealer_id,

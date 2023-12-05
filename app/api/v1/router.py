@@ -207,21 +207,41 @@ async def general_static() -> StatisticsSchema:
 
 
 @router_v1.get('/statistics/{dealer_id}')
-async def dealer_static(dealer_id: int) -> StatisticsSchema:
+async def dealer_static(
+    dealer_id: int,
+    year_from: int = 1900,
+    month_from: int = 1,
+    day_from: int = 1,
+    year_to: int = 2100,
+    month_to: int = 1,
+    day_to: int = 1,
+) -> StatisticsSchema:
     """Get dealer statistics.
 
     Args:
         dealer_id: id of dealer.
+        year_from: minimum year of parsing.
+        month_from: minimum month of parsing.
+        day_from: minimum day of parsing.
+        year_to: maximum year of parsing.
+        month_to: maximum month of parsing.
+        day_to: maximum day of parsing.
 
     Returns:
         Statistics corresponding to provided dealer.
     """
+    date_from = datetime(int(year_from), int(month_from), int(day_from))
+    date_to = datetime(int(year_to), int(month_to), int(day_to))
     dealer = await DealerDAO.find_by_id(dealer_id)
     if not dealer:
         logger.error(DealerNotFound.detail)
         raise DealerNotFound
     return StatisticsSchema.model_validate(
-        await StatisticsDAO.get_dealer_stat(dealer_id),
+        await StatisticsDAO.get_dealer_stat(
+            dealer_id,
+            date_from,
+            date_to,
+        ),
     )
 
 
