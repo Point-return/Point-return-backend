@@ -1,9 +1,9 @@
-from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter
 
 from app.api.v1.exceptions import (
+    DateError,
     DealerNotFound,
     ParsedDataNotFound,
     ProductDealerNotFound,
@@ -21,6 +21,7 @@ from app.api.v1.schemas import (
 )
 from app.config import logger
 from app.core.schemas import EmptySchema
+from app.api.v1.date_value import date_val
 from app.ds.solution_v_2 import get_solution
 from app.products.dao import (
     DealerDAO,
@@ -70,8 +71,11 @@ async def dealer_products(
     if not dealer:
         logger.error(DealerNotFound.detail)
         raise DealerNotFound
-    date_from = datetime(int(year_from), int(month_from), int(day_from))
-    date_to = datetime(int(year_to), int(month_to), int(day_to))
+    date_from = date_val(year_from, month_from, day_from)
+    date_to = date_val(year_to, month_to, day_to)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
     return MenuValidationSchema(
         **MenuSchema.model_validate(
             await ParsedProductDealerDAO.product_list(
@@ -216,8 +220,11 @@ async def general_static(
     Returns:
         All statistics information.
     """
-    date_from = datetime(int(year_from), int(month_from), int(day_from))
-    date_to = datetime(int(year_to), int(month_to), int(day_to))
+    date_from = date_val(year_from, month_from, day_from)
+    date_to = date_val(year_to, month_to, day_to)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
     return StatisticsSchema.model_validate(
         await StatisticsDAO.get_general_stat(
             date_from,
@@ -250,8 +257,11 @@ async def dealer_static(
     Returns:
         Statistics corresponding to provided dealer.
     """
-    date_from = datetime(int(year_from), int(month_from), int(day_from))
-    date_to = datetime(int(year_to), int(month_to), int(day_to))
+    date_from = date_val(year_from, month_from, day_from)
+    date_to = date_val(year_to, month_to, day_to)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
     dealer = await DealerDAO.find_by_id(dealer_id)
     if not dealer:
         logger.error(DealerNotFound.detail)
