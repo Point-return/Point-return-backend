@@ -1,4 +1,4 @@
-from typing import Any, Generic, TypeVar
+from typing import Any, Dict, Generic, List, TypeVar
 
 from sqlalchemy import delete, insert, select
 
@@ -70,6 +70,18 @@ class BaseDAO(Generic[Model]):
         """
         async with async_session_maker() as session:
             query = insert(cls.model).values(**data)
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def create_many(cls, values: List[Dict[str, Any]]) -> None:
+        """Create many objects in the database using provided values.
+
+        Args:
+            values: provided list of values.
+        """
+        async with async_session_maker() as session:
+            query = insert(cls.model).values(values)
             await session.execute(query)
             await session.commit()
 

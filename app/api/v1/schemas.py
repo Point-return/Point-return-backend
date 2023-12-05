@@ -6,13 +6,8 @@ from pydantic import BaseModel, ConfigDict
 from app.core.schemas import to_snake_case
 
 
-class ProductSchema(BaseModel):
-    """Product schema."""
-
-    model_config = ConfigDict(
-        from_attributes=True,
-        alias_generator=to_snake_case,
-    )
+class ProductValidationSchema(BaseModel):
+    """Product validation schema."""
 
     id: int
     article: str
@@ -28,6 +23,15 @@ class ProductSchema(BaseModel):
     wbArticle: Optional[int]
     ymArticle: Optional[str]
     wbArticleTd: Optional[str]
+
+
+class ProductSchema(ProductValidationSchema):
+    """Product schema."""
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_snake_case,
+    )
 
 
 class ParsedProductValidationSchema(BaseModel):

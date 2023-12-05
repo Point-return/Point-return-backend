@@ -165,19 +165,7 @@ class StatisticsDAO(BaseDAO):
             query = (
                 sa.update(cls.model)
                 .where(cls.model.parsed_data_id == dealerprice_id)
-                .values(successfull=True)
-            )
-            await session.execute(query)
-            await session.commit()
-
-    @classmethod
-    async def cancel_success(cls, dealerprice_id: int) -> None:
-        """Update success value to False."""
-        async with async_session_maker() as session:
-            query = (
-                sa.update(cls.model)
-                .where(cls.model.parsed_data_id == dealerprice_id)
-                .values(successfull=False)
+                .values(successfull=True, skipped=False)
             )
             await session.execute(query)
             await session.commit()
@@ -269,15 +257,3 @@ class StatisticsDAO(BaseDAO):
                 'percent': percent,
             }
             return response
-
-    @classmethod
-    async def cancel_skip(cls, dealerprice_id: int) -> None:
-        """Update skipped value to False."""
-        async with async_session_maker() as session:
-            query = (
-                sa.update(cls.model)
-                .where(cls.model.parsed_data_id == dealerprice_id)
-                .values(skipped=False)
-            )
-            await session.execute(query)
-            await session.commit()

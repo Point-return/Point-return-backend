@@ -109,11 +109,6 @@ class TestURLs:
                 status.HTTP_200_OK,
             ),
             (
-                self.patch_urls['solution'],
-                status.HTTP_409_CONFLICT,
-                status.HTTP_409_CONFLICT,
-            ),
-            (
                 self.patch_urls['solution_no_product'],
                 status.HTTP_404_NOT_FOUND,
                 status.HTTP_404_NOT_FOUND,

@@ -12,7 +12,7 @@ from app.products.dao import ProductDAO
 async def import_products() -> None:
     """Import products."""
     logger.debug(
-        'Imports product data from: ' f'{DATA_IMPORT_LOCATION}',
+        'Importing product data from: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.products}.csv',

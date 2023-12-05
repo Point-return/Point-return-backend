@@ -10,7 +10,7 @@ from app.products.dao import ParsedProductDealerDAO, StatisticsDAO
 async def import_parsed_data() -> None:
     """Import parsing data."""
     logger.debug(
-        'Parsing data is imported from: ' f'{DATA_IMPORT_LOCATION}',
+        'Importing parsing data from: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.parsed_data}.csv',

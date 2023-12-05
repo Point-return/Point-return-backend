@@ -5,11 +5,6 @@ ParsedDataNotFound = HTTPException(
     detail='Parsing data not found',
 )
 
-ConnectionAlreadyExists = HTTPException(
-    status_code=status.HTTP_409_CONFLICT,
-    detail='Data key has already been selected',
-)
-
 DealerNotFound = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
     detail='Dealer not found',
@@ -18,4 +13,9 @@ DealerNotFound = HTTPException(
 ProductNotFound = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
     detail='Product not found',
+)
+
+ProductDealerNotFound = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND,
+    detail='Product-dealer connection not found',
 )

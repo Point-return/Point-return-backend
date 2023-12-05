@@ -8,7 +8,7 @@ from app.products.dao import DealerDAO
 async def import_dealers() -> None:
     """Import dealers."""
     logger.debug(
-        'Dealer data is imported from: ' f'{DATA_IMPORT_LOCATION}',
+        'Importing dealer data from: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.dealers}.csv',
@@ -24,7 +24,7 @@ async def import_dealers() -> None:
                 await DealerDAO.create(id=int(id), name=name)
                 counter += 1
         logger.debug(
-            f'Import completed, {counter} dealers exported',
+            f'Import completed, {counter} dealers imported',
         )
 
 

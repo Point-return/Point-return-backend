@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent
 class Settings(BaseSettings):
     """Project Settings."""
 
-    model_config = SettingsConfigDict(env_file='.env')
+    model_config = SettingsConfigDict(env_file='.env', extra='allow')
 
     MODE: Literal['DEV', 'TEST', 'PROD']
 
