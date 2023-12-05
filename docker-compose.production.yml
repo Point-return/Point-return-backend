@@ -15,12 +15,11 @@ services:
   backend:
     depends_on:
       - db
-    build:
-      context: .
+    image: starkiller2000/point-backend
     env_file: deploy.env
     command: ["bash", "./app/docker/app.sh"]
 
   gateway:
-    build: ../Point-return-gateway/
+    image: starkiller2000/point-gateway
     ports:
       - 8000:80

@@ -1,6 +1,6 @@
 # Virtual environement
 venv
-.env
+*.env
 
 # Testing
 .coverage
@@ -24,4 +24,4 @@ requirements-style.txt
 .vscode
 
 #migrations
-app/migrations/versions/*
+app/migrations/versions/*.py

@@ -100,3 +100,12 @@ report:
 
 read-report:
 	coverage report
+
+
+# docker
+
+make compose:
+	docker compose up --build -d
+
+make production:
+	docker compose -f docker-compose.production.yml up --build -d
