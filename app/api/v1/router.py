@@ -116,7 +116,6 @@ async def get_recommendations(
         logger.error(ParsedDataNotFound.detail)
         raise ParsedDataNotFound
     solutions = await get_solution(str(parsed_data.product_name), limit)
-    logger.debug(solutions)
     return [
         RecomendationValidationSchema(
             **RecomendationSchema.model_validate(solution).model_dump(),

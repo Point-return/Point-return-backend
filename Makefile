@@ -83,8 +83,8 @@ parsed-data:
 	@PYTHONPATH=$(current_dir) $(PYTHON) app/products/commands/import_parsed_data.py
 
 import:
-	@make products
 	@make dealers
+	@make products
 	@make product-dealer
 	@make parsed-data
 

@@ -1,9 +1,11 @@
 import sys
+
 from app.config import settings
-from app.database import engine
 from app.core.models import Base
-from app.products.models import *
-from app.users.models import *
+from app.database import engine
+from app.products.models import *  # noqa: F401, F403
+from app.users.models import *  # noqa: F401, F403
+
 
 async def drop_database() -> None:
     """Drop database."""
@@ -12,6 +14,7 @@ async def drop_database() -> None:
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.drop_all)
         await connection.run_sync(Base.metadata.create_all)
+
 
 if __name__ == '__main__':
     import asyncio

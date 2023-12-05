@@ -1,5 +1,6 @@
-import csv
 import sys
+
+import pandas as pd
 
 from app.config import DATA_IMPORT_LOCATION, CSVFilenames, logger
 from app.products.dao import ProductDealerDAO
@@ -9,53 +10,39 @@ from app.products.utils import generate_product_dealer_key
 async def import_productdealer() -> None:
     """Import product-dealer links."""
     logger.debug(
-        'Importing product-dealer data from: '
-        f'{DATA_IMPORT_LOCATION}',
+        'Importing product-dealer data from: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.product_dealer}.csv',
         'r',
         encoding='utf-8-sig',
     ) as csv_file:
-        counter = 0
-        data = csv.reader(csv_file, delimiter=';')
-        wrong_data = []
-        next(data)
-        for (
-            _,
-            key,
-            dealer_id,
-            product_id,
-        ) in data:
-            try:
-                integer_key = int(key)
-            except ValueError:
-                wrong_data.append((dealer_id, product_id))
-                continue
-            existing_product_dealer = await ProductDealerDAO.find_one_or_none(
-                key=integer_key,
-            )
-            if not existing_product_dealer:
-                await ProductDealerDAO.create(
-                    key=integer_key,
-                    dealer_id=int(dealer_id),
-                    product_id=int(product_id),
+        data = pd.read_csv(csv_file, delimiter=';', na_filter=False)
+        data = data.drop('id', axis=1)
+        existing_productdealer_keys = await ProductDealerDAO.get_keys()
+        wrong_data = pd.DataFrame(columns=data.columns)
+        for index, row in data.iterrows():
+            if row['key'] in existing_productdealer_keys:
+                data.drop(index, inplace=True)
+            if not row['key'].isnumeric():
+                wrong_data = pd.concat(
+                    [wrong_data, pd.DataFrame([row])],
+                    ignore_index=True,
                 )
-                counter += 1
-    for dealer_id, product_id in wrong_data:
-        existing_product_dealer = await ProductDealerDAO.find_one_or_none(
-            dealer_id=int(dealer_id),
-            product_id=int(product_id),
-        )
-        if not existing_product_dealer:
+                data.drop(index, inplace=True)
+        data['key'] = data['key'].apply(int)
+        new_number = len(data.index)
+        await ProductDealerDAO.create_many(data.to_dict('records'))
+        wrong_data = wrong_data.drop('key', axis=1)
+        new_wrong_number = len(wrong_data.index)
+        for index, row in wrong_data.iterrows():
             await ProductDealerDAO.create(
+                **row,
                 key=await generate_product_dealer_key(),
-                dealer_id=int(dealer_id),
-                product_id=int(product_id),
             )
-            counter += 1
     logger.debug(
-        f'Import completed, imported {counter} product-dealer links',
+        f'Import completed, imported {new_number+new_wrong_number} '
+        'product-dealer links',
     )
 
 
