@@ -96,11 +96,6 @@ class TestStatisticsDAO:
                 parsed_data_id=parsed_data_item_id,
             )
             assert statistic_item.skipped is True
-            await StatisticsDAO.cancel_skip(parsed_data_item_id)
-            statistic_item = await StatisticsDAO.find_one_or_none(
-                parsed_data_id=parsed_data_item_id,
-            )
-            assert statistic_item.skipped is False
 
     async def test_success(self, parsed_data: List[Dict[str, Any]]) -> None:
         """Test changing successfull parameter to True.
@@ -118,8 +113,4 @@ class TestStatisticsDAO:
                 parsed_data_id=parsed_data_item_id,
             )
             assert statistic_item.successfull is True
-            await StatisticsDAO.cancel_success(parsed_data_item_id)
-            statistic_item = await StatisticsDAO.find_one_or_none(
-                parsed_data_id=parsed_data_item_id,
-            )
-            assert statistic_item.successfull is False
+            assert statistic_item.skipped is False

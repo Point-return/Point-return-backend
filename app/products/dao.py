@@ -107,6 +107,7 @@ class ParsedProductDealerDAO(BaseDAO):
                     ),
                 )
                 .filter(cls.model.dealer_id == dealer_id)
+                .order_by(cls.model.id)
                 .offset(offset)
                 .limit(limit)
             )
@@ -164,19 +165,7 @@ class StatisticsDAO(BaseDAO):
             query = (
                 sa.update(cls.model)
                 .where(cls.model.parsed_data_id == dealerprice_id)
-                .values(successfull=True)
-            )
-            await session.execute(query)
-            await session.commit()
-
-    @classmethod
-    async def cancel_success(cls, dealerprice_id: int) -> None:
-        """Update success value to False."""
-        async with async_session_maker() as session:
-            query = (
-                sa.update(cls.model)
-                .where(cls.model.parsed_data_id == dealerprice_id)
-                .values(successfull=False)
+                .values(successfull=True, skipped=False)
             )
             await session.execute(query)
             await session.commit()
@@ -211,10 +200,10 @@ class StatisticsDAO(BaseDAO):
             skipped = query_skipped.scalar_one_or_none()
             try:
                 percent = (
-                    f'{round(successfull /(successfull + skipped) * 100)}%'
+                    f'{round(successfull /(successfull + skipped) * 100)}'
                 )
             except ZeroDivisionError:
-                percent = 'Unknown'
+                percent = '-'
             response = {
                 'QuantitySuccessfull': successfull,
                 'QuantitySkipped': skipped,
@@ -258,25 +247,13 @@ class StatisticsDAO(BaseDAO):
             skipped = query_skipped.scalar_one_or_none()
             try:
                 percent = (
-                    f'{round(successfull /(successfull + skipped) * 100)}%'
+                    f'{round(successfull /(successfull + skipped) * 100)}'
                 )
             except ZeroDivisionError:
-                percent = 'Unknown'
+                percent = '-'
             response = {
                 'QuantitySuccessfull': successfull,
                 'QuantitySkipped': skipped,
                 'percent': percent,
             }
             return response
-
-    @classmethod
-    async def cancel_skip(cls, dealerprice_id: int) -> None:
-        """Update skipped value to False."""
-        async with async_session_maker() as session:
-            query = (
-                sa.update(cls.model)
-                .where(cls.model.parsed_data_id == dealerprice_id)
-                .values(skipped=False)
-            )
-            await session.execute(query)
-            await session.commit()

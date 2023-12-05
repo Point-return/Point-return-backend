@@ -105,7 +105,7 @@ class ParsedProductDealer(Base):
 
     id = Column(Integer, primary_key=True)
     product_key = Column(Integer, ForeignKey('marketing_productdealerkey.key'))
-    price = Column(Float, nullable=False)
+    price = Column(Float)
     product_url = Column(String)
     product_name = Column(String, nullable=False)
     date = Column(Date, nullable=False)

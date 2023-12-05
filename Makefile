@@ -68,7 +68,7 @@ style:
 secret-key:
 	@$(PYTHON) app/core/commands/generate_key.py
 
-# data import
+# data
 
 products:
 	@PYTHONPATH=$(current_dir) $(PYTHON) app/products/commands/import_products.py
@@ -83,11 +83,13 @@ parsed-data:
 	@PYTHONPATH=$(current_dir) $(PYTHON) app/products/commands/import_parsed_data.py
 
 import:
-	@make products
 	@make dealers
+	@make products
 	@make product-dealer
 	@make parsed-data
 
+drop:
+	@PYTHONPATH=$(current_dir) $(PYTHON) app/core/commands/drop_database.py
 # testing
 
 test:

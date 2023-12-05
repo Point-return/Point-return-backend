@@ -1,4 +1,4 @@
-from typing import Any, Generic, TypeVar
+from typing import Any, Dict, Generic, List, TypeVar
 
 from sqlalchemy import delete, insert, select
 
@@ -32,7 +32,7 @@ class BaseDAO(Generic[Model]):
             return result.scalar_one_or_none()
 
     @classmethod
-    async def find_all(cls) -> Model:
+    async def find_all(cls) -> List[Model]:
         """Find all objects of this model in the database.
 
         Returns:
@@ -72,6 +72,32 @@ class BaseDAO(Generic[Model]):
             query = insert(cls.model).values(**data)
             await session.execute(query)
             await session.commit()
+
+    @classmethod
+    async def create_many(cls, values: List[Dict[str, Any]]) -> None:
+        """Create many objects in the database using provided values.
+
+        Args:
+            values: provided list of values.
+        """
+        if not values:
+            return None
+        async with async_session_maker() as session:
+            query = insert(cls.model).values(values)
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def get_ids(cls) -> List[int]:
+        """Find all objects of this model in the database.
+
+        Returns:
+            All objects of this type from the database.
+        """
+        async with async_session_maker() as session:
+            query = select(cls.model.id)
+            result = await session.execute(query)
+            return result.scalars().all()
 
     @classmethod
     async def delete(

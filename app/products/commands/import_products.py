@@ -1,5 +1,7 @@
-import csv
 import sys
+
+import pandas as pd
+from numpy import nan
 
 from app.config import DATA_IMPORT_LOCATION, CSVFilenames, logger
 from app.core.utils import (
@@ -12,56 +14,33 @@ from app.products.dao import ProductDAO
 async def import_products() -> None:
     """Import products."""
     logger.debug(
-        'Imports product data from: ' f'{DATA_IMPORT_LOCATION}',
+        'Importing product data from: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.products}.csv',
         'r',
         encoding='utf-8-sig',
     ) as csv_file:
-        counter = 0
-        data = csv.reader(csv_file, delimiter=';')
-        next(data)
-        for (
-            _,
-            id,
-            article,
-            ean_13,
-            name,
-            cost,
-            recommended_price,
-            category_id,
-            ozon_name,
-            name_1c,
-            wb_name,
-            ozon_article,
-            wb_article,
-            ym_article,
-            wb_article_td,
-        ) in data:
-            existing_product = await ProductDAO.find_by_id(int(id))
-            if not existing_product:
-                await ProductDAO.create(
-                    id=int(id),
-                    article=article,
-                    ean_13=convert_to_float_and_truncate(ean_13),
-                    name=name,
-                    cost=convert_string_to_float(cost),
-                    recommended_price=convert_string_to_float(
-                        recommended_price,
-                    ),
-                    category_id=convert_to_float_and_truncate(category_id),
-                    ozon_name=ozon_name,
-                    name_1c=name_1c,
-                    wb_name=wb_name,
-                    ozon_article=convert_to_float_and_truncate(ozon_article),
-                    wb_article=convert_to_float_and_truncate(wb_article),
-                    ym_article=ym_article,
-                    wb_article_td=wb_article_td,
-                )
-                counter += 1
+        data = pd.read_csv(
+            csv_file,
+            delimiter=';',
+            index_col=0,
+            na_filter=False,
+        )
+        data.replace({nan: None}, inplace=True)
+        for column in ['ean_13', 'category_id', 'ozon_article', 'wb_article']:
+            data[column] = data[column].apply(convert_to_float_and_truncate)
+        for column in ['cost', 'recommended_price']:
+            data[column] = data[column].apply(convert_string_to_float)
+        data.replace({nan: None}, inplace=True)
+        existing_products_ids = await ProductDAO.get_ids()
+        for index, row in data.iterrows():
+            if row['id'] in existing_products_ids:
+                data.drop(index, inplace=True)
+        new_number = len(data.index)
+        await ProductDAO.create_many(data.to_dict('records'))
         logger.debug(
-            f'Import completed, {counter} products imported',
+            f'Import completed, {new_number} products imported',
         )
 
 
