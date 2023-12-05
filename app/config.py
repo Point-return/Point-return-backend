@@ -1,15 +1,19 @@
 import logging
 from logging.config import dictConfig
 from pathlib import Path
+from typing import Any, Dict
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Literal
 
 BASE_DIR = Path(__file__).resolve().parent
 
 
 class Settings(BaseSettings):
-    """Настройки проекта."""
+    """Project Settings."""
+
+    model_config = SettingsConfigDict(env_file='.env', extra='allow')
 
     MODE: Literal['DEV', 'TEST', 'PROD']
 
@@ -22,10 +26,10 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL(cls) -> str:
-        """Создание URL для базы данных в зависимости от .env файла.
+        """Creating a URL for a database depending on the .env file.
 
         Returns:
-            URL базы данных.
+            Database URL.
         """
         return (
             f'{cls.DB_ENG}+asyncpg://{cls.PG_USER}:'
@@ -42,10 +46,10 @@ class Settings(BaseSettings):
 
     @property
     def TEST_DATABASE_URL(cls) -> str:
-        """Создание URL для базы данных в зависимости от .env файла.
+        """Creating a URL for a database depending on the .env file.
 
         Returns:
-            URL базы данных.
+            Database URL.
         """
         return (
             f'{cls.TEST_DB_ENG}+asyncpg://{cls.TEST_PG_USER}:'
@@ -56,19 +60,16 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
 
-    class Config:
-        env_file = '.env'
-
 
 settings = Settings()
 
 API_URL = '/api/v1'
-TOKEN_NAME = 'points_access_token'
+TOKEN_NAME = 'access_token'
 DATA_IMPORT_LOCATION = str(BASE_DIR / 'data')
 
 
 class CSVFilenames:
-    """Названия файлов с тестовыми данными."""
+    """Names of files with test data."""
 
     products: str = 'marketing_product'
     dealers: str = 'marketing_dealer'
@@ -77,7 +78,7 @@ class CSVFilenames:
 
 
 class Roles:
-    """Используемые в проекте роли."""
+    """Roles used in the project."""
 
     user: str = 'user'
     admin: str = 'admin'
@@ -87,32 +88,32 @@ LOGGER_NAME = 'point_logger'
 
 
 class LoggingConfig(BaseModel):
-    """Конфигурация логирования."""
+    """Logging configuration."""
 
     LOGGER_NAME: str = LOGGER_NAME
     LOG_FORMAT: str = '%(levelprefix)s | %(asctime)s | %(message)s'
     LOG_LEVEL: str = 'DEBUG'
 
-    version = 1
-    disable_existing_loggers = False
-    formatters = {
+    version: int = 1
+    disable_existing_loggers: bool = False
+    formatters: Dict[str, Dict[str, str]] = {
         'default': {
             '()': 'uvicorn.logging.DefaultFormatter',
             'fmt': LOG_FORMAT,
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
     }
-    handlers = {
+    handlers: Dict[str, Dict[str, str]] = {
         'default': {
             'formatter': 'default',
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stderr',
         },
     }
-    loggers = {
+    loggers: Dict[str, Dict[str, Any]] = {
         LOGGER_NAME: {'handlers': ['default'], 'level': LOG_LEVEL},
     }
 
 
-dictConfig(LoggingConfig().dict())
+dictConfig(LoggingConfig().model_dump())
 logger = logging.getLogger(LOGGER_NAME)

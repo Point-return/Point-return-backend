@@ -2,40 +2,40 @@ from fastapi import HTTPException, status
 
 UserNameAlreadyExistsException = HTTPException(
     status_code=status.HTTP_409_CONFLICT,
-    detail='Пользователь с таким именем уже существует',
+    detail='A user with the same name already exists',
 )
 
 UserEmailAlreadyExistsException = HTTPException(
     status_code=status.HTTP_409_CONFLICT,
-    detail='Пользователь с такой почтой уже существует',
+    detail='A user with this email already exists',
 )
 
 InvalidCredentialsException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail='Неверные данные',
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail='Wrong data',
 )
 
 NoTokenException = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='Токен не предоставлен',
+    detail='Token not provided',
 )
 
 WrongTokenException = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='Неверный токен',
+    detail='Invalid token',
 )
 
 TokenExpiredException = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='Токен истек',
+    detail='Token has expired',
 )
 
 UserInfoNotFoundException = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='Данные из токена отсутствуют',
+    detail='No data from token',
 )
 
 WrongUserInfoException = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='Данные из токена неверны',
+    detail='Token data is incorrect',
 )

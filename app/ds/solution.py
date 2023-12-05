@@ -1,7 +1,6 @@
 import pandas as pd
 from fuzzywuzzy import fuzz
 
-from app.config import logger
 from app.products.dao import ProductDAO
 
 
@@ -61,7 +60,6 @@ async def get_solution(
         reverse=True,
     )
     last_index = length if length < len(solution) else len(solution)
-    logger.debug(solution[0:last_index])
 
     return solution[0:last_index]
 

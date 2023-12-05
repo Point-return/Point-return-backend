@@ -4,7 +4,7 @@ from app.core.models import Base
 
 
 class User(Base):
-    """Модель пользователя."""
+    """User model."""
 
     __tablename__ = 'users'
 
@@ -15,9 +15,9 @@ class User(Base):
     role = Column(String, nullable=False)
 
     def __repr__(self) -> str:
-        """Функция для представления модели пользователя.
+        """Represent the user model.
 
         Returns:
-            Строку с именем пользователя.
+            Username string.
         """
         return f'User {self.username}'

@@ -3,13 +3,13 @@ from typing import Optional
 
 
 def convert_string_to_float(string: str) -> Optional[float]:
-    """Функция для преобразования строки в float.
+    """Transform string to float.
 
     Args:
-        string: передаваемая строка.
+        string: passed string.
 
     Returns:
-        Число с плавающей запятой или None, если строка пустая.
+        Floating point number or None if string is empty.
     """
     if not string:
         return None
@@ -17,13 +17,13 @@ def convert_string_to_float(string: str) -> Optional[float]:
 
 
 def convert_to_float_and_truncate(string: str) -> Optional[int]:
-    """Функция для преобразования строки в int с отбросанной дробной частью.
+    """Transform a string to an int with the fractional part removed.
 
     Args:
-        string: передаваемая строка.
+        string: passed string.
 
     Returns:
-        Целое число с отбросанной дробной частью или None, если строка пустая.
+        Integer with fractional part removed, or None if string is empty.
     """
     if not string:
         return None

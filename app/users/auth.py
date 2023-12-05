@@ -13,38 +13,38 @@ pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
 def get_password_hash(password: str) -> str:
-    """Хэширование пароля.
+    """Password Hashing.
 
     Args:
-        passworg: пароль.
+        password: password.
 
     Returns:
-        Хэшированный пароль.
+        Hashed password.
     """
     return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Проверка пароля.
+    """Password verification.
 
     Args:
-        plain_password: введённый пароль.
-        hashed_password: хэшированный пароль.
+        plain_password: entered password.
+        hashed_password: hashed password.
 
     Returns:
-        Соответствие паролей.
+        Password matching.
     """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def create_access_token(data: Dict[str, Any]) -> str:
-    """Создание токена авторизации.
+    """Create an Authorization Token.
 
     Args:
-        data: данные для создания токена.
+        data: data for creating a token.
 
     Returns:
-        Токен авторизации.
+        Authorization token.
     """
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(days=30)
@@ -58,14 +58,14 @@ def create_access_token(data: Dict[str, Any]) -> str:
 
 
 async def authenticate_user(email: EmailStr, password: str) -> Optional[User]:
-    """Авторизация пользователя.
+    """User authorization.
 
     Args:
-        email: email пользователя.
-        password: пароль пользователя.
+        email: user email.
+        password: user password.
 
     Returns:
-        Объект пользователя из базы данных или None.
+        User object from database or None.
     """
     user = await UserDAO.find_one_or_none(email=email)
     if user and verify_password(password, user.password):
@@ -77,14 +77,14 @@ async def authenticate_user_by_username(
     username: str,
     password: str,
 ) -> Optional[User]:
-    """Авторизация пользователя по имени.
+    """User authorization by name.
 
     Args:
-        username: имя пользователя.
-        password: пароль пользователя.
+        username: Username.
+        password: user password.
 
     Returns:
-        Объект пользователя из базы данных или None.
+        User object from database or None.
     """
     user = await UserDAO.find_one_or_none(username=username)
     if user and verify_password(password, user.password):

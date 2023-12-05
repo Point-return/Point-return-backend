@@ -10,9 +10,9 @@ from app.products.dao import ProductDAO
 
 
 async def import_products() -> None:
-    """Функция для импорта продуктов."""
+    """Import products."""
     logger.debug(
-        'Импортируются данные продуктов из: ' f'{DATA_IMPORT_LOCATION}',
+        'Importing product data from: ' f'{DATA_IMPORT_LOCATION}',
     )
     with open(
         f'{DATA_IMPORT_LOCATION}/{CSVFilenames.products}.csv',
@@ -61,7 +61,7 @@ async def import_products() -> None:
                 )
                 counter += 1
         logger.debug(
-            f'Импорт завершён, импортировано {counter} продуктов',
+            f'Import completed, {counter} products imported',
         )
 
 

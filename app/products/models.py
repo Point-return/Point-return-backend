@@ -1,5 +1,6 @@
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Column,
     Date,
     Float,
@@ -13,7 +14,7 @@ from app.core.models import Base
 
 
 class Dealer(Base):
-    """Модель дилера."""
+    """Dealer model."""
 
     __tablename__ = 'marketing_dealer'
 
@@ -24,16 +25,16 @@ class Dealer(Base):
     parsed_data = relationship('ParsedProductDealer', back_populates='dealer')
 
     def __repr__(self) -> str:
-        """Функция для представления модели дилера.
+        """Represent dealer model.
 
         Returns:
-            Строку с именем дилера.
+            Line with dealer name.
         """
-        return f'Дилер {self.name}'
+        return f'Dealer {self.name}'
 
 
 class Product(Base):
-    """Модель продукта."""
+    """Product model."""
 
     __tablename__ = 'marketing_product'
 
@@ -55,21 +56,21 @@ class Product(Base):
     product_dealer = relationship('ProductDealer', back_populates='product')
 
     def __repr__(self) -> str:
-        """Функция для представления модели продукта.
+        """Represent the product model.
 
         Returns:
-            Строку с названием продукта.
+            Product name line.
         """
-        return f'Продукт {self.name}'
+        return f'Product {self.name}'
 
 
 class ProductDealer(Base):
-    """Модель связи дилера и продукта по ключу."""
+    """Model of connection between dealer and product by key."""
 
     __tablename__ = 'marketing_productdealerkey'
 
     id = Column(Integer, primary_key=True)
-    key = Column(String, unique=True, nullable=False)
+    key = Column(Integer, unique=True, nullable=False)
     dealer_id = Column(
         Integer,
         ForeignKey('marketing_dealer.id'),
@@ -89,21 +90,21 @@ class ProductDealer(Base):
     dealer = relationship('Dealer', back_populates='product_dealer')
 
     def __repr__(self) -> str:
-        """Функция для представления модели связки продукт-дилер.
+        """Represent the product-dealer linkage model.
 
         Returns:
-            Строку с ключом связки продукт-дилер.
+            String with product-dealer link key.
         """
-        return f'Продукт {self.product_id} от дилера {self.dealer_id}'
+        return f'Product {self.product_id} from the dealer {self.dealer_id}'
 
 
 class ParsedProductDealer(Base):
-    """Модель данных парсинга."""
+    """Parsing data model."""
 
     __tablename__ = 'marketing_dealerprice'
 
     id = Column(Integer, primary_key=True)
-    product_key = Column(String, ForeignKey('marketing_productdealerkey.key'))
+    product_key = Column(Integer, ForeignKey('marketing_productdealerkey.key'))
     price = Column(Float, nullable=False)
     product_url = Column(String)
     product_name = Column(String, nullable=False)
@@ -119,11 +120,41 @@ class ParsedProductDealer(Base):
         back_populates='parsed_data',
     )
     dealer = relationship('Dealer', back_populates='parsed_data')
+    statistics = relationship('Statistics', back_populates='parsed_data')
 
     def __repr__(self) -> str:
-        """Функция для представления модели данных парсинга.
+        """Represent the parsing data model.
 
         Returns:
-            Строку с ключом продукта парсинга.
+            String with the parsing data item id.
         """
-        return f'Данные парсинга {self.product_key}'
+        return f'Parsing data {self.id}'
+
+
+class Statistics(Base):
+    """Parsing statistics data model."""
+
+    __tablename__ = 'marketing_statistics'
+
+    id = Column(Integer, primary_key=True)
+    parsed_data_id = Column(
+        Integer,
+        ForeignKey('marketing_dealerprice.id'),
+        unique=True,
+        nullable=False,
+    )
+    skipped = Column(Boolean, nullable=False, default=False)
+    successfull = Column(Boolean, nullable=False, default=False)
+
+    parsed_data = relationship(
+        'ParsedProductDealer',
+        back_populates='statistics',
+    )
+
+    def __repr__(self) -> str:
+        """Represent the statistics model.
+
+        Returns:
+            String with the parsing product id.
+        """
+        return f'Statistics of parsed data {self.parsed_data_id}'

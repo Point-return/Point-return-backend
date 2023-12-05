@@ -1,13 +1,13 @@
 from datetime import date as datetype
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.core.schemas import to_snake_case
 
 
-class ProductSchema(BaseModel):
-    """Схема продукта."""
+class ProductValidationSchema(BaseModel):
+    """Product validation schema."""
 
     id: int
     article: str
@@ -24,16 +24,21 @@ class ProductSchema(BaseModel):
     ymArticle: Optional[str]
     wbArticleTd: Optional[str]
 
-    class Config:
-        orm_mode = True
-        alias_generator = to_snake_case
+
+class ProductSchema(ProductValidationSchema):
+    """Product schema."""
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_snake_case,
+    )
 
 
 class ParsedProductValidationSchema(BaseModel):
-    """Схема данных парсинга."""
+    """Parsing data validation schema."""
 
     id: int
-    productKey: Optional[str]
+    productKey: Optional[int]
     price: float
     productUrl: Optional[str]
     productName: str
@@ -42,15 +47,16 @@ class ParsedProductValidationSchema(BaseModel):
 
 
 class ParsedProductSchema(ParsedProductValidationSchema):
-    """Схема данных парсинга."""
+    """Parsing data schema."""
 
-    class Config:
-        orm_mode = True
-        alias_generator = to_snake_case
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_snake_case,
+    )
 
 
 class MenuValidationSchema(BaseModel):
-    """Схема меню данных парсинга."""
+    """Parsing data menu validation schema."""
 
     items: List[ParsedProductValidationSchema]
     page: int
@@ -59,26 +65,27 @@ class MenuValidationSchema(BaseModel):
 
 
 class MenuSchema(MenuValidationSchema):
-    """Схема меню данных парсинга."""
+    """Parsing data menu schema."""
+
+    model_config = ConfigDict(alias_generator=to_snake_case)
 
     items: List[ParsedProductSchema]  # type: ignore[assignment]
 
-    class Config:
-        alias_generator = to_snake_case
-
 
 class DealerSchema(BaseModel):
-    """Схема дилера."""
+    """Dealer schema."""
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_snake_case,
+    )
 
     id: int
     name: str
 
-    class Config:
-        orm_mode = True
-
 
 class RecomendationValidationSchema(BaseModel):
-    """Схема рекомендуемого варианта."""
+    """Validation schema of the recommended option."""
 
     id: int
     productName: str
@@ -86,43 +93,14 @@ class RecomendationValidationSchema(BaseModel):
 
 
 class RecomendationSchema(RecomendationValidationSchema):
-    """Схема рекомендуемого варианта."""
+    """Schema of the recommended option."""
 
-    class Config:
-        alias_generator = to_snake_case
-
-
-class ProductDealerKeySchema(BaseModel):
-    """Модель связки продуктов."""
-
-    id: int
-    product_key: str
-    product_name: str
-    dealer_id: int
+    model_config = ConfigDict(alias_generator=to_snake_case)
 
 
-class UpdateParsedProductSchema(BaseModel):
-    """Схема данных парсинга."""
+class StatisticsSchema(BaseModel):
+    """Statistic schema."""
 
-    id: int
-    productKey: Optional[str]
-    productName: str
-    dealerId: int
-
-
-class UpdateProductDealerKey(BaseModel):
-    """Модель для добавления связки продуктов."""
-
-    msg: str
-    newParsedProduct: List[UpdateParsedProductSchema]
-    newProductDealer: List[ProductDealerKeySchema]
-
-
-class UpdateSchema(UpdateProductDealerKey):
-    """Схема обновленных данных парсинга."""
-
-    newParsedProduct: List[UpdateParsedProductSchema]
-    newProductDealer: List[ProductDealerKeySchema]
-
-    class Config:
-        alias_generator = to_snake_case
+    QuantitySuccessfull: int
+    QuantitySkipped: int
+    percent: str

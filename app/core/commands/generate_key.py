@@ -2,12 +2,14 @@ from base64 import b64encode
 from secrets import token_bytes
 from random import randint
 
+from app.config import logger
+
 
 def generate_secret_key() -> str:
-    """Функция для создания секретного ключа.
+    """Create a secret key.
 
     Returns:
-        Пример случайного секретного ключа.
+        An example of a random secret key.
     """
     return b64encode(token_bytes(32)).decode()
 
@@ -18,4 +20,4 @@ def create_code() -> str:
 
 
 if __name__ == '__main__':
-    print(generate_secret_key())  # noqa: T201
+    logger.debug(generate_secret_key())

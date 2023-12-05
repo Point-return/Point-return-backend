@@ -15,28 +15,28 @@ from app.users.exceptions import (
     UserNameAlreadyExistsException,
 )
 from app.users.models import User
-from app.users.schemas import TokenSchema, UserAuth, UserSafe
+from app.users.schemas import TokenSchema, UserLogin, UserRegister, UserSafe
 
 router_users = APIRouter(
     prefix='/users',
-    tags=['Пользователи'],
+    tags=['Users'],
 )
 
 router_auth = APIRouter(
     prefix='/auth',
-    tags=['Авторизация'],
+    tags=['Authorization'],
 )
 
 
 @router_auth.post('/register')
-async def register_user(user_data: UserAuth) -> EmptySchema:
-    """Регистрация пользователя.
+async def register_user(user_data: UserRegister) -> EmptySchema:
+    """User registration.
 
     Args:
-        user_data: переданные данные пользователя.
+        user_data: transferred user data.
 
     Raises:
-        HTTPException 500: если пользователь уже существует.
+        HTTPException 500: if the user already exists.
     """
     existing_user_email = await UserDAO.find_one_or_none(email=user_data.email)
     if existing_user_email:
@@ -59,16 +59,17 @@ async def register_user(user_data: UserAuth) -> EmptySchema:
 @router_auth.post('/login')
 async def login_user(
     response: Response,
-    user_data: UserAuth,
+    user_data: UserLogin,
 ) -> TokenSchema:
-    """Вход пользователя.
+    """User Login.
 
     Args:
-        response: передаваемый ответ.
-        user_data: данные пользователя.
+        response: transmitted response.
+        user_data: user data.
 
     Raises:
-        HTTPException 401: пользователь не зарегистрирован или пароль неверен.
+        HTTPException 401: the user is not registered
+        or the password is incorrect.
     """
     user = await authenticate_user(user_data.email, user_data.password)
     if not user:
@@ -80,10 +81,10 @@ async def login_user(
 
 @router_auth.post('/logout')
 async def logout_user(response: Response) -> EmptySchema:
-    """Вход пользователя.
+    """User logout.
 
     Args:
-        response: передаваемый ответ.
+        response: transmitted response.
     """
     response.delete_cookie(TOKEN_NAME)
     return EmptySchema()
@@ -93,13 +94,13 @@ async def logout_user(response: Response) -> EmptySchema:
 async def read_users_me(
     current_user: User = Depends(get_current_user),
 ) -> UserSafe:
-    """Данные текущего пользователя.
+    """Get current user info.
 
     Args:
-        current_user: текущий пользователь.
+        current_user: current user.
 
     Returns:
-        Информация о текущем пользователе.
+        Current user information.
     """
     return UserSafe(
         email=current_user.email,
