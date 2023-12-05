@@ -52,7 +52,7 @@ async def dealer_products(
 ) -> MenuValidationSchema:
     """Get information about all dealer's products.
 
-    Args:
+        Args:
         dealer_id: id of selected dealer.
         size: amount of objects on page.
         page: page number.
@@ -195,14 +195,34 @@ async def add_skipped(dealerprice_id: int) -> EmptySchema:
 
 
 @router_v1.get('/statistics')
-async def general_static() -> StatisticsSchema:
+async def general_static(
+    year_from: int = 1900,
+    month_from: int = 1,
+    day_from: int = 1,
+    year_to: int = 2100,
+    month_to: int = 1,
+    day_to: int = 1,
+) -> StatisticsSchema:
     """Get statistics for all dealers.
+
+        Args:
+        year_from: minimum year of parsing.
+        month_from: minimum month of parsing.
+        day_from: minimum day of parsing.
+        year_to: maximum year of parsing.
+        month_to: maximum month of parsing.
+        day_to: maximum day of parsing.
 
     Returns:
         All statistics information.
     """
+    date_from = datetime(int(year_from), int(month_from), int(day_from))
+    date_to = datetime(int(year_to), int(month_to), int(day_to))
     return StatisticsSchema.model_validate(
-        await StatisticsDAO.get_general_stat(),
+        await StatisticsDAO.get_general_stat(
+            date_from,
+            date_to,
+        ),
     )
 
 
@@ -218,7 +238,7 @@ async def dealer_static(
 ) -> StatisticsSchema:
     """Get dealer statistics.
 
-    Args:
+        Args:
         dealer_id: id of dealer.
         year_from: minimum year of parsing.
         month_from: minimum month of parsing.
