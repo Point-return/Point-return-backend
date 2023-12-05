@@ -1,0 +1,27 @@
+# Virtual environement
+venv
+.env
+
+# Testing
+.coverage
+app/tests/
+**/conftest.py
+requirements-test.txt
+
+# Data, information and configuration
+*.md
+*.cfg
+requirements-style.txt
+
+# Cache
+.mypy_cache
+.pytest_cache
+**/__pycache__
+**/*.pyc
+.git
+.gitignore
+.idea
+.vscode
+
+#migrations
+app/migrations/versions/*

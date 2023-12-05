@@ -1,0 +1,20 @@
+version: '3'
+
+volumes:
+  pg_data:
+
+services:
+  db:
+    image: postgres:13.10
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  backend:
+    build: ./
+    env_file: .env
+    depends_on:
+      - db
+    command: ["app/docker/app.sh"]
+    ports:
+      - 8000:8000
+
