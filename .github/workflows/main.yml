@@ -69,8 +69,11 @@ jobs:
     needs: backend_tests
     strategy:
       matrix:
-        name: [backend, gateway]
-        directory: [./, ./gateway/]
+        include:
+          - name: backend
+            directory: ./
+          - name: gateway
+            directory: ./gateway/
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
