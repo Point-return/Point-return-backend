@@ -262,3 +262,8 @@ Documentation for endpoints when running locally is located at: http://127.0.0.1
 - :white_check_mark: [Aigerim Tokhmetova](https://github.com/moonkerimka)
 - :white_check_mark: [Aleksandr Filippov](https://github.com/AlexFee1)
 - :white_check_mark: [Evgeniy Bessonov](https://github.com/evgeniy-yandex)
+
+### Links to archives:
+
+- :white_check_mark: [Link to code from the main repository](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
+- :white_check_mark: [Link to screen Swagger UI](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
