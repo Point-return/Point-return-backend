@@ -1,13 +1,16 @@
-from datetime import datetime
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.api.v1.exceptions import (
+    DateError,
     DealerNotFound,
     ParsedDataNotFound,
     ProductDealerNotFound,
     ProductNotFound,
+)
+from app.users.exceptions import (
+    InvalidCredentialsException,
 )
 from app.api.v1.schemas import (
     DealerSchema,
@@ -21,6 +24,7 @@ from app.api.v1.schemas import (
 )
 from app.config import logger
 from app.core.schemas import EmptySchema
+from app.api.v1.date_value import date_val
 from app.ds.solution_v_2 import get_solution
 from app.products.dao import (
     DealerDAO,
@@ -31,6 +35,8 @@ from app.products.dao import (
 )
 from app.products.models import ParsedProductDealer
 from app.products.utils import generate_product_dealer_key
+from app.users.dependencies import get_current_user
+from app.users.models import User
 
 router_v1 = APIRouter(
     prefix='/v1',
@@ -38,44 +44,47 @@ router_v1 = APIRouter(
 )
 
 
-@router_v1.get('/dealer/{dealer_id}')
+@router_v1.get('/dealer/{dealerId}')
 async def dealer_products(
-    dealer_id: int,
+    dealerId: int,
     size: int = 50,
     page: int = 1,
-    year_from: int = 1900,
-    month_from: int = 1,
-    day_from: int = 1,
-    year_to: int = 2100,
-    month_to: int = 1,
-    day_to: int = 1,
+    yearFrom: int = 1900,
+    monthFrom: int = 1,
+    dayFrom: int = 1,
+    yearTo: int = 2100,
+    monthTo: int = 1,
+    dayTo: int = 1,
 ) -> MenuValidationSchema:
     """Get information about all dealer's products.
 
-    Args:
-        dealer_id: id of selected dealer.
+        Args:
+        dealerId: id of selected dealer.
         size: amount of objects on page.
         page: page number.
-        year_from: minimum year of parsing.
-        month_from: minimum month of parsing.
-        day_from: minimum day of parsing.
-        year_to: maximum year of parsing.
-        month_to: maximum month of parsing.
-        day_to: maximum day of parsing.
+        yearFrom: minimum year of parsing.
+        monthFrom: minimum month of parsing.
+        dayFrom: minimum day of parsing.
+        yearTo: maximum year of parsing.
+        monthTo: maximum month of parsing.
+        dayTo: maximum day of parsing.
 
     Returns:
         Parsing data according to parameters.
     """
-    dealer = await DealerDAO.find_by_id(dealer_id)
+    dealer = await DealerDAO.find_by_id(dealerId)
     if not dealer:
         logger.error(DealerNotFound.detail)
         raise DealerNotFound
-    date_from = datetime(int(year_from), int(month_from), int(day_from))
-    date_to = datetime(int(year_to), int(month_to), int(day_to))
+    date_from = date_val(yearFrom, monthFrom, dayFrom)
+    date_to = date_val(yearTo, monthTo, dayTo)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
     return MenuValidationSchema(
         **MenuSchema.model_validate(
             await ParsedProductDealerDAO.product_list(
-                dealer_id=dealer_id,
+                dealer_id=dealerId,
                 limit=size,
                 page=page,
                 date_from=date_from,
@@ -95,9 +104,9 @@ async def get_dealers() -> List[DealerSchema]:
     return await DealerDAO.find_all()
 
 
-@router_v1.get('/recommendations/{dealerprice_id}')
+@router_v1.get('/recommendations/{dealerpriceId}')
 async def get_recommendations(
-    dealerprice_id: int,
+    dealerpriceId: int,
     limit: int = 10,
 ) -> List[RecomendationValidationSchema]:
     """Receive a number of recommendations.
@@ -110,7 +119,7 @@ async def get_recommendations(
         List of recommendation products.
     """
     parsed_data: ParsedProductDealer = await ParsedProductDealerDAO.find_by_id(
-        dealerprice_id,
+        dealerpriceId,
     )
     if not parsed_data:
         logger.error(ParsedDataNotFound.detail)
@@ -124,41 +133,41 @@ async def get_recommendations(
     ]
 
 
-@router_v1.patch('/recommendations/{dealerprice_id}/choose')
+@router_v1.patch('/recommendations/{dealerpriceId}/choose')
 async def add_product_key(
-    dealerprice_id: int,
-    product_id: int,
+    dealerpriceId: int,
+    productId: int,
 ) -> EmptySchema:
     """Choose the product from base.
 
     Args:
-        dealerprice_id: specific parsed pada item id.
-        product_id: choosed product id.
+        dealerpriceId: specific parsed pada item id.
+        productId: choosed product id.
 
     Returns:
         Empty responce.
     """
     parsed_data = await ParsedProductDealerDAO.find_by_id(
-        dealerprice_id,
+        dealerpriceId,
     )
     if not parsed_data:
         logger.error(ParsedDataNotFound.detail)
         raise ParsedDataNotFound
-    product = await ProductDAO.find_by_id(product_id)
+    product = await ProductDAO.find_by_id(productId)
     if not product:
         logger.error(ProductNotFound.detail)
         raise ProductNotFound
     connection = await ProductDealerDAO.find_one_or_none(
         dealer_id=parsed_data.dealer_id,
-        product_id=product_id,
+        product_id=productId,
     )
     if not parsed_data.product_key:
-        await StatisticsDAO.update_success(dealerprice_id)
+        await StatisticsDAO.update_success(dealerpriceId)
     if not connection:
         key = await generate_product_dealer_key()
         await ProductDealerDAO.create(
             dealer_id=parsed_data.dealer_id,
-            product_id=product_id,
+            product_id=productId,
             key=key,
         )
     else:
@@ -166,75 +175,121 @@ async def add_product_key(
             return EmptySchema()
         key = await ProductDealerDAO.get_key(
             dealer_id=parsed_data.dealer_id,
-            product_id=product_id,
+            product_id=productId,
         )
-    await ParsedProductDealerDAO.update_key(id=dealerprice_id, key=key)
+    await ParsedProductDealerDAO.update_key(id=dealerpriceId, key=key)
     return EmptySchema()
 
 
-@router_v1.patch('/recommendations/{dealerprice_id}/skip')
-async def add_skipped(dealerprice_id: int) -> EmptySchema:
+@router_v1.patch('/recommendations/{dealerpriceId}/skip')
+async def add_skipped(dealerpriceId: int) -> EmptySchema:
     """Mark parsing data as skipped.
 
     Args:
-        dealerprice_id: specific parsed pada item id.
+        dealerpriceId: specific parsed pada item id.
 
     Returns:
         Empty responce.
     """
     parsed_data = await ParsedProductDealerDAO.find_by_id(
-        dealerprice_id,
+        dealerpriceId,
     )
     if not parsed_data:
         logger.error(ParsedDataNotFound.detail)
         raise ParsedDataNotFound
     if not parsed_data.product_key:
-        await StatisticsDAO.update_skip(dealerprice_id)
+        await StatisticsDAO.update_skip(dealerpriceId)
     return EmptySchema()
 
 
 @router_v1.get('/statistics')
-async def general_static() -> StatisticsSchema:
+async def general_static(
+    yearFrom: int = 1900,
+    monthFrom: int = 1,
+    dayFrom: int = 1,
+    yearTo: int = 2100,
+    monthTo: int = 1,
+    dayTo: int = 1,
+) -> StatisticsSchema:
     """Get statistics for all dealers.
+
+        Args:
+        yearFrom: minimum year of parsing.
+        monthFrom: minimum month of parsing.
+        dayFrom: minimum day of parsing.
+        yearTo: maximum year of parsing.
+        monthTo: maximum month of parsing.
+        dayTo: maximum day of parsing.
 
     Returns:
         All statistics information.
     """
+    date_from = date_val(yearFrom, monthFrom, dayFrom)
+    date_to = date_val(yearTo, monthTo, dayTo)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
     return StatisticsSchema.model_validate(
-        await StatisticsDAO.get_general_stat(),
+        await StatisticsDAO.get_general_stat(
+            date_from,
+            date_to,
+        ),
     )
 
 
-@router_v1.get('/statistics/{dealer_id}')
-async def dealer_static(dealer_id: int) -> StatisticsSchema:
+@router_v1.get('/statistics/{dealerId}')
+async def dealer_static(
+    dealerId: int,
+    yearFrom: int = 1900,
+    monthFrom: int = 1,
+    dayFrom: int = 1,
+    yearTo: int = 2100,
+    monthTo: int = 1,
+    dayTo: int = 1,
+) -> StatisticsSchema:
     """Get dealer statistics.
 
-    Args:
-        dealer_id: id of dealer.
+        Args:
+        dealerId: id of dealer.
+        yearFrom: minimum year of parsing.
+        monthFrom: minimum month of parsing.
+        dayFrom: minimum day of parsing.
+        yearTo: maximum year of parsing.
+        monthTo: maximum month of parsing.
+        dayTo: maximum day of parsing.
 
     Returns:
         Statistics corresponding to provided dealer.
     """
-    dealer = await DealerDAO.find_by_id(dealer_id)
+    date_from = date_val(yearFrom, monthFrom, dayFrom)
+    date_to = date_val(yearTo, monthTo, dayTo)
+    if (not date_from) or (not date_to):
+        logger.error(DateError.detail)
+        raise DateError
+    dealer = await DealerDAO.find_by_id(dealerId)
     if not dealer:
         logger.error(DealerNotFound.detail)
         raise DealerNotFound
     return StatisticsSchema.model_validate(
-        await StatisticsDAO.get_dealer_stat(dealer_id),
+        await StatisticsDAO.get_dealer_stat(
+            dealerId,
+            date_from,
+            date_to,
+        ),
     )
 
 
-@router_v1.get('/product/{product_key}')
-async def get_product(product_key: int) -> ProductValidationSchema:
+@router_v1.get('/product/{productKey}')
+async def get_product(productKey: int) -> ProductValidationSchema:
     """Get product information by product-dealer connection key.
 
     Args:
-        product_key: product-dealer connection key.
+        productKey: product-dealer connection key.
 
     Returns:
         Product data.
     """
-    product_dealer = await ProductDealerDAO.find_one_or_none(key=product_key)
+    product_dealer = await ProductDealerDAO.find_one_or_none(key=productKey)
     if not product_dealer:
         logger.error(ProductDealerNotFound.detail)
         raise ProductDealerNotFound
@@ -243,3 +298,17 @@ async def get_product(product_key: int) -> ProductValidationSchema:
             await ProductDAO.find_by_id(product_dealer.product_id),
         ).model_dump(),
     )
+
+
+@router_v1.get('/testToken')
+async def get_testLogin(
+    user: User = Depends(get_current_user),
+) -> List[DealerSchema]:
+    """Get all dealers.
+
+    Returns:
+        All dealers data.
+    """
+    if not user:
+        raise InvalidCredentialsException
+    return await DealerDAO.find_all()

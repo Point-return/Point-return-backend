@@ -102,7 +102,4 @@ async def read_users_me(
     Returns:
         Current user information.
     """
-    return UserSafe(
-        email=current_user.email,
-        username=current_user.username,
-    )
+    return await current_user
