@@ -10,20 +10,18 @@ env:
   POSTGRES_PASSWORD: postgres
   POSTGRES_DB: postgres
   DB_HOST: 127.0.0.1
-  DB_PORT: 5432
   MODE: DEV
   DB_ENG: postgresql
   DB_PORT: 5432
   PG_PASS: postgres
   PG_USER: postgres
   DB_NAME: postgres
-  DB_HOST: db
   TEST_DB_PORT: 5432
   TEST_PG_PASS: postgres
   TEST_PG_USER: postgres
   TEST_DB_ENG: postgresql
   TEST_DB_NAME: postgres
-  TEST_DB_HOST: db
+  TEST_DB_HOST: 127.0.0.1
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   ALGORITHM: ${{ secrets.ALGORITHM }}
 
