@@ -17,10 +17,13 @@ services:
       - db
     build:
       context: .
+      dockerfile: Dockerfile
     env_file: deploy.env
     command: ["bash", "./app/docker/app.sh"]
 
   gateway:
-    build: ./gateway/
+    build: 
+      context: ./gateway/
+      dockerfile: Dockerfile
     ports:
       - 8000:80

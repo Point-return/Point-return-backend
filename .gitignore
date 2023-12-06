@@ -120,11 +120,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-<<<<<<< HEAD
 *.env
-=======
-.env
->>>>>>> dev
 .venv
 env/
 venv/
@@ -180,3 +176,4 @@ media/
 versions/*
 !env.py
 *.csv
+frontend

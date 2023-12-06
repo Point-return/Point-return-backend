@@ -29,3 +29,4 @@ app/migrations/versions/*.py
 
 #compose
 *.yml
+frontend
