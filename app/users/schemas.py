@@ -30,6 +30,7 @@ class UserSafe(BaseModel):
         alias_generator=to_snake_case,
     )
 
+    id: int
     email: EmailStr
     username: str
 

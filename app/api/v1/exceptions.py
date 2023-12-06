@@ -19,3 +19,7 @@ ProductDealerNotFound = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
     detail='Product-dealer connection not found',
 )
+DateError = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND,
+    detail='Invalid date!',
+)

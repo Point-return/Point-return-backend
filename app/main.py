@@ -24,12 +24,31 @@ app.include_router(router_v1, prefix='/api')
 app.include_router(router_auth)
 app.include_router(router_users)
 
+origins = [
+    'http://localhost:3000',
+    'http://localhost:5000',
+    'http://localhost:5173',
+    'http://localhost:8000',
+    'http://81.31.246.3:3000',
+    'http://81.31.246.3:5000',
+    'http://81.31.246.3:5173',
+    'http://81.31.246.3:8000',
+    'https://81.31.246.3:3000',
+    'https://81.31.246.3:5000',
+    'https://81.31.246.3:5173',
+    'https://81.31.246.3:8000',
+    'https://point-return.sytes.net',
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'OPTIONS', 'DELETE', 'PATCH', 'PUT'],
-    allow_headers=['*'],
+    allow_headers=['Content-Type', 'Set-Cookie',
+                   'Access-Control-Allow-Headers',
+                   'Access-Control-Allow-Origin',
+                   'Authorization'],
 )
 
 admin = Admin(app, engine, authentication_backend=authentication_backend)
@@ -39,9 +58,3 @@ admin.add_view(ProductDealerAdmin)
 admin.add_view(ParsedProductDealerAdmin)
 admin.add_view(UserAdmin)
 admin.add_view(StatisticsAdmin)
-
-
-@app.get('/')
-def index() -> str:
-    """Test function."""
-    return 'Hello'

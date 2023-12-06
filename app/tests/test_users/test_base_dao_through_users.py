@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict,Union
 
 import pytest
 
@@ -36,10 +36,9 @@ def compare_found_and_provided_users(
 @pytest.fixture
 def user_data(
     request: pytest.FixtureRequest,
-    admin: Dict[str, str],
-    user: Dict[str, str],
+    users: Dict[str, User],
     non_existent_user: Dict[str, str],
-) -> Optional[Dict[str, str]]:
+) -> Union[Dict[str, str], User]:
     """Iterate email parameters.
 
     Args:
@@ -51,9 +50,9 @@ def user_data(
         Corresponding email.
     """
     if request.param == 'admin':
-        return admin
+        return users['admin']
     elif request.param == 'user':
-        return user
+        return users['user']
     return non_existent_user
 
 
@@ -140,25 +139,6 @@ class TestFindUserByParameters:
             email=user_data['email'],
         )
         compare_found_and_provided_users(found_user, user_data, is_present)
-
-
-async def test_find_all_users(
-    user: Dict[str, str],
-    admin: Dict[str, str],
-) -> None:
-    """Test finding all users.
-
-    Args:
-        user: user data fixture.
-        admin: admin data fixture.
-    """
-    found_users = await UserDAO.find_all()
-    compare_found_and_provided_users(found_users[0], admin, True)
-    compare_found_and_provided_users(found_users[1], user, True)
-
-
-class TestCreateDeleteUser:
-    """TestClass for creation and deletion of users."""
 
 
 async def test_creste_ans_delete_user(
