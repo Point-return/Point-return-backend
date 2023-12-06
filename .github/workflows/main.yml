@@ -89,7 +89,7 @@ jobs:
         with:
           context: ${{ matrix.directory }}
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/point-${{ matrix.name }}:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/point-${{ matrix.name }}
 
   deploy:
     runs-on: ubuntu-latest
