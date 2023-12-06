@@ -10,7 +10,6 @@ requirements-test.txt
 
 # Data, information and configuration
 *.md
-*.cfg
 requirements-style.txt
 gateway
 
