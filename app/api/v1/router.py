@@ -2,15 +2,13 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 
+from app.api.v1.date_value import date_val
 from app.api.v1.exceptions import (
     DateError,
     DealerNotFound,
     ParsedDataNotFound,
     ProductDealerNotFound,
     ProductNotFound,
-)
-from app.users.exceptions import (
-    InvalidCredentialsException,
 )
 from app.api.v1.schemas import (
     DealerSchema,
@@ -24,7 +22,6 @@ from app.api.v1.schemas import (
 )
 from app.config import logger
 from app.core.schemas import EmptySchema
-from app.api.v1.date_value import date_val
 from app.ds.solution_v_2 import get_solution
 from app.products.dao import (
     DealerDAO,
@@ -36,6 +33,7 @@ from app.products.dao import (
 from app.products.models import ParsedProductDealer
 from app.products.utils import generate_product_dealer_key
 from app.users.dependencies import get_current_user
+from app.users.exceptions import InvalidCredentialsException
 from app.users.models import User
 
 router_v1 = APIRouter(

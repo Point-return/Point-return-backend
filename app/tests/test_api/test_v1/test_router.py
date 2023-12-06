@@ -12,7 +12,6 @@ from app.api.v1.router import (
 )
 from app.main import app
 from app.users.router import login_user
-from app.config import logger
 
 
 class TestURLs:
