@@ -24,9 +24,15 @@ app.include_router(router_v1, prefix='/api')
 app.include_router(router_auth)
 app.include_router(router_users)
 
+origins = [
+    'http://localhost:3000',
+    'http://localhost:5000',
+    'http://localhost:5173',
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'OPTIONS', 'DELETE', 'PATCH', 'PUT'],
     allow_headers=['Content-Type', 'Set-Cookie',
@@ -42,9 +48,3 @@ admin.add_view(ProductDealerAdmin)
 admin.add_view(ParsedProductDealerAdmin)
 admin.add_view(UserAdmin)
 admin.add_view(StatisticsAdmin)
-
-
-@app.get('/')
-def index() -> str:
-    """Test function."""
-    return 'Hello'
