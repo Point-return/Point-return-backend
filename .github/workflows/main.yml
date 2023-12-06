@@ -103,7 +103,7 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        password: ${{ secrets.SSH_PASSWORD }}
         source: "docker-compose.production.yml"
         target: "app"
     - name: Executing remote ssh commands to deploy
