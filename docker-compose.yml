@@ -21,6 +21,6 @@ services:
     command: ["bash", "./app/docker/app.sh"]
 
   gateway:
-    build: ../Point-return-gateway/
+    build: ./gateway/
     ports:
       - 8000:80

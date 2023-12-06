@@ -1,5 +1,5 @@
 FROM python:3.11
-WORKDIR /app
+WORKDIR /root/app
 COPY requirements.txt .
 COPY requirements-DS.txt .
 RUN python -m pip install --upgrade pip

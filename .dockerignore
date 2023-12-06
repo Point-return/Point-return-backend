@@ -25,3 +25,6 @@ gateway
 
 #migrations
 app/migrations/versions/*.py
+
+#compose
+*.yml
