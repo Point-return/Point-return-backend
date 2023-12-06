@@ -91,9 +91,41 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/point-${{ matrix.name }}:latest
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: 
+      - build_and_push_to_docker_hub
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    - name: Copy docker-compose.yml via ssh
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        source: "docker-compose.production.yml"
+        target: "app"
+    - name: Executing remote ssh commands to deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd app/
+          sudo docker compose -f docker-compose.production.yml pull
+          sudo docker compose -f docker-compose.production.yml down
+          sudo docker compose -f docker-compose.production.yml up -d
+          make migrations
+          make migrate
+          make import
+
   send_message:
     runs-on: ubuntu-latest
-    needs: build_and_push_to_docker_hub
+    needs: deploy
     steps:
     - name: Send message
       uses: appleboy/telegram-action@master
