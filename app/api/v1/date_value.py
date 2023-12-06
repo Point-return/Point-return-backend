@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import Optional
 
 
 def date_val(
     year: int,
     month: int,
     day: int,
-):
+) -> Optional[datetime]:
     """Program for validation date."""
     if year < 1900:
         year = 1900

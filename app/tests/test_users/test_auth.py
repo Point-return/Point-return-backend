@@ -3,7 +3,6 @@ from typing import Dict, Optional
 import pytest
 from fastapi import status
 from httpx import AsyncClient
-from app.users.models import User
 
 
 @pytest.mark.parametrize(
@@ -60,7 +59,8 @@ async def test_registed_user(
 @pytest.fixture
 def email(
     request: pytest.FixtureRequest,
-    users: Dict[str, User],
+    admin: Dict[str, str],
+    user: Dict[str, str],
 ) -> Optional[str]:
     """Iterate email parameters.
 
@@ -73,9 +73,9 @@ def email(
         Corresponding email.
     """
     if request.param == 'admin':
-        return users['admin'].email
+        return admin['email']
     elif request.param == 'user':
-        return users['user'].email
+        return user['email']
     elif request.param == 'not_existing':
         return 'not_existing@mail.ru'
     elif request.param == 'not_valid':
@@ -86,7 +86,8 @@ def email(
 @pytest.fixture
 def password(
     request: pytest.FixtureRequest,
-    users: Dict[str, User],
+    admin: Dict[str, str],
+    user: Dict[str, str],
 ) -> Optional[str]:
     """Iterate password parameters.
 
@@ -99,9 +100,9 @@ def password(
         Corresponding password.
     """
     if request.param == 'admin':
-        return users['admin'].password
+        return admin['password']
     elif request.param == 'user':
-        return users['user'].password
+        return user['password']
     elif request.param == 'some':
         return 'some_password'
     return None

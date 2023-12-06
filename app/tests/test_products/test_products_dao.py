@@ -1,10 +1,9 @@
 from typing import Any, Dict, List
 
 from app.products.dao import ProductDAO, ProductDealerDAO, StatisticsDAO
-from app.products.models import ParsedProductDealer, Product, Dealer, ProductDealer
 
 
-async def test_get_product_ids_names(products: List[Product]) -> None:
+async def test_get_product_ids_names(products: List[Dict[str, Any]]) -> None:
     """Test getting if and name of each product.
 
     Args:
@@ -14,8 +13,8 @@ async def test_get_product_ids_names(products: List[Product]) -> None:
     for iterator in range(len(ids_names)):
         id_name = ids_names[iterator]
         product = products[iterator]
-        assert id_name['id'] == product.id
-        assert id_name['name'] == product.name
+        assert id_name['id'] == product['id']
+        assert id_name['name'] == product['name']
         assert set(id_name.keys()) == {'id', 'name'}
 
 
@@ -24,27 +23,27 @@ class TestProductDealerKeys:
 
     async def test_get_min_key(
         self,
-        product_dealer: List[ProductDealer],
+        product_dealer: List[Dict[str, Any]],
     ) -> None:
         """Test getting min product-dealer key.
 
         Args:
             product_dealer: pytest fixrute with product-dealer data.
         """
-        db_min_key = min(map(lambda item: item.key, product_dealer))
+        db_min_key = min(map(lambda item: item['key'], product_dealer))
         found_min_key = await ProductDealerDAO.get_min_key()
         assert db_min_key == found_min_key
 
     async def test_get_max_key(
         self,
-        product_dealer: List[ProductDealer],
+        product_dealer: List[Dict[str, Any]],
     ) -> None:
         """Test getting max product-dealer key.
 
         Args:
             product_dealer: pytest fixrute with product-dealer data.
         """
-        db_max_key = max(map(lambda item: item.key, product_dealer))
+        db_max_key = max(map(lambda item: item['key'], product_dealer))
         found_max_key = await ProductDealerDAO.get_max_key()
         assert db_max_key == found_max_key
 

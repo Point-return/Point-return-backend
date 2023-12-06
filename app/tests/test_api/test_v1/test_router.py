@@ -21,43 +21,43 @@ class TestURLs:
         'dealers': app.url_path_for(get_dealers.__name__),
         'parsed_data_exists': app.url_path_for(
             dealer_products.__name__,
-            dealer_id=1,
+            dealerId=1,
         ),
         'parsed_data_not_exists': app.url_path_for(
             dealer_products.__name__,
-            dealer_id=100,
+            dealerId=100,
         ),
         'recommendations_exist': app.url_path_for(
             get_recommendations.__name__,
-            dealerprice_id=1,
+            dealerpriceId=1,
         ),
         'recommendations_not_exist': app.url_path_for(
             get_recommendations.__name__,
-            dealerprice_id=100,
+            dealerpriceId=100,
         ),
     }
 
     patch_urls = {
-        'skip': app.url_path_for(add_skipped.__name__, dealerprice_id=1),
+        'skip': app.url_path_for(add_skipped.__name__, dealerpriceId=1),
         'skip_not_exists': app.url_path_for(
             add_skipped.__name__,
-            dealerprice_id=100,
+            dealerpriceId=100,
         ),
         'solution': app.url_path_for(
             add_product_key.__name__,
-            dealerprice_id=1,
+            dealerpriceId=1,
         )
-        + '?product_id=1',
+        + '?productId=1',
         'solution_no_product': app.url_path_for(
             add_product_key.__name__,
-            dealerprice_id=1,
+            dealerpriceId=1,
         )
-        + '?product_id=100',
+        + '?productId=100',
         'solution_no_parsed_data': app.url_path_for(
             add_product_key.__name__,
-            dealerprice_id=100,
+            dealerpriceId=100,
         )
-        + '?product_id=1',
+        + '?productId=1',
     }
 
     post_urls = {
