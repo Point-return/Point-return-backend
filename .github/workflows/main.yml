@@ -117,9 +117,16 @@ jobs:
           sudo docker compose -f docker-compose.production.yml pull
           sudo docker compose -f docker-compose.production.yml down
           sudo docker compose -f docker-compose.production.yml up -d
+          docker exec -it app-backend-1 bash
           make migrations
           make migrate
           make import
+          make admin
+          ${{ secrets.ADMIN_EMAIL }}
+          ${{ secrets.ADMIN_USERNAME }}
+          ${{ secrets.ADMIN_PASSWORD }}
+          ${{ secrets.ADMIN_PASSWORD }}
+          exit
 
   send_message:
     runs-on: ubuntu-latest
