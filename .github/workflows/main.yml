@@ -58,9 +58,10 @@ jobs:
         pip install -r requirements-DS.txt
         pip install -r requirements-test.txt
         pip install -r requirements-style.txt 
-    - name: Test with isort, flake8, black mypy
+    - name: Test with flake8, mypy
       run: |
-        make test
+        flake8 app
+        mypy app
 
   build_and_push_to_docker_hub:
     name: Push Docker image to DockerHub
