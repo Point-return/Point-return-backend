@@ -1,7 +1,7 @@
 import logging
 from logging.config import dictConfig
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -75,6 +75,7 @@ class CSVFilenames:
     dealers: str = 'marketing_dealer'
     parsed_data: str = 'marketing_dealerprice'
     product_dealer: str = 'marketing_productdealerkey'
+    users: Optional[str] = None
 
 
 class Roles:

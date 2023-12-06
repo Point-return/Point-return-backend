@@ -8,7 +8,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy import insert
 
-from app.config import settings
+from app.config import settings, Roles
 from app.core.models import Base
 from app.core.utils import (
     convert_string_to_float,
@@ -23,46 +23,19 @@ from app.products.models import (
     ProductDealer,
     Statistics,
 )
+from app.products.commands.import_products import import_products
+from app.products.commands.import_dealers import import_dealers
+from app.products.commands.import_parsed_data import import_parsed_data
+from app.products.commands.import_productdealer import import_productdealer
+from app.products.dao import ProductDAO, DealerDAO, ProductDealerDAO, ParsedProductDealerDAO
 from app.users.auth import get_password_hash
 from app.users.models import User
-
-
-def open_data(filename: str) -> List[Dict[str, str]]:
-    """Read test data from tile.
-
-    Args:
-        filename: name of file.
-
-    Returns:
-        Data from file.
-    """
-    with open(f'app/data/{filename}.csv', 'r', encoding='utf-8-sig') as file:
-        data = list(csv.reader(file, delimiter=';'))
-        fields = data[0]
-        return [
-            {field_name: value for field_name, value in zip(fields, item)}
-            for item in data[1:]
-        ]
+from app.users.dao import UserDAO
+from app.users.commands.import_users import import_users
 
 
 @pytest.fixture(scope='session')
-def filenames() -> Dict[str, str]:
-    """Provide names of files with test data.
-
-    Returns:
-        Names of files with test data.
-    """
-    return {
-        'users': 'test_users',
-        'products': 'test_products',
-        'dealers': 'test_dealers',
-        'product-dealer': 'test_productdealer',
-        'parsed data': 'test_dealerprice',
-    }
-
-
-@pytest.fixture(scope='session')
-def admin(filenames: Dict[str, str]) -> Dict[str, str]:
+async def users() -> Dict[str, User]:
     """Provide test data of admin from file.
 
     Args:
@@ -71,21 +44,11 @@ def admin(filenames: Dict[str, str]) -> Dict[str, str]:
     Returns:
         Admin data from file.
     """
-    return open_data(filenames['users'])[0]
-
-
-@pytest.fixture(scope='session')
-def user(filenames: Dict[str, str]) -> Dict[str, str]:
-    """Provide test data of user from file.
-
-    Args:
-        filenames: names of files with test data.
-
-    Returns:
-        User data from file.
-    """
-    return open_data(filenames['users'])[1]
-
+    assert settings.MODE == 'TEST'
+    import_users()
+    return {'admin': await UserDAO.find_one_or_none(role=Roles.admin),
+            'user': await UserDAO.find_one_or_none(role=Roles.user),
+    }
 
 @pytest.fixture(scope='session')
 def non_existent_user() -> Dict[str, str]:
@@ -103,7 +66,7 @@ def non_existent_user() -> Dict[str, str]:
 
 
 @pytest.fixture(scope='session')
-def products(filenames: Dict[str, str]) -> List[Dict[str, Any]]:
+async def products() -> List[Product]:
     """Provide test data of products from file.
 
     Args:
@@ -112,24 +75,13 @@ def products(filenames: Dict[str, str]) -> List[Dict[str, Any]]:
     Returns:
         Products data from file.
     """
-    data = open_data(filenames['products'])
-    for item in data:
-        item['id'] = int(item['id'])
-        item['ean_13'] = convert_to_float_and_truncate(item['ean_13'])
-        item['cost'] = float(item['cost'])
-        item['recommended_price'] = float(item['recommended_price'])
-        item['category_id'] = convert_to_float_and_truncate(
-            item['category_id'],
-        )
-        item['ozon_article'] = convert_to_float_and_truncate(
-            item['ozon_article'],
-        )
-        item['wb_article'] = convert_to_float_and_truncate(item['wb_article'])
-    return data
+    assert settings.MODE == 'TEST'
+    import_products()
+    return await ProductDAO.find_all()
 
 
 @pytest.fixture(scope='session')
-def dealers(filenames: Dict[str, str]) -> List[Dict[str, Any]]:
+async def dealers() -> List[Dealer]:
     """Provide test data of dealers from file.
 
     Args:
@@ -138,14 +90,13 @@ def dealers(filenames: Dict[str, str]) -> List[Dict[str, Any]]:
     Returns:
         Dealers data from file.
     """
-    data = open_data(filenames['dealers'])
-    for item in data:
-        item['id'] = int(item['id'])
-    return data
+    assert settings.MODE == 'TEST'
+    import_dealers()
+    return await DealerDAO.find_all()
 
 
 @pytest.fixture(scope='session')
-def product_dealer(filenames: Dict[str, str]) -> List[Dict[str, Any]]:
+async def product_dealer() -> List[ProductDealer]:
     """Provide test data of product-dealer keys from file.
 
     Args:
@@ -154,16 +105,13 @@ def product_dealer(filenames: Dict[str, str]) -> List[Dict[str, Any]]:
     Returns:
         Product-dealer keys data from file.
     """
-    data = open_data(filenames['product-dealer'])
-    for item in data:
-        item['dealer_id'] = int(item['dealer_id'])
-        item['product_id'] = int(item['product_id'])
-        item['key'] = int(item['key'])
-    return data
+    assert settings.MODE == 'TEST'
+    import_productdealer()
+    return await ProductDealerDAO.find_all()
 
 
 @pytest.fixture(scope='session')
-def parsed_data(filenames: Dict[str, str]) -> List[Dict[str, Any]]:
+async def parsed_data() -> List[ParsedProductDealer]:
     """Provide test parsed data from file.
 
     Args:
@@ -172,62 +120,9 @@ def parsed_data(filenames: Dict[str, str]) -> List[Dict[str, Any]]:
     Returns:
         Parsed data from file.
     """
-    data = open_data(filenames['parsed data'])
-    for item in data:
-        item['dealer_id'] = int(item['dealer_id'])
-        item['id'] = int(item['id'])
-        item['price'] = convert_string_to_float(item['price'])
-        item['date'] = datetime.strptime(item['date'], '%Y-%m-%d').date()
-    return data
-
-
-@pytest.fixture(scope='session', autouse=True)
-async def prepate_database(
-    admin: Dict[str, Any],
-    user: Dict[str, Any],
-    products: List[Dict[str, Any]],
-    dealers: List[Dict[str, Any]],
-    product_dealer: List[Dict[str, Any]],
-    parsed_data: List[Dict[str, Any]],
-) -> None:
-    """Prepare database.
-
-    Args:
-        admin: fixture with admin data.
-        user: fixture with user data.
-    """
     assert settings.MODE == 'TEST'
-
-    async with engine.begin() as connection:
-        await connection.run_sync(Base.metadata.drop_all)
-        await connection.run_sync(Base.metadata.create_all)
-
-    user = user.copy()
-    admin = admin.copy()
-    user['password'] = get_password_hash(user['password'])
-    admin['password'] = get_password_hash(admin['password'])
-    async with async_session_maker() as session:
-        add_admin = insert(User).values(**admin)
-        add_user = insert(User).values(**user)
-        add_products = insert(Product).values(products)
-        add_dealers = insert(Dealer).values(dealers)
-        add_product_dealer = insert(ProductDealer).values(product_dealer)
-        add_parsed_data = insert(ParsedProductDealer).values(parsed_data)
-        add_statistics = insert(Statistics).values(
-            [
-                {'parsed_data_id': parsed_data_item['id']}
-                for parsed_data_item in parsed_data
-            ],
-        )
-        await session.execute(add_admin)
-        await session.execute(add_user)
-        await session.execute(add_products)
-        await session.execute(add_dealers)
-        await session.execute(add_product_dealer)
-        await session.execute(add_parsed_data)
-        await session.execute(add_statistics)
-
-        await session.commit()
+    import_parsed_data()
+    return await ParsedProductDealerDAO.find_all()
 
 
 @pytest.fixture(scope='session')
