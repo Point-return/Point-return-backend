@@ -11,6 +11,7 @@ requirements-test.txt
 # Data, information and configuration
 *.md
 requirements-style.txt
+requirements-test.txt
 gateway
 
 # Cache

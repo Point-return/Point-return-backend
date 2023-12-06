@@ -116,7 +116,7 @@ jobs:
           cd app/
           sudo docker compose -f docker-compose.production.yml pull
           sudo docker compose -f docker-compose.production.yml down
-          sudo docker compose -f docker-compose.production.yml up -d
+          sudo docker compose -f docker-compose.production.yml up -d --build
 
   send_message:
     runs-on: ubuntu-latest
