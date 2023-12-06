@@ -5,7 +5,7 @@ volumes:
 
 services:
   db:
-    image: postgres:13.10
+    image: postgres:15
     env_file: deploy.env
     volumes:
       - pg_data:/var/lib/postgresql/data

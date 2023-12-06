@@ -12,6 +12,8 @@ requirements-test.txt
 *.md
 *.cfg
 requirements-style.txt
+*.csv
+app/data
 
 # Cache
 .mypy_cache
