@@ -14,6 +14,7 @@ requirements-test.txt
 requirements-style.txt
 *.csv
 app/data
+gateway
 
 # Cache
 .mypy_cache

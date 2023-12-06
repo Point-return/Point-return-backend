@@ -69,7 +69,8 @@ jobs:
     needs: backend_tests
     strategy:
       matrix:
-        context: [backend, gateway]
+        name: [backend, gateway]
+        directory: [./, ./gateway/]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -83,9 +84,9 @@ jobs:
       - name: Push to DockerHub
         uses: docker/build-push-action@v4
         with:
-          context: ../Point-return-${{ matrix.context }}/
+          context: ${{ matrix.directory }}
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/point-${{ matrix.context }}:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/point-${{ matrix.name }}:latest
 
   send_message:
     runs-on: ubuntu-latest
