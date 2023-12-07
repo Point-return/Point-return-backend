@@ -2,7 +2,7 @@
 
 ### Description:
 
-Project Point-return-backend - ... .
+The Point-return-backend project is a project developed on the modern FastApi web framework to develop a solution to automate the process of comparing goods. Offering several customer products that are most likely to match the dealer's marked product. Implementing this solution as an online service that opens in a web browser.
 
 ### How to install a project:
 
@@ -222,7 +222,6 @@ Documentation for endpoints when running locally is located at: http://127.0.0.1
 ### Technology stack used in the project:
 
 - CSV
-- Github Actions
 - FastAPI
 - FuzzyWuzzy
 - Pandas
@@ -268,3 +267,8 @@ Documentation for endpoints when running locally is located at: http://127.0.0.1
 
 - :white_check_mark: [Link to code from the main repository](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
 - :white_check_mark: [Link to screen Swagger UI](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
+
+
+### CI/CD status
+[![Point-return-backend workflow](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml/badge.svg)](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml)
+k_mark: [Link to screen Swagger UI](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
