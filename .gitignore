@@ -175,7 +175,10 @@ media/
 # FastAPI migrations
 versions/*
 !env.py
-*.csv
 
 # Workflow
 frontend
+
+# Data
+app/data/test_*
+app/ds/*.csv
