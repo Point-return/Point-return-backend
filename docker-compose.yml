@@ -20,6 +20,8 @@ services:
       dockerfile: Dockerfile
     env_file: server.env
     command: ["bash", "./app/docker/app.sh"]
+    volumes:
+      - ./app/data:/root/app/app/data
 
   gateway:
     build: 

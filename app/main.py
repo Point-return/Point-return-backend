@@ -18,6 +18,8 @@ from app.users.router import router_auth, router_users
 app = FastAPI(
     title='ProSept',
     version='0.1.0',
+    docs_url='/api/v1/docs',
+    openapi_url='/api/v1/openapi.json',
 )
 
 app.include_router(router_v1, prefix='/api')
@@ -39,8 +41,8 @@ origins = [
     'https://81.31.246.3:8000',
     'http://point-return.sytes.net',
     'https://point-return.sytes.net',
-    'http://point-return.github.io/',
-    'https://point-return.github.io/',
+    'http://point-return.github.io',
+    'https://point-return.github.io',
 ]
 
 app.add_middleware(
