@@ -1,0 +1,27 @@
+version: '3'
+
+volumes:
+  pg_data:
+
+services:
+  db:
+    image: postgres:15
+    env_file: server.env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  backend:
+    depends_on:
+      - db
+    image: starkiller2000/point-backend
+    env_file: server.env
+    command: ["bash", "./app/docker/app.sh"]
+    volumes:
+      - /root/app/data:/root/app/app/data
+
+  gateway:
+    image: starkiller2000/point-gateway
+    ports:
+      - 8000:80

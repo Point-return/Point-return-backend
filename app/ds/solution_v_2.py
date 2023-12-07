@@ -1,3 +1,4 @@
+import sys
 from typing import Any, Dict, List
 
 import pandas as pd
@@ -136,12 +137,15 @@ def get_not_continuous_words_when_entering(row: str) -> str:
         'fungi',
     ]
     result = row
-    for word in list_product_dealer:
-        result_split = result.split(word)
-        if len(result_split) > 1:
-            result = result_split[0] + ' ' + word + ' ' + result_split[1]
+    if type(result) is None:
+        return '-'
+    else:
+        for word in list_product_dealer:
+            tmp_str = result.split(str(word))
+            if len(tmp_str) > 1:
+                result = tmp_str[0] + ' ' + word + ' ' + tmp_str[1]
 
-    return result
+        return result
 
 
 def get_suitable_products(
@@ -160,19 +164,17 @@ def get_suitable_products(
         Array of suitable manufacturer products.
     """
     suitable_products = []
-    for product in manufacturer_products['name_split']:
+    for i in range(len(manufacturer_products)):
+        product = manufacturer_products['name_split'][i]
         l_d = fuzz.token_sort_ratio(
             get_not_continuous_words_when_entering(dealer_product),
             product,
         )
         if l_d >= levenshtein_distance_max:
-            manufacturer_products_id = manufacturer_products[
-                manufacturer_products['name_split'] == product
-            ]['id'].to_string(index=False)
             suitable_products.append(
                 {
-                    'id': manufacturer_products_id,
-                    'product_name': product,
+                    'id': manufacturer_products.loc[i]['id'],
+                    'product_name': manufacturer_products['name'][i],
                     'levenshtein_distance': l_d,
                 },
             )
@@ -218,5 +220,7 @@ async def get_solution(
 if __name__ == '__main__':
     import asyncio
 
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    if sys.platform == 'win32' and sys.version_info.minor >= 8:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.get_event_loop_policy().new_event_loop()
     asyncio.run(get_solution('Средство для удаления ленты  клейкой '))

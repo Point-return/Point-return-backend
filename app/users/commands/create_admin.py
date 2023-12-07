@@ -62,5 +62,7 @@ async def create_admin() -> None:
 if __name__ == '__main__':
     import asyncio
 
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    if sys.platform == 'win32' and sys.version_info.minor >= 8:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.get_event_loop_policy().new_event_loop()
     asyncio.run(create_admin())

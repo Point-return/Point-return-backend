@@ -11,18 +11,18 @@ class ProductValidationSchema(BaseModel):
 
     id: int
     article: str
-    ean13: Optional[int]
-    name: Optional[str]
-    cost: Optional[float]
-    recomendedPrice: Optional[float]
-    categoryId: Optional[int]
-    ozonName: Optional[str]
-    name1c: Optional[str]
-    wbName: Optional[str]
-    ozonArticle: Optional[int]
-    wbArticle: Optional[int]
-    ymArticle: Optional[str]
-    wbArticleTd: Optional[str]
+    ean13: Optional[int] = None
+    name: Optional[str] = None
+    cost: Optional[float] = None
+    recomendedPrice: Optional[float] = None
+    categoryId: Optional[int] = None
+    ozonName: Optional[str] = None
+    name1c: Optional[str] = None
+    wbName: Optional[str] = None
+    ozonArticle: Optional[int] = None
+    wbArticle: Optional[int] = None
+    ymArticle: Optional[str] = None
+    wbArticleTd: Optional[str] = None
 
 
 class ProductSchema(ProductValidationSchema):
@@ -38,9 +38,9 @@ class ParsedProductValidationSchema(BaseModel):
     """Parsing data validation schema."""
 
     id: int
-    productKey: Optional[int]
+    productKey: Optional[int] = None
     price: float
-    productUrl: Optional[str]
+    productUrl: Optional[str] = None
     productName: str
     date: datetype
     dealerId: int

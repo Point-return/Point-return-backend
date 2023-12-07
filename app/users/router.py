@@ -75,7 +75,13 @@ async def login_user(
     if not user:
         raise InvalidCredentialsException
     access_token = create_access_token({'sub': str(user.id)})
-    response.set_cookie(TOKEN_NAME, access_token, httponly=True)
+    response.set_cookie(
+        TOKEN_NAME,
+        access_token,
+        httponly=True,
+        secure=True,
+        samesite='none',
+    )
     return TokenSchema(accessToken=access_token)
 
 
@@ -86,11 +92,15 @@ async def logout_user(response: Response) -> EmptySchema:
     Args:
         response: transmitted response.
     """
-    response.delete_cookie(TOKEN_NAME)
+    response.delete_cookie(
+        TOKEN_NAME,
+        secure=True,
+        samesite='none',
+    )
     return EmptySchema()
 
 
-@router_users.post('/me')
+@router_users.get('/me')
 async def read_users_me(
     current_user: User = Depends(get_current_user),
 ) -> UserSafe:
@@ -102,7 +112,4 @@ async def read_users_me(
     Returns:
         Current user information.
     """
-    return UserSafe(
-        email=current_user.email,
-        username=current_user.username,
-    )
+    return await current_user  # type: ignore[misc]
