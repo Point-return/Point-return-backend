@@ -66,7 +66,7 @@ style:
 # utils
 
 secret-key:
-	@$(PYTHON) app/core/commands/generate_key.py
+	@PYTHONPATH=$(current_dir) $(PYTHON) app/core/commands/generate_key.py
 
 # data
 
