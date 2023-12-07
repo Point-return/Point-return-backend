@@ -244,6 +244,12 @@ To run tests, you need to place in app/data a number of csv files, which names a
 |---------|--------|---------------|------------------|
 | Type    |String  | Integer       |     Integer      |
 
+#### Parsing data file test_dealerprice.csv:
+
+| Heading | id     |price    |	product_url |	product_name |	date          |	dealer_id   |
+|---------|--------|---------|--------------|----------------|----------------|-------------|
+| Type    |Integer | Float   | String       | String         | Date  %Y-%m-%d | Integer     |
+
 To run tests you can use next command. It not obly starts tests, but also creates coverage report.
 
 ```
@@ -266,8 +272,10 @@ Documentation for endpoints when running locally is located at: http://127.0.0.1
 
 - CSV
 - Github Actions
+- Gunicorn
 - FastAPI
 - FuzzyWuzzy
+- Nginx
 - Pandas
 - PostgreSQL
 - Pydantic
