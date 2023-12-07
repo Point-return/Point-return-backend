@@ -90,7 +90,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.directory }}
-          dockerfile: Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/point-${{ matrix.name }}
 

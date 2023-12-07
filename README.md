@@ -222,6 +222,7 @@ Documentation for endpoints when running locally is located at: http://127.0.0.1
 ### Technology stack used in the project:
 
 - CSV
+- Github Actions
 - FastAPI
 - FuzzyWuzzy
 - Pandas
