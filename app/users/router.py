@@ -79,6 +79,7 @@ async def login_user(
         TOKEN_NAME,
         access_token,
         httponly=True,
+        secure=True,
         samesite='none',
     )
     return TokenSchema(accessToken=access_token)
