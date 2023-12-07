@@ -71,9 +71,9 @@ jobs:
       matrix:
         include:
           - name: backend
-            directory: ./
+            directory: .
           - name: gateway
-            directory: ./gateway/
+            directory: ./gateway
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
