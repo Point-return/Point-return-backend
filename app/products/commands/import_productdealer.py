@@ -38,9 +38,9 @@ async def import_productdealer() -> None:
         new_wrong_number = 0
         for index, row in wrong_data.iterrows():
             existing_wrong_key = await ProductDealerDAO.find_one_or_none(
-                dealer_id = row['dealer_id'],
-                product_id = row['product_id'],
-                )
+                dealer_id=row['dealer_id'],
+                product_id=row['product_id'],
+            )
             if not existing_wrong_key:
                 await ProductDealerDAO.create(
                     **row,

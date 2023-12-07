@@ -73,59 +73,59 @@ class TestURLs:
         get_responses_data = (
             (
                 self.get_urls['dealers'],
-                status.HTTP_200_OK,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_200_OK,
             ),
             (
                 self.get_urls['parsed_data_exists'],
-                status.HTTP_200_OK,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_200_OK,
             ),
             (
                 self.get_urls['parsed_data_not_exists'],
-                status.HTTP_404_NOT_FOUND,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_404_NOT_FOUND,
             ),
             (
                 self.get_urls['recommendations_exist'],
-                status.HTTP_200_OK,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_200_OK,
             ),
             (
                 self.get_urls['recommendations_not_exist'],
-                status.HTTP_404_NOT_FOUND,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_404_NOT_FOUND,
             ),
             (
                 self.get_urls['recommendations_not_exist'],
-                status.HTTP_404_NOT_FOUND,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_404_NOT_FOUND,
             ),
         )
         patch_responses_data = (
             (
                 self.patch_urls['solution'],
-                status.HTTP_200_OK,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_200_OK,
             ),
             (
                 self.patch_urls['solution_no_product'],
-                status.HTTP_404_NOT_FOUND,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_404_NOT_FOUND,
             ),
             (
                 self.patch_urls['solution_no_parsed_data'],
-                status.HTTP_404_NOT_FOUND,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_404_NOT_FOUND,
             ),
             (
                 self.patch_urls['skip'],
-                status.HTTP_200_OK,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_200_OK,
             ),
             (
                 self.patch_urls['skip_not_exists'],
-                status.HTTP_404_NOT_FOUND,
+                status.HTTP_401_UNAUTHORIZED,
                 status.HTTP_404_NOT_FOUND,
             ),
         )
@@ -135,10 +135,3 @@ class TestURLs:
         for patch_url, unauth_status_code, _ in patch_responses_data:
             response = await async_client.patch(patch_url)
             assert response.status_code == unauth_status_code
-        await async_client.post(
-            self.post_urls['login'],
-            json={
-                'email': user['email'],
-                'password': user['password'],
-            },
-        )
