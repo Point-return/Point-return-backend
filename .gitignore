@@ -180,6 +180,4 @@ media/
 frontend
 
 # Data
-**/*.csv
-./app/data/*
-app/ds/*.csv
+app/data
