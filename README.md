@@ -1,5 +1,11 @@
 # Project Point-return-backend
 
+![example workflow](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml/badge.svg)
+
+Link to the documentation on server:
+- :white_check_mark: [Documentation](https://point-return.sytes.net/api/v1/docs/)
+- :white_check_mark: [Complete project](https://point-return.github.io/)
+
 ### Description:
 
 Project Point-return-backend - ... .
@@ -147,8 +153,6 @@ By default, the file names are listed below.
 |-----------|--------|---------|---------------|------------------|
 | Type       |Integer |String   | Integer       |     Integer      |
 
-id	product_key	price	product_url	product_name	date	dealer_id
-
 #### Parsing data file marketing_dealerprice.csv:
 
 | Heading | id     |	product_key |	price |	product_url |	product_name |	date          |	dealer_id   |
@@ -158,8 +162,7 @@ id	product_key	price	product_url	product_name	date	dealer_id
 You can import data with the following command, after first returning to the root directory:
 
 ```
-cd ..
-cd ..
+cd ../..
 make import
 ```
 
@@ -190,16 +193,56 @@ Launch the application:
 make run
 ```
 
+The application will be available via this link:
+```
+127.0.0.1:8000
+```
+
+### How to run backend using containers:
+
+Run following command:
+```
+make docker
+```
+
+This command would build all workers according to the files on your PC.
+Or you can use following command, which would use pre-created images:
+```
+make production
+```
+
+The application will be available via this link:
+```
+localhost:8000
+```
+
 ## Application testing
 
-To run tests, you need to place a file with the default name mock_users.csv in the app/data directory.
-You need to add one user with the admin role, one with the user role.
+To run tests, you need to place in app/data a number of csv files, which names are specified in app/tests/conftest.py file in filenames fixture. Default file names are listed below. For users file You need to add one user with the admin role, and one with the user role.
 
-#### Test data file mock_users.csv:
+#### Test data file test_users.csv:
 
 | Heading | username     |	email       |	password    |	role        |
 |-----------|--------------|----------------|---------------|---------------|
 | Type       |   String     | Email String   | String        | admin / user  |
+
+#### Products file test_products.csv:
+
+| Heading  | id     |    article |   ean_13    | name  | cost |  recommended_price   |   category_id |   ozon_name   |name_1c    |   wb_name |   ozon_article    |   wb_article  |ym_article |   wb_article_td   |
+|---------|-------|-------|----------|------|-----|-----------------|------------|---------|-------|-------|------------|--------- |----------|-------------|
+| Type     |  Integer |   String |    BigInteger  |   String  |   Float   |   Float   | Integer    | String  |    String | String | Integer     | Integer  | String   | String      |
+
+#### Dealer File test_dealer.csv:
+
+| Heading | id    |	name    |
+|---------|-------|---------|
+| Type    |Integer| String  |
+
+#### Product-dealer link file test_productdealer.csv:
+
+| Heading |	key    |	dealer_id  |	product_id    |
+|---------|--------|---------------|------------------|
+| Type    |String  | Integer       |     Integer      |
 
 To run tests you can use next command. It not obly starts tests, but also creates coverage report.
 
