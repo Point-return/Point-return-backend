@@ -309,17 +309,3 @@ async def get_product(
             await ProductDAO.find_by_id(product_dealer.product_id),
         ).model_dump(),
     )
-
-
-@router_v1.get('/testToken')
-async def get_testLogin(
-    user: User = Depends(get_current_user),
-) -> List[DealerSchema]:
-    """Get all dealers.
-
-    Returns:
-        All dealers data.
-    """
-    if not user:
-        raise InvalidCredentialsException
-    return await DealerDAO.find_all()
