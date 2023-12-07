@@ -259,7 +259,7 @@ pytest
 
 ### Ссылки на архивы:
 
-- :white_check_mark: [Link to code from the main repository](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
+- :white_check_mark: [Link to code from the main repository](https://drive.google.com/file/d/1SfOS2muwhS7iyKS5YQjLgOTs_SXqKV1b/view?usp=sharing)
 - :white_check_mark: [Link to screen Swagger UI](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
 
 ### CI/CD статус:
