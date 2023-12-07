@@ -24,9 +24,6 @@ gateway
 .idea
 .vscode
 
-#migrations
-app/migrations/versions/*.py
-
 #compose
 *.yml
 frontend
