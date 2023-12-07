@@ -2,8 +2,8 @@
 
 ![example workflow](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml/badge.svg)
 
-Link to the documentation on server:
-- :white_check_mark: [Documentation](https://point-return.sytes.net/api/v1/docs/)
+Links:
+- :white_check_mark: [API Documentation](https://point-return.sytes.net/api/v1/docs/)
 - :white_check_mark: [Complete project](https://point-return.github.io/)
 
 ### Description:
@@ -60,17 +60,18 @@ To start, just install the dependencies required for the backend framework and t
 make base-req
 ```
 
-For the application to work, a .env file is required:
+For the application to work, a .env file (or server.env file for containers) is required:
 
 ```
 touch .env
+touch server.env
 ```
 
-You need to fill out the .env file with the following:
+You need to fill out the .env (server.env) file with the following:
 
 ```
 
-MODE = DEV / TEST / PROD
+MODE=DEV / TEST / PROD
 Application operating mode. DEV - development, TEST - testing, PROD - production
 
 DB_ENG=postgresql
@@ -109,12 +110,23 @@ HOST address for connecting to the test database.
 TEST_DB_PORT=
 Communication PORT with test database.
 
-SECRET_KEY = 
+SECRET_KEY=
 Secret key for generating a JWT token.
 
-ALGORITHM = 
+ALGORITHM=
 Algorithm for generating a JWT token.
 
+POSTGRES_USER=
+Username that will be set when creating a postgresql database to access it
+Should be equal to PG_USER
+
+POSTGRES_PASSWORD=
+Password that will be set when creating a postgresql database to access it
+Should be equal to PG_PASS
+
+POSTGRES_DB=
+The name of created postgresql database
+Should be equal to DB_NAME
 ```
 To generate a secret key, you can use the following command:
 ```
@@ -132,7 +144,7 @@ cd app
 cd data
 ```
 
-The required file names are specified in the app.config file in the CSVFiles class.
+The required file names are specified in the app.config file in the CSVFilenames class.
 By default, the file names are listed below.
 
 #### Products file marketing_product.csv:
@@ -193,7 +205,7 @@ Launch the application:
 make run
 ```
 
-The application will be available via this link:
+The application will be available via this address:
 ```
 127.0.0.1:8000
 ```
@@ -211,7 +223,7 @@ Or you can use following command, which would use pre-created images:
 make production
 ```
 
-The application will be available via this link:
+The application will be available via this address:
 ```
 localhost:8000
 ```
@@ -222,9 +234,9 @@ To run tests, you need to place in app/data a number of csv files, which names a
 
 #### Test data file test_users.csv:
 
-| Heading | username     |	email       |	password    |	role        |
+| Heading   | username     |	email       |	password    |	role        |
 |-----------|--------------|----------------|---------------|---------------|
-| Type       |   String     | Email String   | String        | admin / user  |
+| Type      |   String     | Email String   | String        | admin / user  |
 
 #### Products file test_products.csv:
 
@@ -263,14 +275,12 @@ make read-report
 coverage report
 ```
 
-### Endpoints:
-
-Documentation for endpoints when running locally is located at: http://127.0.0.1:8000/docs
-
 
 ### Technology stack used in the project:
 
 - CSV
+- Docker
+- Docker Compose
 - Github Actions
 - Gunicorn
 - FastAPI

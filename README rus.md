@@ -1,5 +1,11 @@
 # Проект Point-return-backend
 
+![example workflow](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml/badge.svg)
+
+Ссылки:
+- :white_check_mark: [Документация на API](https://point-return.sytes.net/api/v1/docs/)
+- :white_check_mark: [Полный проект](https://point-return.github.io/)
+
 ### Описание:
 
 Проект Point-return-backend - ... .
@@ -54,13 +60,14 @@ make test-req
 make base-req
 ```
 
-Для работы приложения необходим файл .env:
+Для работы приложения необходим файл .env (или server.env при использовании контейнеров):
 
 ```
 touch .env
+touch server.env
 ```
 
-Необходимо заполнить файл .env следующим обазом:
+Необходимо заполнить файл .env (server.env) следующим обазом:
 
 ```
 
@@ -109,6 +116,17 @@ SECRET_KEY =
 ALGORITHM = 
 Алгоритм для генетации JWT-токена.
 
+POSTGRES_USER=
+Имя пользователя при создании базы данный postgresql, используемое для доступа к ней
+Должно совпадать с PG_USER
+
+POSTGRES_PASSWORD=
+Пароль при создании базы данный postgresql, используемый для доступа к ней
+Должен совпадать с PG_PASS
+
+POSTGRES_DB=
+Название создаваемой базы данный postgresql
+Должно совпадать с DB_NAME
 ```
 Для генерации секретного ключа можно воспользоваться следующей командой:
 ```
@@ -126,7 +144,7 @@ cd app
 cd data
 ```
 
-Необходимые названия файлов указаны в файле app.config в классе CSVFiles. 
+Необходимые названия файлов указаны в файле app.config в классе CSVFilenames. 
 По умолчанию названия файлов указаны далее.
 
 #### Файл продуктов marketing_product.csv:
@@ -158,8 +176,7 @@ id	product_key	price	product_url	product_name	date	dealer_id
 Импортировать данные можно следующей командой, предварительно вернувшись в корневую директорию:
 
 ```
-cd ..
-cd ..
+cd ../..
 make import
 ```
 
@@ -190,34 +207,85 @@ make admin
 make run
 ```
 
+Приложение будет доступно по следующему адресу:
+```
+127.0.0.1:8000
+```
+### Как запустить backend с помощью контейнеров:
+
+Используйте следующую команду:
+```
+make docker
+```
+
+Данная команда создать образы, используя текущие файлы компьютера.
+Или можно использовать следующую команду, использующую заранее созданные образы:
+```
+make production
+```
+
+Приложение будет доступно по следующему адресу:
+```
+localhost:8000
+```
+
 ## Тестирование приложения
 
-Для запуска тестов в директории app/data необходимо расположить файл с названием по умолчанию mock_users.csv. 
-Необходимо добавить одного пользователя с ролью admin, одного - с ролью user.
+Для запуска тестов в директории app/data необходимо расположить несколько csv файлов, названия которых указаны в файле app/tests/conftest.py в фикстуре filenames. Имена по умолчанию указаны далее. В файле с данными пользователей необходимо создать одного пользователя с ролью admin и одного - с ролью user.  
 
-#### Файл тестовых данных mock_users.csv:
+#### Файл тестовых данных test_users.csv:
 
 | Заголовок | username     |	email       |	password    |	role        |
 |-----------|--------------|----------------|---------------|---------------|
 | Тип       |   String     | Email String   | String        | admin / user  |
 
-Для запуска тестов можно использовать 2 команды:
+#### Файл с данными продуктов test_products.csv:
+
+| Заголовок | id     |    article |   ean_13    | name  | cost |  recommended_price   |   category_id |   ozon_name   |name_1c    |   wb_name |   ozon_article    |   wb_article  |ym_article |   wb_article_td   |
+|---------|-------|-------|----------|------|-----|-----------------|------------|---------|-------|-------|------------|--------- |----------|-------------|
+| Тип     |  Integer |   String |    BigInteger  |   String  |   Float   |   Float   | Integer    | String  |    String | String | Integer     | Integer  | String   | String      |
+
+#### Файл с данными дилеров test_dealer.csv:
+
+| Заголовок | id    |	name    |
+|---------|-------|---------|
+|Тип   |Integer| String  |
+
+#### Файл со связками продукт-дилер test_productdealer.csv:
+
+| Заголовок |	key    |	dealer_id  |	product_id    |
+|---------|--------|---------------|------------------|
+| Тип    |String  | Integer       |     Integer      |
+
+#### Parsing data file test_dealerprice.csv:
+
+| Заголовок | id     |price    |	product_url |	product_name |	date          |	dealer_id   |
+|---------|--------|---------|--------------|----------------|----------------|-------------|
+| Тип    |Integer | Float   | String       | String         | Date  %Y-%m-%d | Integer     |
+
+Для запуска тестов рекомендуется использовать следующую команду. Она не только запускает тесты, но и создаёт отчёт о покрытии тестами.
 
 ```
-make test
-pytest
+make report
 ```
 
-### Эндпоинты:
+Прочитать отчёт о покрытии тестами можно с помощью одной из следующих команд:
 
-Документация на эндпоинты при локальном запуске располагается по адресу: http://127.0.0.1:8000/docs
-
+```
+make read-report
+coverage report
+```
 
 ### Стек технологий использованный в проекте:
 
 - CSV
+- Docker
+- Docker Compose
+- Github Actions
+- Gunicorn
 - FastAPI
 - FuzzyWuzzy
+- Nginx
 - Pandas
 - PostgreSQL
 - Pydantic
@@ -246,8 +314,18 @@ pytest
 - :white_check_mark: [Maksim Ermoshin](https://github.com/Starkiller2000Turbo)
 - :white_check_mark: [Vladislav Podtiazhkin](https://github.com/vlad3069)
 
+### Авторы frontend-части:
+
+- :white_check_mark: [Amir Mukhtarov](https://github.com/m0000Amir)
+- :white_check_mark: [Ilya Biryulev](https://github.com/IlyaBiryulev)
+
 ### Авторы DS-скрипта:
 
 - :white_check_mark: [Aigerim Tokhmetova](https://github.com/moonkerimka)
 - :white_check_mark: [Aleksandr Filippov](https://github.com/AlexFee1)
 - :white_check_mark: [Evgeniy Bessonov](https://github.com/evgeniy-yandex)
+
+### Ссылки на архивы:
+
+- :white_check_mark: [Ссылка на код из ветки main репозитория](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
+- :white_check_mark: [Ссылка на скрины Swagger UI](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
