@@ -1,5 +1,11 @@
 # Project Point-return-backend
 
+![example workflow](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml/badge.svg)
+
+Links:
+- :white_check_mark: [API Documentation](https://point-return.sytes.net/api/v1/docs/)
+- :white_check_mark: [Complete project](https://point-return.github.io/)
+
 ### Description:
 
 The Point-return-backend project is a project developed on the modern FastApi web framework to develop a solution to automate the process of comparing goods. Offering several customer products that are most likely to match the dealer's marked product. Implementing this solution as an online service that opens in a web browser.
@@ -54,17 +60,18 @@ To start, just install the dependencies required for the backend framework and t
 make base-req
 ```
 
-For the application to work, a .env file is required:
+For the application to work, a .env file (or server.env file for containers) is required:
 
 ```
 touch .env
+touch server.env
 ```
 
-You need to fill out the .env file with the following:
+You need to fill out the .env (server.env) file with the following:
 
 ```
 
-MODE = DEV / TEST / PROD
+MODE=DEV / TEST / PROD
 Application operating mode. DEV - development, TEST - testing, PROD - production
 
 DB_ENG=postgresql
@@ -103,12 +110,23 @@ HOST address for connecting to the test database.
 TEST_DB_PORT=
 Communication PORT with test database.
 
-SECRET_KEY = 
+SECRET_KEY=
 Secret key for generating a JWT token.
 
-ALGORITHM = 
+ALGORITHM=
 Algorithm for generating a JWT token.
 
+POSTGRES_USER=
+Username that will be set when creating a postgresql database to access it
+Should be equal to PG_USER
+
+POSTGRES_PASSWORD=
+Password that will be set when creating a postgresql database to access it
+Should be equal to PG_PASS
+
+POSTGRES_DB=
+The name of created postgresql database
+Should be equal to DB_NAME
 ```
 To generate a secret key, you can use the following command:
 ```
@@ -126,7 +144,7 @@ cd app
 cd data
 ```
 
-The required file names are specified in the app.config file in the CSVFiles class.
+The required file names are specified in the app.config file in the CSVFilenames class.
 By default, the file names are listed below.
 
 #### Products file marketing_product.csv:
@@ -147,8 +165,6 @@ By default, the file names are listed below.
 |-----------|--------|---------|---------------|------------------|
 | Type       |Integer |String   | Integer       |     Integer      |
 
-id	product_key	price	product_url	product_name	date	dealer_id
-
 #### Parsing data file marketing_dealerprice.csv:
 
 | Heading | id     |	product_key |	price |	product_url |	product_name |	date          |	dealer_id   |
@@ -158,8 +174,7 @@ id	product_key	price	product_url	product_name	date	dealer_id
 You can import data with the following command, after first returning to the root directory:
 
 ```
-cd ..
-cd ..
+cd ../..
 make import
 ```
 
@@ -190,16 +205,62 @@ Launch the application:
 make run
 ```
 
+The application will be available via this address:
+```
+127.0.0.1:8000
+```
+
+### How to run backend using containers:
+
+Run following command:
+```
+make docker
+```
+
+This command would build all workers according to the files on your PC.
+Or you can use following command, which would use pre-created images:
+```
+make production
+```
+
+The application will be available via this address:
+```
+localhost:8000
+```
+
 ## Application testing
 
-To run tests, you need to place a file with the default name mock_users.csv in the app/data directory.
-You need to add one user with the admin role, one with the user role.
+To run tests, you need to place in app/data a number of csv files, which names are specified in app/tests/conftest.py file in filenames fixture. Default file names are listed below. For users file You need to add one user with the admin role, and one with the user role.
 
-#### Test data file mock_users.csv:
+#### Test data file test_users.csv:
 
-| Heading | username     |	email       |	password    |	role        |
+| Heading   | username     |	email       |	password    |	role        |
 |-----------|--------------|----------------|---------------|---------------|
-| Type       |   String     | Email String   | String        | admin / user  |
+| Type      |   String     | Email String   | String        | admin / user  |
+
+#### Products file test_products.csv:
+
+| Heading  | id     |    article |   ean_13    | name  | cost |  recommended_price   |   category_id |   ozon_name   |name_1c    |   wb_name |   ozon_article    |   wb_article  |ym_article |   wb_article_td   |
+|---------|-------|-------|----------|------|-----|-----------------|------------|---------|-------|-------|------------|--------- |----------|-------------|
+| Type     |  Integer |   String |    BigInteger  |   String  |   Float   |   Float   | Integer    | String  |    String | String | Integer     | Integer  | String   | String      |
+
+#### Dealer File test_dealer.csv:
+
+| Heading | id    |	name    |
+|---------|-------|---------|
+| Type    |Integer| String  |
+
+#### Product-dealer link file test_productdealer.csv:
+
+| Heading |	key    |	dealer_id  |	product_id    |
+|---------|--------|---------------|------------------|
+| Type    |String  | Integer       |     Integer      |
+
+#### Parsing data file test_dealerprice.csv:
+
+| Heading | id     |price    |	product_url |	product_name |	date          |	dealer_id   |
+|---------|--------|---------|--------------|----------------|----------------|-------------|
+| Type    |Integer | Float   | String       | String         | Date  %Y-%m-%d | Integer     |
 
 To run tests you can use next command. It not obly starts tests, but also creates coverage report.
 
@@ -214,16 +275,16 @@ make read-report
 coverage report
 ```
 
-### Endpoints:
-
-Documentation for endpoints when running locally is located at: http://127.0.0.1:8000/docs
-
-
 ### Technology stack used in the project:
 
 - CSV
+- Docker
+- Docker Compose
+- Github Actions
+- Gunicorn
 - FastAPI
 - FuzzyWuzzy
+- Nginx
 - Pandas
 - PostgreSQL
 - Pydantic
