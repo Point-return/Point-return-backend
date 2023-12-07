@@ -35,12 +35,18 @@ async def import_productdealer() -> None:
         new_number = len(data.index)
         await ProductDealerDAO.create_many(data.to_dict('records'))
         wrong_data = wrong_data.drop('key', axis=1)
-        new_wrong_number = len(wrong_data.index)
+        new_wrong_number = 0
         for index, row in wrong_data.iterrows():
-            await ProductDealerDAO.create(
-                **row,
-                key=await generate_product_dealer_key(),
-            )
+            existing_wrong_key = await ProductDealerDAO.find_one_or_none(
+                dealer_id = row['dealer_id'],
+                product_id = row['product_id'],
+                )
+            if not existing_wrong_key:
+                await ProductDealerDAO.create(
+                    **row,
+                    key=await generate_product_dealer_key(),
+                )
+                new_wrong_number += 1
     logger.debug(
         f'Import completed, imported {new_number+new_wrong_number} '
         'product-dealer links',
