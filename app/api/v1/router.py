@@ -33,7 +33,6 @@ from app.products.dao import (
 from app.products.models import ParsedProductDealer
 from app.products.utils import generate_product_dealer_key
 from app.users.dependencies import get_current_user
-from app.users.exceptions import InvalidCredentialsException
 from app.users.models import User
 
 router_v1 = APIRouter(
