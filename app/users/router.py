@@ -75,7 +75,12 @@ async def login_user(
     if not user:
         raise InvalidCredentialsException
     access_token = create_access_token({'sub': str(user.id)})
-    response.set_cookie(TOKEN_NAME, access_token, httponly=True)
+    response.set_cookie(
+        TOKEN_NAME,
+        access_token,
+        httponly=True,
+        samesite='none',
+    )
     return TokenSchema(accessToken=access_token)
 
 
