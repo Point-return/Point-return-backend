@@ -39,6 +39,7 @@ origins = [
     'https://81.31.246.3:8000',
     'http://point-return.sytes.net',
     'https://point-return.sytes.net',
+    'http://point-return.github.io/',
     'https://point-return.github.io/',
 ]
 
