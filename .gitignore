@@ -120,7 +120,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-*.env
+.env
+server.env
 .venv
 env/
 venv/
@@ -173,7 +174,7 @@ media/
 !**/migrations/__init__.py
 
 # FastAPI migrations
-versions/*
+app/migrations/versions/*.py
 !env.py
 
 # Workflow

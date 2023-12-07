@@ -22,8 +22,6 @@ async def import_productdealer() -> None:
         existing_productdealer_keys = await ProductDealerDAO.get_keys()
         wrong_data = pd.DataFrame(columns=data.columns)
         for index, row in data.iterrows():
-            if row['key'] in existing_productdealer_keys:
-                data.drop(index, inplace=True)
             if not row['key'].isnumeric():
                 wrong_data = pd.concat(
                     [wrong_data, pd.DataFrame([row])],
@@ -31,6 +29,9 @@ async def import_productdealer() -> None:
                 )
                 data.drop(index, inplace=True)
         data['key'] = data['key'].apply(int)
+        for index, row in data.iterrows():
+            if int(row['key']) in existing_productdealer_keys:
+                data.drop(index, inplace=True)
         new_number = len(data.index)
         await ProductDealerDAO.create_many(data.to_dict('records'))
         wrong_data = wrong_data.drop('key', axis=1)
