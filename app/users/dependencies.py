@@ -35,7 +35,7 @@ def get_token(request: Request) -> str:
     return token
 
 
-def get_current_user(token: str = Depends(get_token)) -> Awaitable[User]:
+async def get_current_user(token: str = Depends(get_token)) -> Awaitable[User]:
     """Get the current user from a request.
 
     Args:
@@ -68,7 +68,7 @@ def get_current_user(token: str = Depends(get_token)) -> Awaitable[User]:
     if not user_id:
         logger.error(UserInfoNotFoundException.detail)
         raise UserInfoNotFoundException
-    user = UserDAO.find_by_id(int(user_id))
+    user = await UserDAO.find_by_id(int(user_id))
     if not user:
         logger.error(WrongUserInfoException.detail)
         raise WrongUserInfoException
