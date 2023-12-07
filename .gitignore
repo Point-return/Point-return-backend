@@ -180,5 +180,6 @@ media/
 frontend
 
 # Data
-app/data/test_*
+**/*.csv
+./app/data/*
 app/ds/*.csv

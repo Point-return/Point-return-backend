@@ -18,6 +18,8 @@ services:
     image: starkiller2000/point-backend
     env_file: server.env
     command: ["bash", "./app/docker/app.sh"]
+    volumes:
+      - /root/app/data:/root/app/app/data
 
   gateway:
     image: starkiller2000/point-gateway
