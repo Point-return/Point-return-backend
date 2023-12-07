@@ -246,8 +246,21 @@ pytest
 - :white_check_mark: [Maksim Ermoshin](https://github.com/Starkiller2000Turbo)
 - :white_check_mark: [Vladislav Podtiazhkin](https://github.com/vlad3069)
 
+### Авторы frontend-основы:
+
+- :white_check_mark: [Amir Mukhtarov](https://github.com/m0000Amir)
+- :white_check_mark: [Ilya Biryulev](https://github.com/IlyaBiryulev)
+
 ### Авторы DS-скрипта:
 
 - :white_check_mark: [Aigerim Tokhmetova](https://github.com/moonkerimka)
 - :white_check_mark: [Aleksandr Filippov](https://github.com/AlexFee1)
 - :white_check_mark: [Evgeniy Bessonov](https://github.com/evgeniy-yandex)
+
+### Ссылки на архивы:
+
+- :white_check_mark: [Link to code from the main repository](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
+- :white_check_mark: [Link to screen Swagger UI](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
+
+### CI/CD статус:
+[![Point-return-backend workflow](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml/badge.svg)](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml)
