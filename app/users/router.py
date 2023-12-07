@@ -92,7 +92,11 @@ async def logout_user(response: Response) -> EmptySchema:
     Args:
         response: transmitted response.
     """
-    response.delete_cookie(TOKEN_NAME)
+    response.delete_cookie(
+        TOKEN_NAME,
+        secure=True,
+        samesite='none',
+    )
     return EmptySchema()
 
 
