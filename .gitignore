@@ -121,6 +121,7 @@ celerybeat.pid
 
 # Environments
 .env
+server.env
 .venv
 env/
 venv/
@@ -176,3 +177,6 @@ media/
 versions/*
 !env.py
 *.csv
+
+# Workflow
+frontend
