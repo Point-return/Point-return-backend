@@ -53,6 +53,7 @@ async def dealer_products(
     yearTo: int = 2100,
     monthTo: int = 1,
     dayTo: int = 1,
+    current_user: User = Depends(get_current_user),
 ) -> MenuValidationSchema:
     """Get information about all dealer's products.
 
@@ -93,7 +94,9 @@ async def dealer_products(
 
 
 @router_v1.get('/dealers')
-async def get_dealers() -> List[DealerSchema]:
+async def get_dealers(
+    current_user: User = Depends(get_current_user),
+) -> List[DealerSchema]:
     """Get all dealers.
 
     Returns:
@@ -106,6 +109,7 @@ async def get_dealers() -> List[DealerSchema]:
 async def get_recommendations(
     dealerpriceId: int,
     limit: int = 10,
+    current_user: User = Depends(get_current_user),
 ) -> List[RecomendationValidationSchema]:
     """Receive a number of recommendations.
 
@@ -135,6 +139,7 @@ async def get_recommendations(
 async def add_product_key(
     dealerpriceId: int,
     productId: int,
+    current_user: User = Depends(get_current_user),
 ) -> EmptySchema:
     """Choose the product from base.
 
@@ -180,7 +185,10 @@ async def add_product_key(
 
 
 @router_v1.patch('/recommendations/{dealerpriceId}/skip')
-async def add_skipped(dealerpriceId: int) -> EmptySchema:
+async def add_skipped(
+    dealerpriceId: int,
+    current_user: User = Depends(get_current_user),
+) -> EmptySchema:
     """Mark parsing data as skipped.
 
     Args:
@@ -208,6 +216,7 @@ async def general_static(
     yearTo: int = 2100,
     monthTo: int = 1,
     dayTo: int = 1,
+    current_user: User = Depends(get_current_user),
 ) -> StatisticsSchema:
     """Get statistics for all dealers.
 
@@ -244,6 +253,7 @@ async def dealer_static(
     yearTo: int = 2100,
     monthTo: int = 1,
     dayTo: int = 1,
+    current_user: User = Depends(get_current_user),
 ) -> StatisticsSchema:
     """Get dealer statistics.
 
@@ -278,7 +288,10 @@ async def dealer_static(
 
 
 @router_v1.get('/product/{productKey}')
-async def get_product(productKey: int) -> ProductValidationSchema:
+async def get_product(
+    productKey: int,
+    current_user: User = Depends(get_current_user),
+) -> ProductValidationSchema:
     """Get product information by product-dealer connection key.
 
     Args:

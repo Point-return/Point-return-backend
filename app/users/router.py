@@ -75,7 +75,13 @@ async def login_user(
     if not user:
         raise InvalidCredentialsException
     access_token = create_access_token({'sub': str(user.id)})
-    response.set_cookie(TOKEN_NAME, access_token, httponly=True)
+    response.set_cookie(
+        TOKEN_NAME,
+        access_token,
+        httponly=True,
+        secure=True,
+        samesite='none',
+    )
     return TokenSchema(accessToken=access_token)
 
 
@@ -86,7 +92,11 @@ async def logout_user(response: Response) -> EmptySchema:
     Args:
         response: transmitted response.
     """
-    response.delete_cookie(TOKEN_NAME)
+    response.delete_cookie(
+        TOKEN_NAME,
+        secure=True,
+        samesite='none',
+    )
     return EmptySchema()
 
 
