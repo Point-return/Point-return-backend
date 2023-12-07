@@ -3,7 +3,8 @@ name: Main Point Workflow
 on:
   push:
     branches:
-      - [deploy, main]
+      - main
+      - deploy
 
 env:
   POSTGRES_USER: postgres

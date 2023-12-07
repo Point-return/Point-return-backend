@@ -24,4 +24,4 @@ jobs:
     - name: Test with flake8 and mypy tests
       run: |
         python -m flake8 app/
-        mypy -m mypy app/ 
+        python -m mypy app/ 
