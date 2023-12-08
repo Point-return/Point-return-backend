@@ -112,4 +112,4 @@ async def read_users_me(
     Returns:
         Current user information.
     """
-    return await current_user  # type: ignore[misc]
+    return current_user  # type: ignore[misc]

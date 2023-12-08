@@ -29,3 +29,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:80
+    volumes:
+      - ./app/statics:/usr/share/nginx/html/static

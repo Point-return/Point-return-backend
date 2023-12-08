@@ -13,6 +13,9 @@ requirements-test.txt
 requirements-style.txt
 requirements-test.txt
 gateway
+app/data
+app/statics
+src
 
 # Cache
 .mypy_cache

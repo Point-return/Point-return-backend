@@ -25,3 +25,5 @@ services:
     image: starkiller2000/point-gateway
     ports:
       - 8000:80
+    volumes:
+      - ./app/statics:/usr/share/nginx/html/static
