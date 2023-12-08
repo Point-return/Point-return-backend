@@ -326,9 +326,5 @@ coverage report
 
 ### Links to archives:
 
-- :white_check_mark: [Link to code from the main repository](https://drive.google.com/file/d/1SfOS2muwhS7iyKS5YQjLgOTs_SXqKV1b/view?usp=sharing)
+- :white_check_mark: [Link to code from the main repository](https://drive.google.com/file/d/1Ij-8dj7bJrDjM27wdOqIHsenWml131i6/view?usp=sharing)
 - :white_check_mark: [Link to screen Swagger UI](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
-
-
-### CI/CD status
-[![Point-return-backend workflow](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml/badge.svg)](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml)
