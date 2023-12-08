@@ -329,6 +329,3 @@ coverage report
 
 - :white_check_mark: [Ссылка на код из ветки main репозитория](https://drive.google.com/file/d/1SfOS2muwhS7iyKS5YQjLgOTs_SXqKV1b/view?usp=sharing)
 - :white_check_mark: [Ссылка на скрины Swagger UI](https://drive.google.com/file/d/1d1s4TAFXJE4ihbzgvtL6X1kTvy1cgJlL/view?usp=sharing)
-
-### CI/CD статус:
-[![Point-return-backend workflow](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml/badge.svg)](https://github.com/Point-return/Point-return-backend/actions/workflows/main.yml)
